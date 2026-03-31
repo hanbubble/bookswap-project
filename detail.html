@@ -750,7 +750,6 @@
         _reviews = snap.exists() ? Object.values(snap.val()) : [];
         if (typeof loadBook === 'function' && currentBook) loadBook();
         if (typeof loadReviews === 'function' && currentBook) loadReviews();
-        if (typeof loadCurrentUserReview === 'function' && currentBook) loadCurrentUserReview();
       });
       db.ref('users').on('value', snap => {
         _users = snap.exists() ? Object.values(snap.val()) : [];
@@ -844,16 +843,20 @@
 
       setupRealtimeListeners();
 
-      // books가 로드될 때까지 대기
-      db.ref('books').once('value', snap => {
-        _books = snap.exists() ? Object.values(snap.val()) : [];
+      // books + reviews 동시에 기다린 후 초기화
+      Promise.all([
+        db.ref('books').once('value'),
+        db.ref('reviews').once('value'),
+      ]).then(([bSnap, rSnap]) => {
+        _books   = bSnap.exists() ? Object.values(bSnap.val()) : [];
+        _reviews = rSnap.exists() ? Object.values(rSnap.val()) : [];
         currentBook = _books.find(b => b.id === bookId);
         if (!currentBook) { window.location.href = 'index.html'; return; }
         applyBackground();
         loadBook();
         loadReviews();
-        loadCurrentUserReview();
-        addPassagePair();
+        const hadReview = loadCurrentUserReview();
+        if (!hadReview) addPassagePair();
       });
     }
 
@@ -946,28 +949,18 @@
     }
 
     // ── Edit mode ─────────────────────────────────────────────
-    let _reviewLoaded = false;
     function loadCurrentUserReview() {
       currentReview = getReviews().find(r => r.bookId === bookId && r.userId === currentUser.id) || null;
-      if (!currentReview) return;
-      if (_reviewLoaded) {
-        // 이미 로드된 후엔 YouTube/사진만 갱신
-        if (currentReview.youtubeUrl && !document.getElementById('youtube-embed').innerHTML) {
-          document.getElementById('youtube-url').value = currentReview.youtubeUrl;
-          embedYoutube();
-        }
-        return;
-      }
-      _reviewLoaded = true;
-      isEditMode = true;
+      if (!currentReview) return false;
 
+      isEditMode = true;
       document.getElementById('form-title').innerHTML =
         'MY RECORD ✏ <span class="edit-mode-badge">EDIT MODE</span>';
       document.getElementById('submit-btn').textContent = 'UPDATE ✏';
 
       formRating = currentReview.rating || 0;
       resetFormStars();
-      document.getElementById('form-oneliner').value     = currentReview.oneLiner    || '';
+      document.getElementById('form-oneliner').value = currentReview.oneLiner || '';
 
       if (currentReview.youtubeUrl) {
         document.getElementById('youtube-url').value = currentReview.youtubeUrl;
@@ -989,6 +982,7 @@
       } else {
         addPassagePair();
       }
+      return true;
     }
 
     // ── Photo ─────────────────────────────────────────────────
