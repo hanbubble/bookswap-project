@@ -984,12 +984,6 @@
         `;
         card.title = book.title;
 
-        // 테이프
-        const tape = document.createElement('div');
-        tape.className = 'book-tape';
-        tape.style.background = TAPE_COLORS[i % TAPE_COLORS.length];
-        tape.style.transform = `translateX(-50%)`;
-        card.appendChild(tape);
 
         // 표지
         const inner = document.createElement('div');
