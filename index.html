@@ -764,7 +764,7 @@
     <section class="shelf-section">
       <div class="chalk-deco" id="chalk-deco" aria-hidden="true"></div>
       <h2 class="shelf-title">OUR BOOK BOARD</h2>
-      <p class="shelf-sub">열심히 읽어서 보드를 채우자! ✦</p>
+      <p class="shelf-sub" id="shelf-sub">열심히 읽어서 보드를 채우자! ✦</p>
       <div class="bookshelf" id="bookshelf">
         <div class="shelf-empty-hint" id="empty-hint">첫 번째 책을 등록해보세요 🌟</div>
       </div>
@@ -922,6 +922,9 @@
       board.innerHTML = '';
       const books   = getBooks();
       const reviews = getReviews();
+
+      const subEl = document.getElementById('shelf-sub');
+      if (subEl) subEl.textContent = `지금까지 모은 지식의 별자리 ${books.length}개 ✦`;
 
       if (books.length === 0) {
         const hint = document.createElement('div');
