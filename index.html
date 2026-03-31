@@ -937,7 +937,7 @@
       const reviews = getReviews();
 
       const subEl = document.getElementById('shelf-sub');
-      if (subEl) subEl.textContent = `지금까지 모은 지식의 별자리 ${books.length}개 ✦`;
+      if (subEl) subEl.innerHTML = `지금까지 모은 지식의 별자리 <span style="color:white">${books.length}</span>개 ✦`;
 
       if (books.length === 0) {
         const hint = document.createElement('div');
