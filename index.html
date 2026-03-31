@@ -1052,10 +1052,10 @@
       ].join('');
 
       try {
-        const res     = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(apiUrl)}`);
-        const wrapper = await res.json();
-        const parser  = new DOMParser();
-        const xml     = parser.parseFromString(wrapper.contents, 'text/xml');
+        const res    = await fetch(`https://corsproxy.io/?${encodeURIComponent(apiUrl)}`);
+        const text   = await res.text();
+        const parser = new DOMParser();
+        const xml    = parser.parseFromString(text, 'text/xml');
         const itemEls = Array.from(xml.querySelectorAll('item'));
 
         if (itemEls.length === 0) {
