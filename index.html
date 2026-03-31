@@ -161,16 +161,12 @@
       text-align: center;
     }
 
-    /* 콜라주 보드 */
+    /* 콜라주 보드 — 별자리 레이아웃 */
     .bookshelf {
       width: 100%;
       max-width: 520px;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
-      gap: 16px;
-      padding: 24px 16px 36px;
       position: relative;
-      align-content: flex-start;
+      padding: 0;
     }
 
     .shelf-empty-hint {
@@ -917,26 +913,74 @@
         return;
       }
 
-      // 유저 id → 색상 인덱스 매핑 (멤버 서클과 동일 색상 사용)
+      // 유저 id → 색상 인덱스 매핑
       const users      = getUsers();
       const userIdxMap = {};
       users.forEach((u, idx) => { userIdxMap[u.id] = idx; });
 
-      // CIRCLE_COLORS의 solid 버전 (도트용)
       const DOT_COLORS = ['#72BFEE','#F07BAD','#92CC45','#AE85E0','#E0A620','#50C49A','#E09550','#A07EE0'];
 
+      // ── 별자리 레이아웃 계산 ──────────────────────────────────
+      const CARD_W  = 90;
+      const CARD_H  = 155;
+      const COLS    = 3;
+      const CELL_H  = 240;
+      const PAD     = 12;
+
+      const containerW = board.clientWidth || 460;
+      const CELL_W     = (containerW - PAD * 2) / COLS;
+      const rowCount   = Math.ceil(books.length / COLS);
+      const containerH = rowCount * CELL_H + PAD * 2 + 40;
+      board.style.height = containerH + 'px';
+
+      // 각 카드 중심 좌표 계산 (SVG 선 연결용)
+      const positions = books.map((book, i) => {
+        const col = i % COLS;
+        const row = Math.floor(i / COLS);
+        const rx  = seededRandom(book.id + '_x');
+        const ry  = seededRandom(book.id + '_y');
+        const maxOffX = Math.max(0, CELL_W - CARD_W - PAD);
+        const maxOffY = Math.max(0, CELL_H - CARD_H - PAD);
+        const x = PAD + col * CELL_W + rx * maxOffX;
+        const y = PAD + row * CELL_H + ry * maxOffY;
+        return { x, y, cx: x + CARD_W / 2, cy: y + CARD_H / 2 };
+      });
+
+      // ── SVG 별자리 선 ────────────────────────────────────────
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('width', '100%');
+      svg.setAttribute('height', '100%');
+      svg.style.cssText = 'position:absolute;top:0;left:0;pointer-events:none;z-index:0;overflow:visible;';
+      board.appendChild(svg);
+
+      for (let i = 0; i < positions.length - 1; i++) {
+        const a = positions[i];
+        const b = positions[i + 1];
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', a.cx); line.setAttribute('y1', a.cy);
+        line.setAttribute('x2', b.cx); line.setAttribute('y2', b.cy);
+        line.setAttribute('stroke', 'rgba(180,210,255,0.30)');
+        line.setAttribute('stroke-width', '1.5');
+        line.setAttribute('stroke-dasharray', '5 5');
+        svg.appendChild(line);
+      }
+
+      // ── 카드 생성 ─────────────────────────────────────────────
       books.forEach((book, i) => {
         const bookReviews = reviews.filter(r => r.bookId === book.id && r.rating > 0);
         const avgRating   = bookReviews.length
           ? bookReviews.reduce((s, r) => s + r.rating, 0) / bookReviews.length
           : null;
         const filledStars = avgRating !== null ? Math.round(avgRating) : 0;
+        const { x, y }    = positions[i];
 
         const card = document.createElement('div');
         card.className = 'book-card';
         card.style.cssText = `
-          width:100%; height:155px;
-          animation-delay:${i * 0.05}s;
+          position:absolute;
+          left:${x}px; top:${y}px;
+          width:${CARD_W}px; height:${CARD_H}px;
+          animation-delay:${i * 0.07}s;
         `;
         card.title = book.title;
 
@@ -947,9 +991,11 @@
         tape.style.transform = `translateX(-50%)`;
         card.appendChild(tape);
 
-        // 표지 (네모낳게)
+        // 표지
         const inner = document.createElement('div');
         inner.className = 'book-card-inner';
+        inner.style.width  = '100%';
+        inner.style.height = '100%';
         if (book.cover) {
           inner.style.backgroundImage = `url('${book.cover}')`;
         } else {
@@ -961,10 +1007,9 @@
         inner.appendChild(titleEl);
         card.appendChild(inner);
 
-        // 별점 스티커 — 카드 바깥 아래에 겹쳐서, 살짝 다른 각도
+        // 별점 스티커
         const sticker = document.createElement('div');
         sticker.className = 'card-stars-sticker';
-        sticker.style.transform = ``;
         if (avgRating !== null) {
           sticker.innerHTML = [...Array(5)].map((_, si) =>
             `<span${si >= filledStars ? ' class="empty"' : ''}>★</span>`
@@ -974,7 +1019,7 @@
         }
         card.appendChild(sticker);
 
-        // 등록자 도트 — 우상단에 겹쳐서
+        // 등록자 도트
         const dot = document.createElement('div');
         dot.className = 'owner-dot';
         const ownerIdx = userIdxMap[book.registeredBy] ?? 0;
@@ -983,13 +1028,12 @@
         dot.title = ownerName;
         card.appendChild(dot);
 
-        // 픽셀 도트 말풍선 — 등록자 한줄평
+        // 픽셀 말풍선
         const ownerReview = reviews.find(r => r.bookId === book.id && r.userId === book.registeredBy);
         if (ownerReview?.oneLiner) {
           const bubble = document.createElement('div');
           bubble.className = 'pixel-bubble';
           bubble.textContent = ownerReview.oneLiner;
-          bubble.style.transform = ``;
           const bubbleColor = DOT_COLORS[ownerIdx % DOT_COLORS.length];
           bubble.style.background = bubbleColor;
           bubble.style.borderColor = bubbleColor;
