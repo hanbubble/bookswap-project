@@ -18,16 +18,14 @@
     @keyframes float   { 0%,100%{transform:translateY(0) rotate(-3deg)} 50%{transform:translateY(-10px) rotate(3deg)} }
     @keyframes float2  { 0%,100%{transform:translateY(0) rotate(4deg)} 50%{transform:translateY(-8px) rotate(-4deg)} }
     @keyframes popIn   { 0%{transform:scale(0.8) rotate(-2deg);opacity:0} 70%{transform:scale(1.06) rotate(1deg)} 100%{transform:scale(1) rotate(0deg);opacity:1} }
+    @keyframes twinkle { 0%,100%{opacity:0.08;transform:scale(1)} 50%{opacity:0.85;transform:scale(1.4)} }
+    @keyframes glow    { 0%,100%{text-shadow:0 0 10px rgba(168,212,255,0.4),0 0 30px rgba(200,168,255,0.2)} 50%{text-shadow:0 0 20px rgba(168,212,255,0.8),0 0 50px rgba(200,168,255,0.5)} }
 
     body {
       font-family: 'Jua', sans-serif;
       min-height: 100vh;
-      background: #FFFFFF;
-      background-image:
-        radial-gradient(circle, #AEE2FF 1px, transparent 1px),
-        radial-gradient(circle, #FFB6D9 1px, transparent 1px);
-      background-size: 30px 30px, 60px 60px;
-      background-position: 0 0, 15px 15px;
+      background: linear-gradient(135deg, #0a0a2e 0%, #1a0a3e 50%, #0d1b4b 100%);
+      background-attachment: fixed;
       animation: fadeIn 0.4s ease;
       overflow-x: hidden;
     }
@@ -37,56 +35,60 @@
       position: fixed;
       top: 14px; right: 18px;
       z-index: 999;
-      background: linear-gradient(135deg, #D4BAFF, #AEE2FF);
-      border: 2px solid white;
+      background: rgba(168,212,255,0.15);
+      border: 1px solid rgba(168,212,255,0.45);
       border-radius: 50px;
       padding: 8px 20px;
       font-family: 'Press Start 2P', 'Galmuri11', monospace;
       font-size: 9px;
-      color: white;
-      box-shadow: 3px 3px 0 #9B8FCC;
+      color: #c8e8ff;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 14px rgba(168,212,255,0.2);
       cursor: pointer;
       text-decoration: none;
       display: inline-block;
       line-height: 1.6;
-      transition: transform 0.15s;
+      transition: all 0.2s;
     }
-    .home-btn:hover { animation: bounce 0.4s ease; }
+    .home-btn:hover { box-shadow: 0 0 22px rgba(168,212,255,0.55); animation: bounce 0.4s ease; }
 
     /* Logout */
     .logout-btn {
       position: fixed;
       top: 14px; left: 18px;
       z-index: 999;
-      background: white;
-      border: 2.5px solid #AEE2FF;
+      background: rgba(200,168,255,0.12);
+      border: 1px solid rgba(200,168,255,0.35);
       border-radius: 50px;
       padding: 7px 18px;
       font-family: 'Jua', sans-serif;
       font-size: 13px;
-      color: #88BBDD;
+      color: #c8a8ff;
       cursor: pointer;
+      backdrop-filter: blur(10px);
       transition: all 0.2s;
-      box-shadow: 2px 2px 0 #AEE2FF;
+      box-shadow: 0 0 10px rgba(200,168,255,0.15);
     }
-    .logout-btn:hover { background: #F0FAFF; animation: bounce 0.4s ease; }
+    .logout-btn:hover { box-shadow: 0 0 20px rgba(200,168,255,0.45); animation: bounce 0.4s ease; }
 
     /* Floating deco */
     .deco-float-l {
       position: fixed; top: 18%; left: 1%;
-      font-size: 20px; color: #D4BAFF;
+      font-size: 20px; color: #a8d4ff;
       letter-spacing: 8px; line-height: 2;
       animation: float 4s ease-in-out infinite;
-      pointer-events: none; opacity: .65;
+      pointer-events: none; opacity: .5;
       writing-mode: vertical-rl;
+      filter: drop-shadow(0 0 6px rgba(168,212,255,0.6));
     }
     .deco-float-r {
       position: fixed; bottom: 15%; right: 1%;
-      font-size: 20px; color: #C8F57A;
+      font-size: 20px; color: #c8a8ff;
       letter-spacing: 8px; line-height: 2;
       animation: float2 5s ease-in-out infinite;
-      pointer-events: none; opacity: .65;
+      pointer-events: none; opacity: .5;
       writing-mode: vertical-rl;
+      filter: drop-shadow(0 0 6px rgba(200,168,255,0.6));
     }
 
     /* Split layout */
@@ -114,25 +116,21 @@
     .chalk-deco span {
       position: absolute;
       display: block;
-      opacity: 0.18;
-      filter: blur(0.4px) drop-shadow(0 0 3px rgba(255,255,255,0.4));
-      color: white;
+      filter: drop-shadow(0 0 4px rgba(168,212,255,0.5));
       line-height: 1;
-      animation: fall var(--dur, 6s) ease-in-out infinite alternate;
     }
 
     .shelf-section {
-      background: rgba(20, 18, 28, 0.91);
+      background: rgba(8, 6, 30, 0.6);
+      backdrop-filter: blur(16px);
+      border-right: 1px solid rgba(168,212,255,0.1);
       position: relative;
-      background-image: none;
-      background-size: auto;
       padding: 70px 20px 30px;
       display: flex;
       flex-direction: column;
       align-items: center;
       overflow-y: auto;
       min-height: 100vh;
-      position: relative;
     }
 
     .shelf-section > *:not(.chalk-deco) {
@@ -143,7 +141,7 @@
     .shelf-title {
       font-family: 'Press Start 2P', 'Galmuri11', monospace;
       font-size: 30px;
-      background: linear-gradient(135deg, #AEE2FF, #D4BAFF);
+      background: linear-gradient(135deg, #a8d4ff, #c8a8ff);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -151,12 +149,13 @@
       text-align: center;
       line-height: 1.8;
       letter-spacing: 1px;
+      animation: glow 3s ease-in-out infinite;
     }
 
     .shelf-sub {
       font-family: 'Press Start 2P', 'Galmuri11', monospace;
       font-size: 13px;
-      color: #BBB;
+      color: rgba(168,212,255,0.6);
       margin-bottom: 20px;
       text-align: center;
     }
@@ -172,8 +171,7 @@
     .shelf-empty-hint {
       width: 100%;
       text-align: center;
-      color: #CCC;
-      font-size: 14px;
+      color: rgba(168,212,255,0.5);
       padding: 50px 20px;
       font-family: 'Nanum Pen Script', cursive;
       font-size: 20px;
@@ -218,12 +216,17 @@
     .book-card-inner {
       width: 100%;
       height: 100%;
-      border-radius: 0;
+      border-radius: 4px;
       overflow: hidden;
       background-size: cover;
       background-position: center;
-      box-shadow: 5px 6px 18px rgba(0,0,0,0.28), 0 0 0 2px white;
+      box-shadow: 4px 8px 24px rgba(0,0,0,0.5), 0 0 0 1px rgba(168,212,255,0.25);
       position: relative;
+      transition: box-shadow 0.25s;
+    }
+
+    .book-card:hover .book-card-inner {
+      box-shadow: 4px 8px 28px rgba(0,0,0,0.6), 0 0 0 1.5px rgba(168,212,255,0.6), 0 0 18px rgba(168,212,255,0.25);
     }
 
     /* 호버 제목 오버레이 */
@@ -334,7 +337,8 @@
       flex-direction: column;
       gap: 16px;
       overflow-y: auto;
-      background: rgba(20, 18, 28, 0.91);
+      background: rgba(8, 6, 30, 0.5);
+      backdrop-filter: blur(16px);
       position: relative;
     }
 
@@ -345,11 +349,12 @@
 
     /* 멤버 카드 */
     .members-card {
-      background: white;
+      background: rgba(255,255,255,0.05);
       border-radius: 20px;
       padding: 16px 18px;
-      border: 3px solid #AEE2FF;
-      box-shadow: 4px 4px 0 #AEE2FF;
+      border: 1px solid rgba(168,212,255,0.25);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.08);
+      backdrop-filter: blur(10px);
       position: relative;
     }
 
@@ -357,14 +362,15 @@
       content: '✦';
       position: absolute;
       top: -10px; right: 14px;
-      font-size: 20px; color: #C8F57A;
+      font-size: 20px; color: #a8d4ff;
       animation: sparkle 2s ease-in-out infinite;
+      filter: drop-shadow(0 0 6px rgba(168,212,255,0.8));
     }
 
     .members-card h3 {
       font-family: 'Press Start 2P', 'Galmuri11', monospace;
       font-size: 8px;
-      color: #88BBDD;
+      color: #a8d4ff;
       margin-bottom: 12px;
       line-height: 1.8;
       letter-spacing: 1px;
@@ -395,31 +401,33 @@
     }
 
     .member-circle:hover { transform: scale(1.1) rotate(-5deg); }
-    .member-circle.me { box-shadow: 0 0 0 3px #C8F57A, 3px 3px 0 rgba(0,0,0,0.1); }
+    .member-circle.me { box-shadow: 0 0 0 3px #a8d4ff, 0 0 14px rgba(168,212,255,0.5); }
 
     /* 등록 카드 */
     .register-card {
-      background: white;
+      background: rgba(255,255,255,0.05);
       border-radius: 20px;
       padding: 18px 20px;
-      border: 3px solid #FFB6D9;
-      box-shadow: 4px 4px 0 #FFB6D9;
+      border: 1px solid rgba(200,168,255,0.25);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.08);
+      backdrop-filter: blur(10px);
       flex: 1;
       position: relative;
     }
 
     .register-card::before {
-      content: '♡';
+      content: '✦';
       position: absolute;
       top: -12px; left: 14px;
-      font-size: 22px; color: #FFB6D9;
+      font-size: 22px; color: #c8a8ff;
       animation: sparkle 3s ease-in-out infinite;
+      filter: drop-shadow(0 0 6px rgba(200,168,255,0.8));
     }
 
     .register-card h2 {
       font-family: 'Press Start 2P', 'Galmuri11', monospace;
       font-size: 9px;
-      color: #CC88AA;
+      color: #c8a8ff;
       margin-bottom: 14px;
       line-height: 1.8;
       letter-spacing: 0.5px;
@@ -435,36 +443,40 @@
     .search-row input {
       flex: 1;
       padding: 10px 14px;
-      border: 2.5px solid #E8E8FF;
+      border: 1px solid rgba(168,212,255,0.3);
       border-radius: 50px;
       font-family: 'Jua', sans-serif;
       font-size: 13px;
-      color: #555;
-      background: #FAFAFF;
+      color: #e8f4ff;
+      background: rgba(255,255,255,0.08);
       outline: none;
+      backdrop-filter: blur(6px);
       transition: border-color 0.2s, box-shadow 0.2s;
     }
 
+    .search-row input::placeholder { color: rgba(168,212,255,0.4); }
+
     .search-row input:focus {
-      border-color: #AEE2FF;
-      box-shadow: 0 0 0 3px rgba(174,226,255,0.2), 3px 3px 0 #AEE2FF;
+      border-color: rgba(168,212,255,0.7);
+      box-shadow: 0 0 0 3px rgba(168,212,255,0.12), 0 0 14px rgba(168,212,255,0.2);
     }
 
     .search-btn {
       padding: 10px 16px;
-      background: linear-gradient(135deg, #AEE2FF, #D4BAFF);
-      border: 2px solid white;
+      background: rgba(168,212,255,0.18);
+      border: 1px solid rgba(168,212,255,0.45);
       border-radius: 50px;
       font-family: 'Fredoka One', cursive;
       font-size: 13px;
-      color: white;
+      color: #c8e8ff;
       cursor: pointer;
-      box-shadow: 3px 3px 0 #9BB8E0;
-      transition: transform 0.15s;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 0 10px rgba(168,212,255,0.15);
+      transition: all 0.2s;
       white-space: nowrap;
     }
 
-    .search-btn:hover { animation: bounce 0.4s ease; }
+    .search-btn:hover { box-shadow: 0 0 20px rgba(168,212,255,0.45); animation: bounce 0.4s ease; }
 
     /* Search results */
     .search-results {
@@ -473,7 +485,7 @@
       overflow-x: auto;
       padding: 4px 2px 10px;
       scrollbar-width: thin;
-      scrollbar-color: #FFB6D9 transparent;
+      scrollbar-color: rgba(168,212,255,0.4) transparent;
     }
 
     .result-thumb {
@@ -493,15 +505,15 @@
       width: 56px; height: 78px;
       object-fit: cover;
       border-radius: 6px;
-      box-shadow: 2px 2px 0 #AEE2FF;
-      border: 2px solid transparent;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+      border: 1px solid rgba(168,212,255,0.2);
     }
 
-    .result-thumb:hover img { border-color: #FFB6D9; }
+    .result-thumb:hover img { border-color: rgba(200,168,255,0.7); box-shadow: 0 4px 18px rgba(200,168,255,0.3); }
 
     .result-thumb span {
       font-size: 9px;
-      color: #999;
+      color: rgba(168,212,255,0.7);
       text-align: center;
       line-height: 1.3;
       max-width: 60px;
@@ -528,9 +540,9 @@
       align-items: center;
       gap: 12px;
       padding: 10px 14px;
-      background: #FFF8FF;
+      background: rgba(200,168,255,0.08);
       border-radius: 16px;
-      border: 2.5px dashed #D4BAFF;
+      border: 1px dashed rgba(200,168,255,0.4);
       margin-bottom: 10px;
     }
 
@@ -538,21 +550,21 @@
       width: 40px; height: 56px;
       object-fit: cover;
       border-radius: 5px;
-      box-shadow: 2px 2px 0 #D4BAFF;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
     }
 
     .sel-info { flex: 1; }
 
     .sel-label {
       font-size: 10px;
-      color: #D4BAFF;
+      color: #c8a8ff;
       margin-bottom: 2px;
       font-family: 'Press Start 2P', 'Galmuri11', monospace;
     }
 
     .sel-title {
       font-size: 13px;
-      color: #555;
+      color: #e8f4ff;
       font-family: 'Jua', sans-serif;
       line-height: 1.3;
     }
@@ -560,7 +572,7 @@
     .deselect-btn {
       background: none;
       border: none;
-      color: #D0A0C0;
+      color: rgba(200,168,255,0.6);
       cursor: pointer;
       font-size: 18px;
     }
@@ -570,7 +582,7 @@
     /* Star rating */
     .star-label {
       font-size: 10px;
-      color: #AAAACC;
+      color: rgba(168,212,255,0.7);
       margin-bottom: 6px;
       display: block;
       font-family: 'Press Start 2P', 'Galmuri11', monospace;
@@ -586,35 +598,37 @@
     .star-rating span {
       font-size: 26px;
       cursor: pointer;
-      color: #E8E8F0;
+      color: rgba(255,255,255,0.15);
       transition: color 0.1s, transform 0.15s;
       line-height: 1;
     }
 
-    .star-rating span.active { color: #FFB347; }
+    .star-rating span.active { color: #FFD166; filter: drop-shadow(0 0 4px rgba(255,209,102,0.7)); }
     .star-rating span:hover { transform: scale(1.25) rotate(-10deg); }
 
     /* Textareas */
     .form-textarea {
       width: 100%;
       padding: 10px 14px;
-      border: 2.5px solid #E8E8FF;
+      border: 1px solid rgba(168,212,255,0.25);
       border-radius: 16px;
       font-family: 'Jua', sans-serif;
       font-size: 13px;
-      color: #555;
-      background: #FAFAFF;
+      color: #e8f4ff;
+      background: rgba(255,255,255,0.07);
       outline: none;
       resize: vertical;
       min-height: 64px;
       margin-bottom: 10px;
-      transition: border-color 0.2s;
+      transition: border-color 0.2s, box-shadow 0.2s;
       line-height: 1.6;
     }
 
+    .form-textarea::placeholder { color: rgba(168,212,255,0.35); }
+
     .form-textarea:focus {
-      border-color: #FFB6D9;
-      box-shadow: 0 0 0 3px rgba(255,182,217,0.15), 3px 3px 0 #FFB6D9;
+      border-color: rgba(200,168,255,0.6);
+      box-shadow: 0 0 0 3px rgba(200,168,255,0.1), 0 0 14px rgba(200,168,255,0.15);
     }
 
     /* Passage pairs (등록 폼) */
@@ -623,7 +637,7 @@
     .passages-input-label {
       font-family: 'Press Start 2P', 'Galmuri11', monospace;
       font-size: 7px;
-      color: #AAAACC;
+      color: rgba(168,212,255,0.6);
       margin-bottom: 8px;
       display: block;
       line-height: 1.8;
@@ -636,21 +650,21 @@
       gap: 8px;
       margin-bottom: 8px;
       padding: 10px;
-      background: #FAFAFF;
+      background: rgba(255,255,255,0.04);
       border-radius: 14px;
-      border: 2px dashed #D4BAFF;
+      border: 1px dashed rgba(200,168,255,0.3);
       position: relative;
     }
 
     .passage-pair textarea {
       width: 100%;
       padding: 8px 10px;
-      border: 2px solid #E8E8FF;
+      border: 1px solid rgba(168,212,255,0.2);
       border-radius: 10px;
       font-family: 'Jua', sans-serif;
       font-size: 12px;
-      color: #555;
-      background: white;
+      color: #e8f4ff;
+      background: rgba(255,255,255,0.06);
       outline: none;
       resize: vertical;
       min-height: 56px;
@@ -658,79 +672,82 @@
       transition: border-color 0.2s;
     }
 
-    .passage-pair textarea:focus { border-color: #AEE2FF; }
+    .passage-pair textarea::placeholder { color: rgba(168,212,255,0.3); }
+    .passage-pair textarea:focus { border-color: rgba(168,212,255,0.55); }
 
     .remove-pair-btn {
       position: absolute;
       top: 6px; right: 8px;
       background: none;
       border: none;
-      color: #CCC;
+      color: rgba(255,255,255,0.25);
       cursor: pointer;
       font-size: 14px;
       transition: color 0.2s;
     }
 
-    .remove-pair-btn:hover { color: #FF7BAC; }
+    .remove-pair-btn:hover { color: rgba(200,168,255,0.8); }
 
     .add-passage-btn {
       width: 100%;
       padding: 8px;
-      background: white;
-      border: 2px dashed #C8F57A;
+      background: rgba(168,212,255,0.07);
+      border: 1px dashed rgba(168,212,255,0.35);
       border-radius: 50px;
       font-family: 'Fredoka One', cursive;
       font-size: 13px;
-      color: #88CC66;
+      color: rgba(168,212,255,0.8);
       cursor: pointer;
       margin-bottom: 10px;
-      transition: background 0.2s;
+      transition: all 0.2s;
     }
 
-    .add-passage-btn:hover { background: #F8FFF0; }
+    .add-passage-btn:hover { background: rgba(168,212,255,0.14); box-shadow: 0 0 12px rgba(168,212,255,0.2); }
 
     /* SEND button */
     .send-btn {
       width: 100%;
       padding: 13px;
-      background: linear-gradient(135deg, #C8F57A, #AEE2FF);
-      border: 3px solid white;
+      background: linear-gradient(135deg, rgba(168,212,255,0.3), rgba(200,168,255,0.3));
+      border: 1px solid rgba(168,212,255,0.5);
       border-radius: 50px;
       font-family: 'Press Start 2P', 'Galmuri11', monospace;
       font-size: 11px;
-      color: white;
+      color: #e8f4ff;
       cursor: pointer;
-      box-shadow: 4px 4px 0 #88CC66, 0 6px 20px rgba(200,245,122,0.35);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 0 20px rgba(168,212,255,0.25), inset 0 1px 0 rgba(255,255,255,0.15);
       letter-spacing: 2px;
       line-height: 1.8;
-      transition: transform 0.15s, box-shadow 0.15s;
+      transition: all 0.2s;
     }
 
-    .send-btn:hover { animation: bounce 0.45s ease; }
-    .send-btn:active { transform: translateY(3px); box-shadow: 1px 1px 0 #88CC66; }
+    .send-btn:hover { box-shadow: 0 0 35px rgba(168,212,255,0.5), 0 0 60px rgba(200,168,255,0.2); animation: bounce 0.45s ease; }
+    .send-btn:active { transform: translateY(2px); box-shadow: 0 0 10px rgba(168,212,255,0.2); }
 
     /* Toast */
     .toast {
       position: fixed;
       bottom: 28px; left: 50%;
       transform: translateX(-50%) translateY(80px);
-      background: linear-gradient(135deg, #D4BAFF, #AEE2FF);
-      color: white;
+      background: rgba(168,212,255,0.18);
+      backdrop-filter: blur(16px);
+      color: #e8f4ff;
       padding: 12px 24px;
       border-radius: 50px;
       font-size: 13px;
       z-index: 9999;
       transition: transform 0.4s cubic-bezier(.34,1.56,.64,1);
-      box-shadow: 4px 4px 0 #9B8FCC;
+      box-shadow: 0 0 24px rgba(168,212,255,0.35), inset 0 1px 0 rgba(255,255,255,0.15);
       font-family: 'Jua', sans-serif;
-      border: 2px solid white;
+      border: 1px solid rgba(168,212,255,0.4);
     }
 
     .toast.show { transform: translateX(-50%) translateY(0); }
-    .toast.err  { background: linear-gradient(135deg, #FF7BAC, #FFB6D9); box-shadow: 4px 4px 0 #CC5588; }
+    .toast.err  { background: rgba(255,100,150,0.2); border-color: rgba(255,100,150,0.5); box-shadow: 0 0 24px rgba(255,100,150,0.3); }
 
-    .search-loading { color: #AAAACC; font-size: 13px; padding: 8px 4px; font-family: 'Jua', sans-serif; }
-    .no-results     { color: #CCAACC; font-size: 13px; padding: 8px 4px; font-family: 'Jua', sans-serif; }
+    .search-loading { color: rgba(168,212,255,0.6); font-size: 13px; padding: 8px 4px; font-family: 'Jua', sans-serif; }
+    .no-results     { color: rgba(200,168,255,0.6); font-size: 13px; padding: 8px 4px; font-family: 'Jua', sans-serif; }
   </style>
 </head>
 <body>
@@ -1217,26 +1234,28 @@
       showToast('📚 책이 등록되었어요!');
     }
 
-    // ── Chalk deco ────────────────────────────────────────────
+    // ── Star deco (딥 스페이스 반짝임) ───────────────────────
     function fillChalkDeco(containerId, count) {
-      const symbols = ['★','★','★','★','☆','✦','✦','✧','⭐','🌙','🪐'];
+      const symbols = ['★','★','★','☆','✦','✦','✧','✧','·','·','·'];
       const container = document.getElementById(containerId);
       for (let i = 0; i < count; i++) {
         const s = document.createElement('span');
-        s.textContent = symbols[Math.floor(Math.random() * symbols.length)];
-        const size  = Math.round(8 + Math.random() * 22);
+        const sym = symbols[Math.floor(Math.random() * symbols.length)];
+        s.textContent = sym;
+        const isTiny = sym === '·';
+        const size  = isTiny ? Math.round(4 + Math.random() * 4) : Math.round(6 + Math.random() * 16);
         const top   = (Math.random() * 98).toFixed(1);
         const left  = (Math.random() * 96).toFixed(1);
-        const rot   = (Math.random() * 40 - 20).toFixed(1);
-        const op    = Math.random() < 0.3 ? (0.6 + Math.random() * 0.4).toFixed(2) : (0.15 + Math.random() * 0.25).toFixed(2);
-        const dur   = (5 + Math.random() * 5).toFixed(1);
-        const delay = -(Math.random() * 8).toFixed(1);
-        s.style.cssText = `top:${top}%;left:${left}%;font-size:${size}px;--r:${rot}deg;--op:${op};--dur:${dur}s;animation-delay:${delay}s`;
+        const dur   = (2 + Math.random() * 5).toFixed(1);
+        const delay = -(Math.random() * 6).toFixed(1);
+        // 일부는 반짝임, 나머지는 표류
+        const anim  = Math.random() < 0.6 ? 'twinkle' : 'fall';
+        s.style.cssText = `top:${top}%;left:${left}%;font-size:${size}px;animation:${anim} ${dur}s ease-in-out infinite alternate;animation-delay:${delay}s;color:white;opacity:0.12;position:absolute;pointer-events:none;`;
         container.appendChild(s);
       }
     }
-    fillChalkDeco('chalk-deco', 55);
-    fillChalkDeco('chalk-deco-right', 55);
+    fillChalkDeco('chalk-deco', 60);
+    fillChalkDeco('chalk-deco-right', 60);
 
     // ── Init ──────────────────────────────────────────────────
     checkAuth();
