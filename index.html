@@ -273,18 +273,18 @@
       position: absolute;
       bottom: -22px;
       left: 2px;
-      font-size: 20px;
-      color: #FFB347;
-      -webkit-text-stroke: 1.5px #CC8800;
+      font-size: 16px;
+      color: #F5D97A;
+      text-shadow: 0 0 3px #FFF5DC, 0 0 7px rgba(245,217,122,0.5);
       z-index: 8;
       white-space: nowrap;
       line-height: 1;
-      filter: drop-shadow(1px 1px 0 rgba(0,0,0,0.15));
+      letter-spacing: 1px;
     }
 
     .card-stars-sticker .empty {
-      color: transparent;
-      -webkit-text-stroke: 1.5px #CCBBAA;
+      color: rgba(245,217,122,0.25);
+      text-shadow: none;
     }
 
     /* 말풍선 — 스페이스 글래스모피즘 */
@@ -1052,10 +1052,10 @@
         sticker.className = 'card-stars-sticker';
         if (avgRating !== null) {
           sticker.innerHTML = [...Array(5)].map((_, si) =>
-            `<span${si >= filledStars ? ' class="empty"' : ''}>★</span>`
+            `<span${si >= filledStars ? ' class="empty"' : ''}>✦</span>`
           ).join('');
         } else {
-          sticker.innerHTML = '<span class="empty" style="font-size:8px;color:#CCC">·····</span>';
+          sticker.innerHTML = '<span class="empty">✦✦✦✦✦</span>';
         }
         card.appendChild(sticker);
 
