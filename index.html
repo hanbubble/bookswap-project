@@ -996,9 +996,9 @@
         const glow = document.createElementNS('http://www.w3.org/2000/svg', 'line');
         glow.setAttribute('x1', a.cx); glow.setAttribute('y1', a.cy);
         glow.setAttribute('x2', b.cx); glow.setAttribute('y2', b.cy);
-        glow.setAttribute('stroke', 'rgba(180,220,255,0.2)');
-        glow.setAttribute('stroke-width', '5');
-        glow.setAttribute('stroke-dasharray', '3 3');
+        glow.setAttribute('stroke', 'rgba(180,220,255,0.25)');
+        glow.setAttribute('stroke-width', '3.5');
+        glow.setAttribute('stroke-dasharray', '4 7');
         svg.appendChild(glow);
 
         // 네온 코어 — 얇고 밝은 선명한 선
@@ -1007,7 +1007,7 @@
         core.setAttribute('x2', b.cx); core.setAttribute('y2', b.cy);
         core.setAttribute('stroke', 'rgba(220,240,255,0.9)');
         core.setAttribute('stroke-width', '1');
-        core.setAttribute('stroke-dasharray', '3 3');
+        core.setAttribute('stroke-dasharray', '4 7');
         svg.appendChild(core);
       }
 
