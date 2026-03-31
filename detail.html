@@ -754,6 +754,7 @@
         _reviews = snap.exists() ? Object.values(snap.val()) : [];
         if (typeof loadBook === 'function' && currentBook) loadBook();
         if (typeof loadReviews === 'function' && currentBook) loadReviews();
+        if (typeof loadCurrentUserReview === 'function' && currentBook) loadCurrentUserReview();
       });
       db.ref('users').on('value', snap => {
         _users = snap.exists() ? Object.values(snap.val()) : [];
@@ -949,9 +950,19 @@
     }
 
     // ── Edit mode ─────────────────────────────────────────────
+    let _reviewLoaded = false;
     function loadCurrentUserReview() {
       currentReview = getReviews().find(r => r.bookId === bookId && r.userId === currentUser.id) || null;
       if (!currentReview) return;
+      if (_reviewLoaded) {
+        // 이미 로드된 후엔 YouTube/사진만 갱신
+        if (currentReview.youtubeUrl && !document.getElementById('youtube-embed').innerHTML) {
+          document.getElementById('youtube-url').value = currentReview.youtubeUrl;
+          embedYoutube();
+        }
+        return;
+      }
+      _reviewLoaded = true;
       isEditMode = true;
 
       document.getElementById('form-title').innerHTML =
