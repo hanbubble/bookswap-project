@@ -985,18 +985,30 @@
       svg.setAttribute('width', '100%');
       svg.setAttribute('height', '100%');
       svg.style.cssText = 'position:absolute;top:0;left:0;pointer-events:none;z-index:0;overflow:visible;';
+
       board.appendChild(svg);
 
       for (let i = 0; i < positions.length - 1; i++) {
         const a = positions[i];
         const b = positions[i + 1];
-        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        line.setAttribute('x1', a.cx); line.setAttribute('y1', a.cy);
-        line.setAttribute('x2', b.cx); line.setAttribute('y2', b.cy);
-        line.setAttribute('stroke', 'rgba(220,240,255,0.85)');
-        line.setAttribute('stroke-width', '1.5');
-        line.setAttribute('stroke-dasharray', '5 5');
-        svg.appendChild(line);
+
+        // 네온 외곽 — 두껍고 반투명
+        const glow = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        glow.setAttribute('x1', a.cx); glow.setAttribute('y1', a.cy);
+        glow.setAttribute('x2', b.cx); glow.setAttribute('y2', b.cy);
+        glow.setAttribute('stroke', 'rgba(180,220,255,0.2)');
+        glow.setAttribute('stroke-width', '5');
+        glow.setAttribute('stroke-dasharray', '3 3');
+        svg.appendChild(glow);
+
+        // 네온 코어 — 얇고 밝은 선명한 선
+        const core = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        core.setAttribute('x1', a.cx); core.setAttribute('y1', a.cy);
+        core.setAttribute('x2', b.cx); core.setAttribute('y2', b.cy);
+        core.setAttribute('stroke', 'rgba(220,240,255,0.9)');
+        core.setAttribute('stroke-width', '1');
+        core.setAttribute('stroke-dasharray', '3 3');
+        svg.appendChild(core);
       }
 
       // ── 카드 생성 ─────────────────────────────────────────────
