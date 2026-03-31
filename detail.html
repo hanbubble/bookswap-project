@@ -707,10 +707,6 @@
           <span class="form-section-label">ONE-LINER ✍</span>
           <textarea class="form-textarea" id="form-oneliner" placeholder="이 책에 대한 한줄평을 남겨주세요"></textarea>
         </div>
-        <div>
-          <span class="form-section-label">MATE COMMENT 💬</span>
-          <textarea class="form-textarea" id="form-mate-comment" placeholder="가장 마음에 들었던 독서메이트의 코멘트"></textarea>
-        </div>
       </div>
 
       <div class="passages-input-area">
@@ -972,7 +968,6 @@
       formRating = currentReview.rating || 0;
       resetFormStars();
       document.getElementById('form-oneliner').value     = currentReview.oneLiner    || '';
-      document.getElementById('form-mate-comment').value = currentReview.mateComment || '';
 
       if (currentReview.youtubeUrl) {
         document.getElementById('youtube-url').value = currentReview.youtubeUrl;
@@ -1090,7 +1085,7 @@
         userName:    currentUser.name,
         rating:      formRating,
         oneLiner:    document.getElementById('form-oneliner').value.trim(),
-        mateComment: document.getElementById('form-mate-comment').value.trim(),
+        mateComment: '',
         passages:    collectPassages(),
         placePhoto:  pendingPhotoBase64,
         youtubeUrl:  document.getElementById('youtube-url').value.trim(),
