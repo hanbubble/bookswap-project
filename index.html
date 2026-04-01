@@ -406,7 +406,6 @@
       font-size: 12px;
       font-family: 'Gamja Flower', cursive;
       color: #0a0a2e;
-      border: 1.5px solid #0a0a2e;
       box-shadow: 0 2px 8px rgba(0,0,0,0.25);
       cursor: default;
       transition: transform 0.2s;
@@ -414,7 +413,7 @@
     }
 
     .member-circle:hover { transform: scale(1.1) rotate(-5deg); }
-    .member-circle.me { box-shadow: 0 0 0 3px #a8d4ff, 0 0 14px rgba(168,212,255,0.5); cursor: pointer; }
+    .member-circle.me { box-shadow: 0 0 8px 2px rgba(168,212,255,0.8); cursor: pointer; }
 
     /* ── Color Picker Popover ── */
     .color-picker-popover {
@@ -440,7 +439,7 @@
     }
     .color-swatches {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 8px;
     }
     .color-swatch {
@@ -1783,7 +1782,7 @@
       el.appendChild(desc);
 
       const grid = document.createElement('div');
-      grid.style.cssText = 'display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px';
+      grid.style.cssText = 'display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px';
 
       palette.forEach((hex, i) => {
         const wrap = document.createElement('div');
