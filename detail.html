@@ -282,10 +282,14 @@
     }
 
     .stars-display {
-      font-size: 20px;
-      letter-spacing: 2px;
-      color: #FFB347;
+      display: inline-flex;
+      gap: 2px;
     }
+    .stars-display .star-cell {
+      font-size: 20px;
+      cursor: default;
+    }
+    .stars-display .star-cell:hover { transform: none; }
 
     .avg-num {
       font-family: 'Fredoka One', cursive;
@@ -869,10 +873,19 @@
     }
 
     // ── Book header ───────────────────────────────────────────
+    function starsHTML(rating) {
+      let html = '';
+      for (let i = 1; i <= 5; i++) {
+        const fill = Math.min(Math.max(rating - (i - 1), 0), 1);
+        const pct  = fill >= 1 ? 100 : fill >= 0.5 ? 50 : 0;
+        html += `<span class="star-cell"><span class="star-empty">✦</span><span class="star-full" style="width:${pct}%">✦</span></span>`;
+      }
+      return html;
+    }
+
     function loadBook() {
       const container = document.getElementById('book-header');
       const avg = calcAvgRating();
-      const starsStr = [...Array(5)].map((_,i) => i < Math.round(avg) ? '★' : '☆').join('');
       const gi = getBooks().findIndex(b => b.id === currentBook.id);
       const coverInner = currentBook.cover
         ? `<img src="${currentBook.cover}" alt="cover">`
@@ -883,7 +896,7 @@
         <div class="book-info">
           <h1>${escHtml(currentBook.title)}</h1>
           <div class="avg-stars">
-            <span class="stars-display">${starsStr}</span>
+            <span class="stars-display">${starsHTML(avg)}</span>
             <span class="avg-num">${avg > 0 ? avg.toFixed(1) + ' / 5.0' : 'NO RATING YET'}</span>
           </div>
         </div>
