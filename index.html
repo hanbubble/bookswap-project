@@ -284,7 +284,6 @@
 
     .card-stars-sticker .star-cell { font-size: 16px; }
     .card-stars-sticker .star-empty { color: rgba(255,255,255,0.35); text-shadow: none; }
-    .card-stars-sticker .star-full  { text-shadow: none; }
 
     /* 말풍선 — 스페이스 글래스모피즘 */
     .pixel-bubble {
@@ -1400,17 +1399,25 @@
     // ── Stars (반별 지원) ──────────────────────────────────────
     let currentRating = 0;
 
-    // 별 HTML 생성 (display용)
+    // 별 HTML 생성 (카드 display용 — 실제 비율 + glow 비례)
     function starsHTML(rating) {
       let html = '';
       for (let i = 1; i <= 5; i++) {
         const fill = Math.min(Math.max(rating - (i - 1), 0), 1);
-        const pct  = fill >= 1 ? 100 : fill >= 0.5 ? 50 : 0;
+        const pct  = Math.round(fill * 100);
         const glow = fill === 0
           ? 'text-shadow:none'
-          : `text-shadow:0 0 ${Math.round(2 + fill * 4)}px #FFF5DC,0 0 ${Math.round(4 + fill * 6)}px rgba(245,217,122,${(0.2 + fill * 0.3).toFixed(2)})`;
+          : `text-shadow:0 0 ${(2 + fill * 5).toFixed(1)}px #FFF5DC,0 0 ${(5 + fill * 8).toFixed(1)}px rgba(245,217,122,${(0.25 + fill * 0.35).toFixed(2)})`;
         html += `<span class="star-cell"><span class="star-empty">✦</span><span class="star-full" style="width:${pct}%;${glow}">✦</span></span>`;
       }
+      return html;
+    }
+
+    // 별 HTML 생성 (입력용 초기화 — 0/50/100% 스냅)
+    function starsInputHTML() {
+      let html = '';
+      for (let i = 0; i < 5; i++)
+        html += `<span class="star-cell"><span class="star-empty">✦</span><span class="star-full" style="width:0%">✦</span></span>`;
       return html;
     }
 
@@ -1429,7 +1436,7 @@
 
     function initStarInput() {
       const container = document.getElementById('star-rating');
-      container.innerHTML = starsHTML(0);
+      container.innerHTML = starsInputHTML();
       container.addEventListener('mousemove', e => {
         const cell = e.target.closest('.star-cell');
         if (!cell) return;
