@@ -282,10 +282,7 @@
       letter-spacing: 1px;
     }
 
-    .card-stars-sticker .empty {
-      color: rgba(245,217,122,0.25);
-      text-shadow: none;
-    }
+    .card-stars-sticker .star-cell { font-size: 16px; }
 
     /* 말풍선 — 스페이스 글래스모피즘 */
     .pixel-bubble {
@@ -609,16 +606,28 @@
       margin-bottom: 12px;
     }
 
-    .star-rating span {
+    /* 반별 공통 셀 */
+    .star-cell {
+      position: relative;
+      display: inline-block;
       font-size: 26px;
-      cursor: pointer;
-      color: rgba(255,255,255,0.15);
-      transition: color 0.1s, transform 0.15s;
       line-height: 1;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.12s;
     }
-
-    .star-rating span.active { color: #FFD166; filter: drop-shadow(0 0 4px rgba(255,209,102,0.7)); }
-    .star-rating span:hover { transform: scale(1.25) rotate(-10deg); }
+    .star-cell:hover { transform: scale(1.2); }
+    .star-empty { color: rgba(245,217,122,0.2); }
+    .star-full {
+      position: absolute;
+      left: 0; top: 0;
+      overflow: hidden;
+      white-space: nowrap;
+      color: #F5D97A;
+      text-shadow: 0 0 3px #FFF5DC, 0 0 7px rgba(245,217,122,0.5);
+      pointer-events: none;
+      transition: width 0.08s;
+    }
 
     /* Textareas */
     .form-textarea {
@@ -1000,13 +1009,7 @@
         </div>
 
         <span class="star-label">RATING ★</span>
-        <div class="star-rating" id="star-rating">
-          <span onclick="setStars(1)" onmouseover="previewStars(1)" onmouseout="resetStars()">★</span>
-          <span onclick="setStars(2)" onmouseover="previewStars(2)" onmouseout="resetStars()">★</span>
-          <span onclick="setStars(3)" onmouseover="previewStars(3)" onmouseout="resetStars()">★</span>
-          <span onclick="setStars(4)" onmouseover="previewStars(4)" onmouseout="resetStars()">★</span>
-          <span onclick="setStars(5)" onmouseover="previewStars(5)" onmouseout="resetStars()">★</span>
-        </div>
+        <div class="star-rating" id="star-rating"></div>
 
         <textarea class="form-textarea" id="one-liner"
           placeholder="책의 한줄평을 남겨주세요 ✍"></textarea>
@@ -1238,13 +1241,7 @@
         // 별점 스티커
         const sticker = document.createElement('div');
         sticker.className = 'card-stars-sticker';
-        if (avgRating !== null) {
-          sticker.innerHTML = [...Array(5)].map((_, si) =>
-            `<span${si >= filledStars ? ' class="empty"' : ''}>✦</span>`
-          ).join('');
-        } else {
-          sticker.innerHTML = '<span class="empty">✦✦✦✦✦</span>';
-        }
+        sticker.innerHTML = avgRating !== null ? starsHTML(avgRating) : starsHTML(0);
         card.appendChild(sticker);
 
         // 등록자 도트
@@ -1398,12 +1395,56 @@
       document.getElementById('selected-book').classList.add('hidden');
     }
 
-    // ── Stars ─────────────────────────────────────────────────
+    // ── Stars (반별 지원) ──────────────────────────────────────
     let currentRating = 0;
-    const stars = () => document.querySelectorAll('#star-rating span');
-    function previewStars(n) { stars().forEach((s,i) => s.classList.toggle('active', i<n)); }
-    function resetStars()    { stars().forEach((s,i) => s.classList.toggle('active', i<currentRating)); }
-    function setStars(n)     { currentRating = n; resetStars(); }
+
+    // 별 HTML 생성 (display용)
+    function starsHTML(rating) {
+      let html = '';
+      for (let i = 1; i <= 5; i++) {
+        const fill = Math.min(Math.max(rating - (i - 1), 0), 1);
+        const pct  = fill >= 1 ? 100 : fill >= 0.5 ? 50 : 0;
+        html += `<span class="star-cell"><span class="star-empty">✦</span><span class="star-full" style="width:${pct}%">✦</span></span>`;
+      }
+      return html;
+    }
+
+    // 입력 별점 렌더
+    function renderInputStars(rating) {
+      const cells = document.querySelectorAll('#star-rating .star-cell');
+      cells.forEach((cell, i) => {
+        const fill = Math.min(Math.max(rating - i, 0), 1);
+        const pct  = fill >= 1 ? 100 : fill >= 0.5 ? 50 : 0;
+        cell.querySelector('.star-full').style.width = pct + '%';
+      });
+    }
+
+    function resetStars() { renderInputStars(currentRating); }
+    function setStars(n)  { currentRating = n; renderInputStars(n); }
+
+    function initStarInput() {
+      const container = document.getElementById('star-rating');
+      container.innerHTML = starsHTML(0);
+      container.addEventListener('mousemove', e => {
+        const cell = e.target.closest('.star-cell');
+        if (!cell) return;
+        const cells = [...container.querySelectorAll('.star-cell')];
+        const idx   = cells.indexOf(cell);
+        const rect  = cell.getBoundingClientRect();
+        const half  = e.clientX < rect.left + rect.width / 2;
+        renderInputStars(idx + (half ? 0.5 : 1));
+      });
+      container.addEventListener('mouseleave', resetStars);
+      container.addEventListener('click', e => {
+        const cell = e.target.closest('.star-cell');
+        if (!cell) return;
+        const cells = [...container.querySelectorAll('.star-cell')];
+        const idx   = cells.indexOf(cell);
+        const rect  = cell.getBoundingClientRect();
+        const half  = e.clientX < rect.left + rect.width / 2;
+        setStars(idx + (half ? 0.5 : 1));
+      });
+    }
 
     // ── 구절 쌍 (등록 폼) ─────────────────────────────────────
     function addRegPassagePair() {
@@ -1444,7 +1485,7 @@
       document.getElementById('one-liner').value = '';
       document.getElementById('reg-passages-input').innerHTML = '';
       addRegPassagePair();
-      resetStars();
+      currentRating = 0; resetStars();
       renderBookshelf();
       showToast('📚 책이 등록되었어요!');
     }
@@ -1605,6 +1646,7 @@
       document.getElementById('admin-btn').classList.remove('hidden');
     }
     setupRealtimeListeners();
+    initStarInput();
     addRegPassagePair();
   </script>
 </body>
