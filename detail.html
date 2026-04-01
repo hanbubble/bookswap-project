@@ -9,6 +9,7 @@
   <link href="https://cdn.jsdelivr.net/gh/quiple/galmuri/dist/galmuri.css" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+  <script src="user-colors.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -763,6 +764,9 @@
       db.ref('users').on('value', snap => {
         _users = snap.exists() ? Object.values(snap.val()) : [];
       });
+      db.ref('config/palette').on('value', snap => {
+        if (snap.exists()) USER_COLORS = snap.val();
+      });
     }
 
     // ── Helpers ───────────────────────────────────────────────
@@ -772,6 +776,13 @@
     function getBooks()       { return _books; }
     function getReviews()     { return _reviews; }
     function getUsers()       { return _users; }
+    function getUserColor(userId) {
+      const users = getUsers();
+      const user  = users.find(u => u.id === userId);
+      if (user && user.color) return user.color;
+      const idx = users.findIndex(u => u.id === userId);
+      return USER_COLORS[(idx < 0 ? 0 : idx) % USER_COLORS.length];
+    }
     function saveReviews(reviews) {
       const obj = {};
       reviews.forEach(r => { obj[r.bookId + '_' + r.userId] = r; });
@@ -797,19 +808,7 @@
       'linear-gradient(160deg,#FFB6D9,#FFE0A0)',
     ];
 
-    const BUBBLE_COLORS = [
-      { bg:'#F0F8FF', border:'#AEE2FF' },
-      { bg:'#FFF0F8', border:'#FFB6D9' },
-      { bg:'#F8F0FF', border:'#D4BAFF' },
-      { bg:'#F5FFF0', border:'#C8F57A' },
-    ];
-
-    const BADGE_GRADIENTS = [
-      'linear-gradient(135deg,#AEE2FF,#D4BAFF)',
-      'linear-gradient(135deg,#FFB6D9,#D4BAFF)',
-      'linear-gradient(135deg,#C8F57A,#AEE2FF)',
-      'linear-gradient(135deg,#FFB6D9,#FFE0A0)',
-    ];
+    let userIdxMap = {};
 
     // ── State ─────────────────────────────────────────────────
     let currentUser;
@@ -820,7 +819,7 @@
     let pendingPhotoBase64 = '';
     let isEditMode = false;
 
-    const DOT_COLORS = ['#72BFEE','#F07BAD','#92CC45','#AE85E0','#E0A620','#50C49A','#E09550','#A07EE0'];
+    const DOT_COLORS = USER_COLORS; // user-colors.js 참조
 
     function hexToPastel(hex, blend = 0.78) {
       const r = parseInt(hex.slice(1,3), 16);
@@ -833,11 +832,7 @@
     }
 
     function applyBackground() {
-      const users = getUsers();
-      const userIdxMap = {};
-      users.forEach((u, idx) => { userIdxMap[u.id] = idx; });
-      const ownerIdx = userIdxMap[currentBook.registeredBy] ?? 0;
-      const pastel = hexToPastel(DOT_COLORS[ownerIdx % DOT_COLORS.length]);
+      const pastel = hexToPastel(getUserColor(currentBook.registeredBy));
       document.body.style.background = pastel;
       document.body.style.backgroundImage = `radial-gradient(circle, white 7px, transparent 7px)`;
       document.body.style.backgroundSize = `44px 44px`;
@@ -934,21 +929,21 @@
 
     function renderOneLiner(review, ri) {
       if (!review.oneLiner) return;
-      const isMine = review.userId === currentUser.id;
-      const bc     = BUBBLE_COLORS[ri % BUBBLE_COLORS.length];
-      const bg     = BADGE_GRADIENTS[ri % BADGE_GRADIENTS.length];
+      const isMine  = review.userId === currentUser.id;
+      const uColor  = getUserColor(review.userId);
+      const bubbleBg = hexToPastel(uColor, 0.88);
 
       const wrapper = document.createElement('div');
       wrapper.className = 'bubble-wrapper' + (isMine ? ' mine' : '');
 
       const badge = document.createElement('div');
       badge.className = 'name-badge';
-      badge.style.background = bg;
+      badge.style.background = uColor;
       badge.textContent = review.userName + (isMine ? ' ✦' : '');
 
       const bubble = document.createElement('div');
       bubble.className = 'bubble';
-      bubble.style.cssText = `background:${bc.bg}; border:2.5px solid ${bc.border}; box-shadow:3px 3px 0 ${bc.border};`;
+      bubble.style.cssText = `background:${bubbleBg}; border:2.5px solid ${uColor}; box-shadow:3px 3px 0 ${uColor};`;
       bubble.textContent = review.oneLiner;
 
       wrapper.appendChild(badge);

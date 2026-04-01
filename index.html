@@ -9,6 +9,7 @@
   <link href="https://cdn.jsdelivr.net/gh/quiple/galmuri/dist/galmuri.css" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+  <script src="user-colors.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -413,7 +414,58 @@
     }
 
     .member-circle:hover { transform: scale(1.1) rotate(-5deg); }
-    .member-circle.me { box-shadow: 0 0 0 3px #a8d4ff, 0 0 14px rgba(168,212,255,0.5); }
+    .member-circle.me { box-shadow: 0 0 0 3px #a8d4ff, 0 0 14px rgba(168,212,255,0.5); cursor: pointer; }
+
+    /* ── Color Picker Popover ── */
+    .color-picker-popover {
+      position: fixed;
+      z-index: 500;
+      background: rgba(8, 6, 30, 0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(168,212,255,0.35);
+      border-radius: 16px;
+      padding: 12px 14px;
+      box-shadow: 0 0 30px rgba(168,212,255,0.18), 0 8px 32px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .color-picker-label {
+      font-family: 'Press Start 2P', 'Galmuri11', monospace;
+      font-size: 7px;
+      color: rgba(168,212,255,0.7);
+      letter-spacing: 1px;
+      white-space: nowrap;
+    }
+    .color-swatches {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    .color-swatch {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: transform 0.15s, box-shadow 0.15s;
+      position: relative;
+    }
+    .color-swatch:hover:not(.swatch-taken) { transform: scale(1.2); }
+    .color-swatch.swatch-current { border-color: white; box-shadow: 0 0 0 2px rgba(255,255,255,0.4), 0 0 10px rgba(255,255,255,0.3); }
+    .color-swatch.swatch-taken { opacity: 0.22; cursor: not-allowed; filter: grayscale(0.4); }
+    .color-swatch.swatch-taken::after {
+      content: '✕';
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: rgba(255,255,255,0.8);
+      line-height: 28px;
+      text-align: center;
+    }
 
     /* 등록 카드 */
     .register-card {
@@ -959,9 +1011,11 @@
       <div class="admin-tab-bar">
         <button class="admin-tab active" id="atab-books" onclick="switchAdminTab('books')">📚 책 관리</button>
         <button class="admin-tab" id="atab-users" onclick="switchAdminTab('users')">👤 회원 승인</button>
+        <button class="admin-tab" id="atab-colors" onclick="switchAdminTab('colors')">🎨 색상 팔레트</button>
       </div>
       <div class="admin-content" id="admin-content-books"></div>
       <div class="admin-content hidden" id="admin-content-users"></div>
+      <div class="admin-content hidden" id="admin-content-colors"></div>
     </div>
   </div>
   <button class="logout-btn" onclick="logout()">← 로그아웃</button>
@@ -1063,6 +1117,11 @@
         if (typeof renderMembers === 'function') renderMembers();
         if (typeof renderBookshelf === 'function') renderBookshelf();
       });
+      db.ref('config/palette').on('value', snap => {
+        if (snap.exists()) USER_COLORS = snap.val();
+        if (typeof renderMembers === 'function') renderMembers();
+        if (typeof renderBookshelf === 'function') renderBookshelf();
+      });
     }
 
     // ── Auth & data helpers ───────────────────────────────────
@@ -1072,6 +1131,13 @@
     function getBooks()   { return _books; }
     function getReviews() { return _reviews; }
     function getUsers()   { return _users; }
+    function getUserColor(userId) {
+      const users = getUsers();
+      const user  = users.find(u => u.id === userId);
+      if (user && user.color) return user.color;
+      const idx = users.findIndex(u => u.id === userId);
+      return USER_COLORS[(idx < 0 ? 0 : idx) % USER_COLORS.length];
+    }
     function saveBooks(books) {
       const obj = {};
       books.forEach(b => { obj[b.id] = b; });
@@ -1139,12 +1205,7 @@
         return;
       }
 
-      // 유저 id → 색상 인덱스 매핑
-      const users      = getUsers();
-      const userIdxMap = {};
-      users.forEach((u, idx) => { userIdxMap[u.id] = idx; });
-
-      const DOT_COLORS = ['#72BFEE','#F07BAD','#92CC45','#AE85E0','#E0A620','#50C49A','#E09550','#A07EE0'];
+      const users = getUsers();
 
       // ── 별자리 레이아웃 계산 ──────────────────────────────────
       const CARD_W  = 90;
@@ -1248,8 +1309,8 @@
         // 등록자 도트
         const dot = document.createElement('div');
         dot.className = 'owner-dot';
-        const ownerIdx = userIdxMap[book.registeredBy] ?? 0;
-        dot.style.background = DOT_COLORS[ownerIdx % DOT_COLORS.length];
+        const ownerColor = getUserColor(book.registeredBy);
+        dot.style.background = ownerColor;
         const ownerName = users.find(u => u.id === book.registeredBy)?.name || '';
         dot.title = ownerName;
         card.appendChild(dot);
@@ -1260,9 +1321,8 @@
           const bubble = document.createElement('div');
           bubble.className = 'pixel-bubble';
           bubble.textContent = ownerReview.oneLiner;
-          const bubbleColor = DOT_COLORS[ownerIdx % DOT_COLORS.length];
-          bubble.style.setProperty('--bubble-color', bubbleColor);
-          bubble.style.setProperty('--bubble-glow', bubbleColor + '55');
+          bubble.style.setProperty('--bubble-color', ownerColor);
+          bubble.style.setProperty('--bubble-glow', ownerColor + '55');
           card.appendChild(bubble);
         }
 
@@ -1272,12 +1332,6 @@
     }
 
     // ── Members ───────────────────────────────────────────────
-    const CIRCLE_COLORS = [
-      'linear-gradient(135deg,#AEE2FF,#D4BAFF)',
-      'linear-gradient(135deg,#FFB6D9,#D4BAFF)',
-      'linear-gradient(135deg,#C8F57A,#AEE2FF)',
-      'linear-gradient(135deg,#FFB6D9,#FFE0A0)',
-    ];
 
     function renderMembers() {
       const currentUser = getCurrentUser();
@@ -1289,14 +1343,91 @@
         return;
       }
       const sorted = [...users.filter(u=>u.id===currentUser.id), ...users.filter(u=>u.id!==currentUser.id)];
-      sorted.forEach((user, i) => {
+      sorted.forEach((user) => {
         const circle = document.createElement('div');
         circle.className = 'member-circle' + (user.id===currentUser.id ? ' me' : '');
         circle.title = user.name;
         circle.textContent = user.name.charAt(0);
-        circle.style.background = CIRCLE_COLORS[i % CIRCLE_COLORS.length];
+        circle.style.background = getUserColor(user.id);
+        if (user.id === currentUser.id) {
+          circle.addEventListener('click', e => {
+            e.stopPropagation();
+            if (_colorPickerOpen) closeColorPicker();
+            else openColorPicker(circle, user.id);
+          });
+        }
         bar.appendChild(circle);
       });
+    }
+
+    // ── Color Picker ──────────────────────────────────────────
+    let _colorPickerOpen = false;
+
+    function openColorPicker(circleEl, userId) {
+      closeColorPicker();
+      const users      = getUsers();
+      const takenColors = new Set(
+        users.filter(u => u.id !== userId && u.color).map(u => u.color.toUpperCase())
+      );
+      const myColor = getUserColor(userId).toUpperCase();
+
+      const popover = document.createElement('div');
+      popover.className = 'color-picker-popover';
+      popover.id        = 'color-picker-popover';
+
+      const label = document.createElement('div');
+      label.className   = 'color-picker-label';
+      label.textContent = '내 색상 선택 ✦';
+      popover.appendChild(label);
+
+      const grid = document.createElement('div');
+      grid.className = 'color-swatches';
+      USER_COLORS.forEach(hex => {
+        const swatch = document.createElement('div');
+        swatch.className   = 'color-swatch';
+        swatch.style.background = hex;
+        swatch.title       = hex;
+        const upper = hex.toUpperCase();
+        if (takenColors.has(upper)) {
+          swatch.classList.add('swatch-taken');
+        } else {
+          if (upper === myColor) swatch.classList.add('swatch-current');
+          swatch.addEventListener('click', e => {
+            e.stopPropagation();
+            saveUserColor(userId, hex);
+            closeColorPicker();
+          });
+        }
+        grid.appendChild(swatch);
+      });
+      popover.appendChild(grid);
+      document.body.appendChild(popover);
+
+      requestAnimationFrame(() => {
+        const rect = circleEl.getBoundingClientRect();
+        const pw   = popover.offsetWidth;
+        const ph   = popover.offsetHeight;
+        let left   = rect.left + rect.width / 2 - pw / 2;
+        let top    = rect.top  - ph - 12;
+        left = Math.max(8, Math.min(left, window.innerWidth - pw - 8));
+        popover.style.left = left + 'px';
+        popover.style.top  = top  + 'px';
+      });
+
+      _colorPickerOpen = true;
+      setTimeout(() => {
+        document.addEventListener('click', closeColorPicker, { once: true });
+      }, 0);
+    }
+
+    function closeColorPicker() {
+      const el = document.getElementById('color-picker-popover');
+      if (el) el.remove();
+      _colorPickerOpen = false;
+    }
+
+    function saveUserColor(userId, hex) {
+      db.ref('users/' + userId).update({ color: hex });
     }
 
     // ── 알라딘 오픈API ────────────────────────────────────────
@@ -1537,12 +1668,13 @@
     }
 
     function switchAdminTab(tab) {
-      ['books','users'].forEach(t => {
+      ['books','users','colors'].forEach(t => {
         document.getElementById('admin-content-' + t).classList.toggle('hidden', t !== tab);
         document.getElementById('atab-' + t).classList.toggle('active', t === tab);
       });
-      if (tab === 'books') loadAdminBooks();
-      else loadPendingUsers();
+      if (tab === 'books')  loadAdminBooks();
+      else if (tab === 'users')  loadPendingUsers();
+      else if (tab === 'colors') loadAdminColors();
     }
 
     function loadAdminBooks() {
@@ -1637,6 +1769,64 @@
           el.appendChild(row);
         });
       });
+    }
+
+    function loadAdminColors() {
+      const el = document.getElementById('admin-content-colors');
+      const palette = [...USER_COLORS];
+
+      el.innerHTML = '';
+
+      const desc = document.createElement('div');
+      desc.style.cssText = 'font-family:Jua,sans-serif;font-size:13px;color:rgba(168,212,255,0.7);margin-bottom:14px;line-height:1.7';
+      desc.textContent = '유저들이 선택할 수 있는 색상 팔레트를 설정하세요. 스와치를 클릭하면 색을 바꿀 수 있어요.';
+      el.appendChild(desc);
+
+      const grid = document.createElement('div');
+      grid.style.cssText = 'display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px';
+
+      palette.forEach((hex, i) => {
+        const wrap = document.createElement('div');
+        wrap.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:6px';
+
+        const swatch = document.createElement('div');
+        swatch.style.cssText = `width:44px;height:44px;border-radius:50%;background:${hex};cursor:pointer;border:2px solid rgba(255,255,255,0.2);transition:transform 0.15s;position:relative`;
+        swatch.title = hex;
+
+        const input = document.createElement('input');
+        input.type  = 'color';
+        input.value = hex;
+        input.style.cssText = 'position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;border:none;padding:0';
+        input.addEventListener('input', () => {
+          swatch.style.background = input.value;
+          palette[i] = input.value;
+        });
+
+        swatch.appendChild(input);
+        swatch.addEventListener('mouseenter', () => { swatch.style.transform = 'scale(1.15)'; });
+        swatch.addEventListener('mouseleave', () => { swatch.style.transform = 'scale(1)'; });
+
+        const label = document.createElement('div');
+        label.style.cssText = 'font-size:10px;font-family:monospace;color:rgba(255,255,255,0.5)';
+        label.textContent = `${i+1}번`;
+
+        wrap.appendChild(swatch);
+        wrap.appendChild(label);
+        grid.appendChild(wrap);
+      });
+
+      el.appendChild(grid);
+
+      const saveBtn = document.createElement('button');
+      saveBtn.className = 'admin-action-btn save';
+      saveBtn.style.cssText = 'width:100%;padding:10px;font-size:12px';
+      saveBtn.textContent = '팔레트 저장';
+      saveBtn.onclick = () => {
+        db.ref('config/palette').set(palette, err => {
+          if (!err) showToast('🎨 색상 팔레트가 저장됐어요!');
+        });
+      };
+      el.appendChild(saveBtn);
     }
 
     function approveUser(user) {
