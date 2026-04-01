@@ -651,23 +651,17 @@ body {
   .detail-layout {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
     gap: 12px;
+    width: calc(100vw - 24px);
+    margin: 0 auto;
   }
 
   .right-panel { display: contents; }
 
-  /* 각 카드 너비: 화면 가로 - 여백 */
-  .book-header,
-  .y2k-card.pink,
-  .y2k-card.green {
-    width: calc(100vw - 24px);
-    box-sizing: border-box;
-  }
-
-  /* 순서 지정 */
+  /* 순서 지정 — 너비는 detail-layout이 통일 */
   .book-header   { order: 1; }
-  .left-panel    { order: 2; width: calc(100vw - 24px); display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .left-panel    { order: 2; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .y2k-card.pink { order: 3; }
   .y2k-card.green{ order: 4; }
 
