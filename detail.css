@@ -759,6 +759,7 @@ body {
   .form-section-label, .passages-input-area h4,
   .form-heading, .edit-mode-badge,
   .form-textarea, .form-textarea::placeholder,
+  .passage-pair textarea, .passage-pair textarea::placeholder,
   .star-label,
   .upload-placeholder,
   .song-input, .yt-input-row input,
