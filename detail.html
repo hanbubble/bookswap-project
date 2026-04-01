@@ -460,16 +460,27 @@
       margin-bottom: 18px;
     }
 
-    .form-stars span {
+    .star-cell {
+      position: relative;
+      display: inline-block;
       font-size: 30px;
-      cursor: pointer;
-      color: #E8E8F0;
-      transition: color 0.1s, transform 0.15s;
       line-height: 1;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.12s;
     }
-
-    .form-stars span.active { color: #FFB347; }
-    .form-stars span:hover  { transform: scale(1.3) rotate(-10deg); }
+    .star-cell:hover { transform: scale(1.2); }
+    .star-empty { color: rgba(245,217,122,0.2); }
+    .star-full {
+      position: absolute;
+      left: 0; top: 0;
+      overflow: hidden;
+      white-space: nowrap;
+      color: #F5D97A;
+      text-shadow: 0 0 3px #FFF5DC, 0 0 7px rgba(245,217,122,0.5);
+      pointer-events: none;
+      transition: width 0.08s;
+    }
 
     /* Form grid */
     .form-grid {
@@ -694,13 +705,7 @@
       <div class="form-heading" id="form-title">MY RECORD ✈</div>
 
       <span class="form-section-label">RATING ★</span>
-      <div class="form-stars" id="form-stars">
-        <span onclick="setFormStar(1)" onmouseover="previewFormStar(1)" onmouseout="resetFormStars()">★</span>
-        <span onclick="setFormStar(2)" onmouseover="previewFormStar(2)" onmouseout="resetFormStars()">★</span>
-        <span onclick="setFormStar(3)" onmouseover="previewFormStar(3)" onmouseout="resetFormStars()">★</span>
-        <span onclick="setFormStar(4)" onmouseover="previewFormStar(4)" onmouseout="resetFormStars()">★</span>
-        <span onclick="setFormStar(5)" onmouseover="previewFormStar(5)" onmouseout="resetFormStars()">★</span>
-      </div>
+      <div class="form-stars" id="form-stars"></div>
 
       <div class="form-grid">
         <div>
@@ -857,6 +862,7 @@
         applyBackground();
         loadBook();
         loadReviews();
+        initFormStars(0);
         const hadReview = loadCurrentUserReview();
         if (!hadReview) addPassagePair();
       });
@@ -961,7 +967,7 @@
       document.getElementById('submit-btn').textContent = 'UPDATE ✏';
 
       formRating = currentReview.rating || 0;
-      resetFormStars();
+      renderFormStars(formRating);
       document.getElementById('form-oneliner').value = currentReview.oneLiner || '';
 
       if (currentReview.youtubeUrl) {
@@ -1065,11 +1071,47 @@
       }).filter(p => p.text);
     }
 
-    // ── Form stars ────────────────────────────────────────────
-    const formStarEls = () => document.querySelectorAll('#form-stars span');
-    function previewFormStar(n) { formStarEls().forEach((s,i) => s.classList.toggle('active', i<n)); }
-    function resetFormStars()   { formStarEls().forEach((s,i) => s.classList.toggle('active', i<formRating)); }
-    function setFormStar(n)     { formRating = n; resetFormStars(); }
+    // ── Form stars (반별 지원) ────────────────────────────────
+    function renderFormStars(rating) {
+      const cells = document.querySelectorAll('#form-stars .star-cell');
+      cells.forEach((cell, i) => {
+        const fill = Math.min(Math.max(rating - i, 0), 1);
+        cell.querySelector('.star-full').style.width = (fill >= 1 ? 100 : fill >= 0.5 ? 50 : 0) + '%';
+      });
+    }
+
+    function resetFormStars() { renderFormStars(formRating); }
+    function setFormStar(n)   { formRating = n; renderFormStars(n); }
+
+    function initFormStars(initRating = 0) {
+      const container = document.getElementById('form-stars');
+      container.innerHTML = '';
+      for (let i = 1; i <= 5; i++) {
+        const cell = document.createElement('span');
+        cell.className = 'star-cell';
+        cell.innerHTML = '<span class="star-empty">✦</span><span class="star-full" style="width:0%">✦</span>';
+        container.appendChild(cell);
+      }
+      renderFormStars(initRating);
+
+      container.addEventListener('mousemove', e => {
+        const cell = e.target.closest('.star-cell');
+        if (!cell) return;
+        const cells = [...container.querySelectorAll('.star-cell')];
+        const idx   = cells.indexOf(cell);
+        const rect  = cell.getBoundingClientRect();
+        renderFormStars(idx + (e.clientX < rect.left + rect.width / 2 ? 0.5 : 1));
+      });
+      container.addEventListener('mouseleave', resetFormStars);
+      container.addEventListener('click', e => {
+        const cell = e.target.closest('.star-cell');
+        if (!cell) return;
+        const cells = [...container.querySelectorAll('.star-cell')];
+        const idx   = cells.indexOf(cell);
+        const rect  = cell.getBoundingClientRect();
+        setFormStar(idx + (e.clientX < rect.left + rect.width / 2 ? 0.5 : 1));
+      });
+    }
 
     // ── Submit ────────────────────────────────────────────────
     function submitReview() {
