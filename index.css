@@ -980,3 +980,61 @@ body {
   font-size: 14px;
   padding: 30px 0;
 }
+
+/* ── 모바일 최적화 ────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  /* 좌우 2단 → 1단 세로 스택 */
+  .split-layout {
+    grid-template-columns: 1fr;
+    min-height: unset;
+  }
+
+  /* 장식 요소 숨김 */
+  .deco-float-l, .deco-float-r { display: none; }
+
+  /* 상단 버튼 */
+  .home-btn, .logout-btn, .admin-btn {
+    font-size: 8px;
+    padding: 6px 12px;
+    top: 10px;
+  }
+  .home-btn  { right: 10px; }
+  .logout-btn{ left: 10px; }
+  .admin-btn { right: 90px; }
+
+  /* 왼쪽 책 보드 */
+  .shelf-section {
+    min-height: unset;
+    padding: 58px 12px 20px;
+    border-right: none;
+    border-bottom: 1px solid rgba(168,212,255,0.12);
+  }
+  .shelf-title { font-size: 16px; }
+  .shelf-sub   { font-size: 9px; }
+
+  /* 책 카드 — 말풍선 위치 조정 */
+  .pixel-bubble {
+    left: auto;
+    right: calc(100% + 10px);
+    top: 0;
+    width: 160px;
+    font-size: 6px;
+  }
+  .pixel-bubble::before { left: auto; right: -8px; border-right-color: transparent; border-left-color: var(--bubble-color, rgba(168,212,255,0.6)); border-right: none; border-left: 8px solid; }
+  .pixel-bubble::after  { left: auto; right: -5px; border-right-color: transparent; border-left-color: rgba(8,6,30,0.88); border-right: none; border-left: 7px solid; }
+
+  /* 오른쪽 등록 폼 */
+  .right-section {
+    padding: 20px 12px 30px;
+    min-height: unset;
+  }
+
+  /* 검색 행 */
+  .search-row { flex-direction: column; }
+  .search-btn { width: 100%; }
+
+  /* 패세지 인풋 */
+  #reg-passages-input .passage-pair {
+    grid-template-columns: 1fr;
+  }
+}

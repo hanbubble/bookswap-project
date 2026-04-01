@@ -630,3 +630,56 @@ body {
 .section-pill.blue   { background: linear-gradient(135deg,#AEE2FF,#D4BAFF); box-shadow:2px 2px 0 #9BB8E0; }
 .section-pill.pink   { background: linear-gradient(135deg,#FFB6D9,#D4BAFF); box-shadow:2px 2px 0 #CC88AA; }
 .section-pill.green  { background: linear-gradient(135deg,#C8F57A,#AEE2FF); box-shadow:2px 2px 0 #88CC66; }
+
+/* ── 모바일 최적화 ────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  /* 장식 요소 숨김 */
+  .deco-l, .deco-r { display: none; }
+
+  /* 상단 버튼 */
+  .home-btn, .back-btn {
+    font-size: 8px;
+    padding: 6px 12px;
+    top: 10px;
+  }
+  .home-btn { right: 10px; }
+  .back-btn { left: 10px; }
+
+  /* 컨텐츠 패딩 */
+  .content { padding: 58px 10px 16px; }
+
+  /* 2단 → 1단 세로 스택 */
+  .detail-layout {
+    grid-template-columns: 1fr;
+  }
+
+  /* 책 헤더 — 표지 여백 제거 */
+  .book-cover-wrap {
+    margin-right: 60px;
+    width: 60px;
+    height: 55px;
+  }
+  .book-cover-wrap img,
+  .book-cover-wrap .no-cover-ph {
+    width: 110px;
+    height: 155px;
+  }
+  .book-info h1 { font-size: 18px; }
+
+  /* 구절 카드 3단 → 2단 */
+  .passages-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  /* 폼 2단 → 1단 */
+  .form-grid { grid-template-columns: 1fr; }
+
+  /* 패세지 입력 2단 → 1단 */
+  .passage-pair {
+    grid-template-columns: 1fr;
+  }
+
+  /* 리뷰 폼 */
+  .review-form-container { padding: 24px 12px 30px; }
+}
