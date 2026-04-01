@@ -318,10 +318,17 @@ body::after {
 
 /* ── 모바일 최적화 ────────────────────────────────────────────────── */
 @media (max-width: 480px) {
-  /* 배경 텍스트 */
+  /* 배경 텍스트: fixed 해제 → 카드 위 일반 요소로 */
   .bg-text {
-    font-size: 72px;
+    position: static;
+    transform: none;
+    font-size: 52px;
     line-height: 1.2;
+    opacity: 0.85;
+    white-space: pre;
+    text-align: center;
+    width: 100%;
+    margin-bottom: 4px;
   }
 
   /* 장식 이모지 숨김 (좁은 화면에서 카드 가림) */
