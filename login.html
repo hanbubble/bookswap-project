@@ -393,19 +393,32 @@
       if (!name) { showError(nameEl, '닉네임을 입력해주세요'); return; }
       if (!pw)   { showError(pwEl,   '비밀번호를 입력해주세요'); return; }
 
-      db.ref('users').once('value', snap => {
-        const usersObj = snap.exists() ? snap.val() : {};
-        const users = Object.values(usersObj);
-        if (users.some(u => u.name === name)) {
-          showError(nameEl, '이미 사용 중인 닉네임이에요');
-          return;
+      Promise.all([
+        db.ref('users').once('value'),
+        db.ref('pendingUsers').once('value'),
+      ]).then(([uSnap, pSnap]) => {
+        const existing = [
+          ...Object.values(uSnap.exists() ? uSnap.val() : {}),
+          ...Object.values(pSnap.exists() ? pSnap.val() : {}),
+        ];
+        if (existing.some(u => u.name === name)) {
+          showError(nameEl, '이미 사용 중인 닉네임이에요'); return;
         }
         const newUser = { id: generateId(), name, password: pw };
-        db.ref('users/' + newUser.id).set(newUser, () => {
+        // 관리자는 바로 승인
+        const ref = name === '문서희' ? 'users' : 'pendingUsers';
+        db.ref(ref + '/' + newUser.id).set(newUser, () => {
           nameEl.value = ''; pwEl.value = '';
           const msg = document.getElementById('signup-success');
+          msg.textContent = name === '문서희'
+            ? '🎉 가입 완료! 로그인해보세요!'
+            : '✉ 가입 신청 완료! 관리자 승인 후 로그인 가능해요.';
           msg.style.display = 'block';
-          setTimeout(() => { msg.style.display='none'; switchTab('login'); document.getElementById('login-name').value=name; }, 1600);
+          setTimeout(() => {
+            msg.style.display = 'none';
+            switchTab('login');
+            document.getElementById('login-name').value = name;
+          }, 2200);
         });
       });
     }
@@ -419,12 +432,22 @@
       if (!pw)   { showError(pwEl,   '비밀번호를 입력해주세요'); return; }
 
       db.ref('users').once('value', snap => {
-        const usersObj = snap.exists() ? snap.val() : {};
-        const users = Object.values(usersObj);
-        const user = users.find(u => u.name === name && u.password === pw);
-        if (!user) { showError(pwEl, '닉네임 또는 비밀번호가 올바르지 않아요'); return; }
-        sessionStorage.setItem('currentUser', JSON.stringify({ id: user.id, name: user.name }));
-        window.location.href = 'index.html';
+        const users = Object.values(snap.exists() ? snap.val() : {});
+        const user  = users.find(u => u.name === name && u.password === pw);
+        if (user) {
+          sessionStorage.setItem('currentUser', JSON.stringify({ id: user.id, name: user.name }));
+          window.location.href = 'index.html';
+          return;
+        }
+        // 대기 중인지 확인
+        db.ref('pendingUsers').once('value', pSnap => {
+          const pending = Object.values(pSnap.exists() ? pSnap.val() : {});
+          if (pending.some(u => u.name === name && u.password === pw)) {
+            showError(pwEl, '아직 관리자 승인 대기 중이에요 🕐');
+          } else {
+            showError(pwEl, '닉네임 또는 비밀번호가 올바르지 않아요');
+          }
+        });
       });
     }
 
