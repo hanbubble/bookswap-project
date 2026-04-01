@@ -283,6 +283,8 @@
     }
 
     .card-stars-sticker .star-cell { font-size: 16px; }
+    .card-stars-sticker .star-empty { color: rgba(255,255,255,0.13); }
+    .card-stars-sticker .star-full  { text-shadow: none; }
 
     /* 말풍선 — 스페이스 글래스모피즘 */
     .pixel-bubble {
@@ -1404,7 +1406,10 @@
       for (let i = 1; i <= 5; i++) {
         const fill = Math.min(Math.max(rating - (i - 1), 0), 1);
         const pct  = fill >= 1 ? 100 : fill >= 0.5 ? 50 : 0;
-        html += `<span class="star-cell"><span class="star-empty">✦</span><span class="star-full" style="width:${pct}%">✦</span></span>`;
+        const glow = fill === 0
+          ? 'text-shadow:none'
+          : `text-shadow:0 0 ${Math.round(2 + fill * 4)}px #FFF5DC,0 0 ${Math.round(4 + fill * 6)}px rgba(245,217,122,${(0.2 + fill * 0.3).toFixed(2)})`;
+        html += `<span class="star-cell"><span class="star-empty">✦</span><span class="star-full" style="width:${pct}%;${glow}">✦</span></span>`;
       }
       return html;
     }
