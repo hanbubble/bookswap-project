@@ -726,7 +726,7 @@ body {
   .book-header   { order: 1; }
   .left-panel    { order: 2; width: 100%; display: flex; flex-direction: row; gap: 10px; }
   .left-panel > * { flex: 1 1 0; min-width: 0; overflow: hidden; box-sizing: border-box; }
-  .y2k-card.pink { order: 3; }
+  .y2k-card.pink { order: 3; margin-top: 20px; }
   .y2k-card.green{ order: 4; }
 
   /* 책 헤더 — 인라인 overflow:visible 재정의 + 이미지 넘침 방지 */
@@ -777,7 +777,7 @@ body {
   /* 리뷰 폼 */
   .review-form-container {
     padding: 24px 12px 30px;
-    margin-top: 12px;
+    margin-top: 32px;
   }
 
   /* Playlist — 링크 입력창 숨김, 버튼을 영상 하단으로 */
