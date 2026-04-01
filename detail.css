@@ -633,53 +633,71 @@ body {
 
 /* ── 모바일 최적화 ────────────────────────────────────────────────── */
 @media (max-width: 480px) {
-  /* 장식 요소 숨김 */
+  /* 장식·데코 숨김 */
   .deco-l, .deco-r { display: none; }
 
   /* 상단 버튼 */
-  .home-btn, .back-btn {
-    font-size: 8px;
-    padding: 6px 12px;
-    top: 10px;
+  .home-btn { right: 10px; top: 10px; font-size: 8px; padding: 6px 12px; }
+  .back-btn { left: 10px;  top: 10px; font-size: 8px; padding: 6px 12px; }
+
+  /* 전체 컨텐츠 */
+  .content {
+    padding: 54px 10px 20px;
   }
-  .home-btn { right: 10px; }
-  .back-btn { left: 10px; }
 
-  /* 컨텐츠 패딩 */
-  .content { padding: 58px 10px 16px; }
-
-  /* 2단 → 1단 세로 스택 */
+  /* ── 레이아웃 재배치 ──
+     순서: book-header → (photo|playlist 2단) → comments → passages
+     right-panel을 display:contents로 해체해 자식들을 flex 직계로 올림 */
   .detail-layout {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
   }
 
-  /* 책 헤더 — 표지 여백 제거 */
+  .right-panel { display: contents; }
+
+  /* 각 카드 너비: 화면 가로 - 여백 */
+  .book-header,
+  .y2k-card.pink,
+  .y2k-card.green {
+    width: calc(100vw - 24px);
+    box-sizing: border-box;
+  }
+
+  /* 순서 지정 */
+  .book-header   { order: 1; }
+  .left-panel    { order: 2; width: calc(100vw - 24px); display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .y2k-card.pink { order: 3; }
+  .y2k-card.green{ order: 4; }
+
+  /* 책 헤더 내부 — 표지 여백 축소 */
   .book-cover-wrap {
-    margin-right: 60px;
-    width: 60px;
-    height: 55px;
+    margin-right: 50px;
+    width: 55px;
+    height: 50px;
   }
   .book-cover-wrap img,
   .book-cover-wrap .no-cover-ph {
-    width: 110px;
-    height: 155px;
+    width: 100px;
+    height: 140px;
   }
-  .book-info h1 { font-size: 18px; }
+  .book-info h1 { font-size: 17px; }
 
-  /* 구절 카드 3단 → 2단 */
+  /* 구절 카드 3단 → 1단 */
   .passages-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
     gap: 8px;
   }
 
   /* 폼 2단 → 1단 */
   .form-grid { grid-template-columns: 1fr; }
 
-  /* 패세지 입력 2단 → 1단 */
-  .passage-pair {
-    grid-template-columns: 1fr;
-  }
+  .passage-pair { grid-template-columns: 1fr; }
 
   /* 리뷰 폼 */
-  .review-form-container { padding: 24px 12px 30px; }
+  .review-form-container {
+    padding: 24px 12px 30px;
+    margin-top: 12px;
+  }
 }
