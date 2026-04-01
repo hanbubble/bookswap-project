@@ -661,7 +661,8 @@ body {
 
   /* 순서 지정 — 너비는 detail-layout이 통일 */
   .book-header   { order: 1; }
-  .left-panel    { order: 2; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .left-panel    { order: 2; display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 10px; }
+  .left-panel > * { min-width: 0; overflow: hidden; }
   .y2k-card.pink { order: 3; }
   .y2k-card.green{ order: 4; }
 
