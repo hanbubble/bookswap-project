@@ -1,0 +1,376 @@
+@font-face {
+  font-family: 'OkMallanf';
+  src: local('Ok Mallang B'), url('Ok Mallang B.otf') format('opentype');
+}
+
+.bg-text {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'OkMallanf', cursive;
+  font-size: 160px;
+  line-height: 1.15;
+  color: #C8A8FF;
+  opacity: 0.75;
+  text-align: center;
+  pointer-events: none;
+  z-index: 0;
+  user-select: none;
+  white-space: pre;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+@keyframes fadeIn   { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+@keyframes bounce   { 0%,100%{transform:translateY(0)} 40%{transform:translateY(-8px)} 70%{transform:translateY(-4px)} }
+@keyframes shake    { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-7px)} 40%{transform:translateX(7px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(5px)} }
+@keyframes sparkle  { 0%,100%{opacity:1;transform:scale(1) rotate(0deg)} 50%{opacity:.6;transform:scale(1.3) rotate(20deg)} }
+@keyframes float    { 0%,100%{transform:translateY(0) rotate(-3deg)} 50%{transform:translateY(-12px) rotate(3deg)} }
+@keyframes float2   { 0%,100%{transform:translateY(0) rotate(5deg)} 50%{transform:translateY(-10px) rotate(-5deg)} }
+
+body {
+  font-family: 'Jua', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.5s ease;
+  overflow-x: hidden;
+}
+
+
+/* Floating deco elements */
+body::before {
+  content: '⭐ ✦ ♡ ✿ ★';
+  position: fixed;
+  top: 12%; left: 4%;
+  font-size: 22px;
+  color: #D4BAFF;
+  letter-spacing: 10px;
+  animation: float 4s ease-in-out infinite;
+  pointer-events: none;
+  opacity: 0.7;
+}
+body::after {
+  content: '✦ ♡ ⭐ ✿';
+  position: fixed;
+  bottom: 14%; right: 5%;
+  font-size: 22px;
+  color: #C8F57A;
+  letter-spacing: 10px;
+  animation: float2 5s ease-in-out infinite;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+/* HOME button */
+.home-btn {
+  position: fixed;
+  top: 14px; right: 18px;
+  z-index: 999;
+  background: linear-gradient(135deg, #D4BAFF, #AEE2FF);
+  border: 2px solid white;
+  border-radius: 50px;
+  padding: 8px 20px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  color: white;
+  box-shadow: 3px 3px 0 #9B8FCC;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  line-height: 1.6;
+  transition: transform 0.15s;
+}
+.home-btn:hover { animation: bounce 0.4s ease; }
+
+/* Wrapper */
+.login-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  max-width: 420px;
+  padding: 20px;
+  animation: fadeIn 0.5s ease;
+}
+
+/* Logo */
+.logo-area { text-align: center; }
+
+.logo-pill {
+  display: inline-block;
+  background: linear-gradient(135deg, #FFB6D9, #D4BAFF);
+  border-radius: 50px;
+  padding: 10px 28px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  color: white;
+  letter-spacing: 1px;
+  box-shadow: 4px 4px 0 #CC88B0, 0 6px 20px rgba(255,182,217,0.4);
+  border: 3px solid white;
+  margin-bottom: 12px;
+  line-height: 1.6;
+}
+
+.logo-sub {
+  font-family: 'Nanum Pen Script', cursive;
+  font-size: 20px;
+  color: #888;
+  display: block;
+}
+
+.deco-row {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  font-size: 20px;
+  margin-top: 6px;
+  animation: sparkle 2s ease-in-out infinite;
+}
+
+/* Card */
+.card {
+  background: rgba(245,230,200,0.88);
+  border-radius: 20px;
+  padding: 20px 36px;
+  width: 100%;
+  position: relative;
+  border: 3px dashed white;
+  box-shadow: 4px 4px 0 rgba(194,48,80,0.25), 0 8px 24px rgba(0,0,0,0.1);
+  outline: none;
+}
+
+/* Corner stickers */
+.card::before {
+  content: '🍓';
+  position: absolute;
+  top: -14px; left: 14px;
+  font-size: 22px;
+  animation: sparkle 2.5s ease-in-out infinite;
+}
+.card::after {
+  content: '🍀';
+  position: absolute;
+  bottom: -12px; right: 16px;
+  font-size: 20px;
+  animation: sparkle 3s ease-in-out infinite;
+}
+
+/* Tabs */
+.tab-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+  background: rgba(255,255,255,0.45);
+  border-radius: 50px;
+  padding: 5px;
+  border: 2px dashed rgba(255,255,255,0.5);
+}
+
+.tab-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-radius: 50px;
+  padding: 10px 0;
+  font-family: 'Jua', sans-serif;
+  font-size: 15px;
+  color: #2B3A6E;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab-btn:first-child.active {
+  background: linear-gradient(135deg, #C8A8FF, #9A6EDD);
+  color: white;
+  box-shadow: 2px 2px 0 #8860CC;
+}
+
+.tab-btn:last-child.active {
+  background: linear-gradient(135deg, #F06040, #CC3018);
+  color: white;
+  box-shadow: 2px 2px 0 #992010;
+}
+
+/* Panel */
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* Form */
+.form-group { margin-bottom: 10px; }
+
+.form-group label {
+  display: block;
+  font-size: 13px;
+  color: #2B3A6E;
+  margin-bottom: 6px;
+  letter-spacing: 1px;
+  font-weight: bold;
+}
+
+.input-wrap { position: relative; }
+
+.form-group input {
+  width: 100%;
+  padding: 9px 16px;
+  border: 2px solid #E8879A;
+  border-radius: 12px;
+  font-family: 'Jua', sans-serif;
+  font-size: 15px;
+  color: #2B3A6E;
+  background: rgba(255,255,255,0.75);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus {
+  border-color: #C23050;
+  box-shadow: 0 0 0 3px rgba(194,48,80,0.15), 3px 3px 0 #E8879A;
+}
+
+.form-group input.has-toggle { padding-right: 44px; }
+
+.eye-toggle {
+  position: absolute;
+  right: 12px; top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 4px;
+}
+
+.error-msg {
+  display: block;
+  color: #FF7BAC;
+  font-size: 12px;
+  margin-top: 5px;
+  padding-left: 4px;
+}
+
+.shake { animation: shake 0.5s ease; }
+
+/* Bubble submit button */
+.submit-btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 50px;
+  font-family: 'Fredoka One', cursive;
+  font-size: 18px;
+  color: white;
+  cursor: pointer;
+  margin-top: 6px;
+  box-shadow: 4px 4px 0 #8860CC, 0 6px 20px rgba(168,130,255,0.35);
+  letter-spacing: 1px;
+  transition: transform 0.15s, box-shadow 0.15s;
+  position: relative;
+  overflow: hidden;
+}
+
+@keyframes shimmer {
+  from { left: -70%; }
+  to   { left: 130%; }
+}
+
+.submit-btn::after {
+  content: '';
+  position: absolute;
+  top: -10%; left: -70%;
+  width: 40%; height: 120%;
+  background: rgba(255,255,255,0.45);
+  transform: skewX(-20deg);
+  pointer-events: none;
+}
+
+.submit-btn:hover::after {
+  animation: shimmer 0.55s ease;
+}
+
+.submit-btn:hover {
+  animation: bounce 0.5s ease;
+  box-shadow: 5px 6px 0 #8860CC, 0 8px 24px rgba(168,130,255,0.4);
+}
+
+.submit-btn:active {
+  transform: translateY(3px);
+  box-shadow: 1px 1px 0 #8860CC;
+}
+
+/* OPEN 버튼: 보라색 */
+#panel-login .submit-btn {
+  background: linear-gradient(135deg, #C8A8FF, #9A6EDD);
+  font-family: 'OkMallanf', cursive;
+  font-size: 26px;
+}
+
+/* JOIN 버튼: 주황빛 다홍색 */
+#panel-signup .submit-btn {
+  background: linear-gradient(135deg, #F06040, #CC3018);
+  box-shadow: 4px 4px 0 #992010, 0 6px 20px rgba(204,48,24,0.35);
+  font-family: 'OkMallanf', cursive;
+  font-size: 26px;
+}
+
+/* ── 모바일 최적화 ────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  /* 배경 텍스트 */
+  .bg-text {
+    font-size: 72px;
+    line-height: 1.2;
+  }
+
+  /* 장식 이모지 숨김 (좁은 화면에서 카드 가림) */
+  body::before, body::after { display: none; }
+
+  /* HOME 버튼 */
+  .home-btn {
+    padding: 6px 14px;
+    font-size: 8px;
+    top: 10px; right: 10px;
+  }
+
+  /* 카드 래퍼 */
+  .login-wrapper {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  /* 카드 */
+  .card {
+    padding: 16px 18px;
+    border-radius: 16px;
+  }
+
+  /* 탭 버튼 */
+  .tab-btn { font-size: 13px; padding: 8px 0; }
+
+  /* 인풋 */
+  .form-group input {
+    font-size: 14px;
+    padding: 8px 14px;
+  }
+
+  /* 제출 버튼 */
+  .submit-btn { padding: 12px; }
+  #panel-login .submit-btn,
+  #panel-signup .submit-btn { font-size: 20px; }
+}
+
+/* Success */
+.success-msg {
+  text-align: center;
+  color: #66BB88;
+  font-size: 13px;
+  margin-top: 12px;
+  padding: 10px;
+  background: #F0FFF8;
+  border-radius: 14px;
+  border: 2px dashed #A0D8B8;
+  display: none;
+  font-family: 'Jua', sans-serif;
+}
