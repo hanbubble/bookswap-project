@@ -765,6 +765,7 @@ body {
   .song-input, .yt-input-row input,
   .avg-stars { font-size: 13.5px; }
   .card-label { font-size: 10.5px; }
+  .passage-text { font-size: 20px; }
 
   /* 구절 카드 3단 → 1단 */
   .passages-grid {
