@@ -761,7 +761,7 @@ body {
   .star-label,
   .upload-placeholder,
   .song-input, .yt-input-row input,
-  .avg-stars { font-size: 13px; }
+  .avg-stars { font-size: 15px; }
 
   /* 구절 카드 3단 → 1단 */
   .passages-grid {
