@@ -757,11 +757,12 @@ body {
   .bubble-name, .bubble, .empty-state,
   .passage-card, .passage-meta,
   .form-section-label, .passages-input-area h4,
+  .form-heading, .edit-mode-badge,
   .form-textarea, .form-textarea::placeholder,
   .star-label,
   .upload-placeholder,
   .song-input, .yt-input-row input,
-  .avg-stars { font-size: 15px; }
+  .avg-stars { font-size: 13.5px; }
 
   /* 구절 카드 3단 → 1단 */
   .passages-grid {
