@@ -989,6 +989,10 @@ body {
     min-height: unset;
   }
 
+  /* 가로 스크롤 완전 차단 */
+  html, body { overflow-x: hidden; max-width: 100vw; }
+  .shelf-section, .right-section { max-width: 100vw; overflow-x: hidden; }
+
   /* 장식 요소 숨김 */
   .deco-float-l, .deco-float-r { display: none; }
 

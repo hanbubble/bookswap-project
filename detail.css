@@ -633,6 +633,9 @@ body {
 
 /* ── 모바일 최적화 ────────────────────────────────────────────────── */
 @media (max-width: 480px) {
+  /* 가로 스크롤 완전 차단 */
+  html, body { overflow-x: hidden; max-width: 100vw; }
+
   /* 장식·데코 숨김 */
   .deco-l, .deco-r { display: none; }
 
@@ -643,6 +646,14 @@ body {
   /* 전체 컨텐츠 */
   .content {
     padding: 54px 10px 20px;
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+
+  /* 리뷰 폼 가로 넘침 방지 */
+  .review-form-container {
+    max-width: 100vw;
+    box-sizing: border-box;
   }
 
   /* ── 레이아웃 재배치 ──
