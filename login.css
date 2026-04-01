@@ -322,7 +322,7 @@ body::after {
   .bg-text {
     position: static;
     transform: none;
-    font-size: 52px;
+    font-size: 62px;
     line-height: 1.2;
     opacity: 0.85;
     white-space: pre;
@@ -337,9 +337,13 @@ body::after {
   /* HOME 버튼 */
   .home-btn {
     padding: 6px 14px;
-    font-size: 8px;
+    font-size: 10px;
     top: 10px; right: 10px;
   }
+
+  /* 로고 */
+  .logo-pill { font-size: 13px; }
+  .logo-sub  { font-size: 24px; }
 
   /* 카드 래퍼 */
   .login-wrapper {
@@ -354,18 +358,24 @@ body::after {
   }
 
   /* 탭 버튼 */
-  .tab-btn { font-size: 13px; padding: 8px 0; }
+  .tab-btn { font-size: 16px; padding: 8px 0; }
+
+  /* 라벨 */
+  .form-group label { font-size: 16px; }
 
   /* 인풋 */
   .form-group input {
-    font-size: 14px;
+    font-size: 17px;
     padding: 8px 14px;
   }
+
+  /* 에러 메시지 */
+  .error-msg { font-size: 14px; }
 
   /* 제출 버튼 */
   .submit-btn { padding: 12px; }
   #panel-login .submit-btn,
-  #panel-signup .submit-btn { font-size: 20px; }
+  #panel-signup .submit-btn { font-size: 24px; }
 }
 
 /* Success */

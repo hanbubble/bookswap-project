@@ -640,8 +640,8 @@ body {
   .deco-l, .deco-r { display: none; }
 
   /* 상단 버튼 */
-  .home-btn { right: 10px; top: 10px; font-size: 8px; padding: 6px 12px; }
-  .back-btn { left: 10px;  top: 10px; font-size: 8px; padding: 6px 12px; }
+  .home-btn { right: 10px; top: 10px; font-size: 10px; padding: 6px 12px; }
+  .back-btn { left: 10px;  top: 10px; font-size: 10px; padding: 6px 12px; }
 
   /* 전체 컨텐츠 */
   .content {
@@ -665,8 +665,12 @@ body {
     align-items: stretch;
     gap: 12px;
     width: calc(100vw - 24px);
+    max-width: calc(100vw - 24px);
     margin: 0 auto;
+    overflow-x: hidden;
   }
+
+  .y2k-card { max-width: 100%; box-sizing: border-box; overflow: hidden; }
 
   .right-panel { display: contents; }
 
@@ -677,18 +681,41 @@ body {
   .y2k-card.pink { order: 3; }
   .y2k-card.green{ order: 4; }
 
-  /* 책 헤더 내부 — 표지 여백 축소 */
+  /* 책 헤더 — 인라인 overflow:visible 재정의 + 이미지 넘침 방지 */
+  .book-header { overflow: hidden !important; }
+
+  /* 책 헤더 내부 — 표지 크기 모바일에 맞게 축소 */
   .book-cover-wrap {
-    margin-right: 50px;
-    width: 55px;
-    height: 50px;
+    position: relative;
+    width: 70px;
+    height: 98px;
+    flex-shrink: 0;
+    margin-left: 0;
+    margin-right: 16px;
   }
   .book-cover-wrap img,
   .book-cover-wrap .no-cover-ph {
-    width: 100px;
-    height: 140px;
+    position: absolute;
+    width: 70px;
+    height: 98px;
+    top: 0; left: 0;
+    transform: rotate(-8deg);
   }
-  .book-info h1 { font-size: 17px; }
+  .book-info h1  { font-size: 20px; }
+  .avg-num       { font-size: 17px; }
+
+  /* 섹션 제목 / 필 */
+  .section-title { font-size: 10px; }
+  .section-pill  { font-size: 8px; }
+  .card-label    { font-size: 8px; }
+
+  /* 코멘트 말풍선 */
+  .bubble-name { font-size: 13px; }
+  .bubble      { font-size: 16px; }
+
+  /* 구절 카드 */
+  .passage-card { font-size: 14px; }
+  .passage-meta { font-size: 12px; }
 
   /* 구절 카드 3단 → 1단 */
   .passages-grid {

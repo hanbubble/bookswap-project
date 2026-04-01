@@ -368,11 +368,11 @@ body {
 
 .members-card h3 {
   font-family: 'Press Start 2P', 'Galmuri11', monospace;
-  font-size: 8px;
+  font-size: 9px;
   color: #a8d4ff;
   margin-bottom: 12px;
   line-height: 1.8;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
 }
 
 .members-bar {
@@ -631,12 +631,13 @@ body {
 
 /* Star rating */
 .star-label {
-  font-size: 10px;
+  font-family: 'Press Start 2P', 'Galmuri11', monospace;
+  font-size: 9px;
   color: #FFC5FC;
   margin-bottom: 6px;
   display: block;
-  font-family: 'Press Start 2P', 'Galmuri11', monospace;
   line-height: 1.8;
+  letter-spacing: 0.5px;
 }
 
 .star-rating {
@@ -698,7 +699,7 @@ body {
 
 .passages-input-label {
   font-family: 'Press Start 2P', 'Galmuri11', monospace;
-  font-size: 7px;
+  font-size: 9px;
   color: #A8FBF0;
   margin-bottom: 8px;
   display: block;
@@ -998,7 +999,7 @@ body {
 
   /* 상단 버튼 */
   .home-btn, .logout-btn, .admin-btn {
-    font-size: 8px;
+    font-size: 10px;
     padding: 6px 12px;
     top: 10px;
   }
@@ -1013,8 +1014,8 @@ body {
     border-right: none;
     border-bottom: 1px solid rgba(168,212,255,0.12);
   }
-  .shelf-title { font-size: 16px; }
-  .shelf-sub   { font-size: 9px; }
+  .shelf-title { font-size: 27px; }
+  .shelf-sub   { font-size: 11px; }
 
   /* 책 카드 — 말풍선 위치 조정 */
   .pixel-bubble {
@@ -1022,20 +1023,29 @@ body {
     right: calc(100% + 10px);
     top: 0;
     width: 160px;
-    font-size: 6px;
+    font-size: 7px;
   }
   .pixel-bubble::before { left: auto; right: -8px; border-right-color: transparent; border-left-color: var(--bubble-color, rgba(168,212,255,0.6)); border-right: none; border-left: 8px solid; }
   .pixel-bubble::after  { left: auto; right: -5px; border-right-color: transparent; border-left-color: rgba(8,6,30,0.88); border-right: none; border-left: 7px solid; }
+
+  /* 멤버 카드 */
+  .members-card h3  { font-size: 11px; }
+  .member-circle    { font-size: 14px; }
 
   /* 오른쪽 등록 폼 */
   .right-section {
     padding: 20px 12px 30px;
     min-height: unset;
   }
+  .register-card h2    { font-size: 11px; }
+  .star-label          { font-size: 11px; }
+  .passages-input-label{ font-size: 11px; }
 
   /* 검색 행 */
   .search-row { flex-direction: column; }
-  .search-btn { width: 100%; }
+  .search-row input { font-size: 16px; }
+  .search-btn { width: 100%; font-size: 16px; }
+  .result-thumb span { font-size: 11px; }
 
   /* 패세지 인풋 */
   #reg-passages-input .passage-pair {
