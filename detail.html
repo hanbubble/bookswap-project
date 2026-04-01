@@ -29,22 +29,23 @@
         <!-- 장소 사진 -->
         <div class="y2k-card" style="padding:12px; animation-delay:0s">
           <div class="card-label">PLACE PHOTO</div>
-          <div class="photo-upload-area" id="photo-area" onclick="triggerPhotoUpload()">
+          <div class="photo-upload-area" id="photo-area">
             <input type="file" id="photo-input" accept="image/*" style="display:none" onchange="handlePhotoChange(event)">
-            <img id="place-photo" alt="독서 장소">
-            <div class="upload-placeholder" id="upload-placeholder">
+            <img id="place-photo" alt="독서 장소" onclick="openPhotoLightbox()">
+            <div class="upload-placeholder" id="upload-placeholder" onclick="triggerPhotoUpload()">
               <span class="upload-icon">📸</span>
               <span>클릭해서<br>갤러리 사진 업로드</span>
             </div>
           </div>
+          <button class="photo-edit-btn" id="photo-edit-btn" onclick="triggerPhotoUpload()" style="display:none">📷 사진 수정하기</button>
         </div>
 
         <!-- Playlist (YouTube) -->
         <div class="y2k-card" style="animation-delay:0.08s">
           <div class="card-label">PLAYLIST 🎵</div>
           <div class="yt-input-row">
-            <input type="text" id="youtube-url" placeholder="YouTube URL">
-            <button class="yt-btn" onclick="embedYoutube()">▶ PLAY</button>
+            <input type="text" id="youtube-url" placeholder="YouTube URL" oninput="updateYtBtn()">
+            <button class="yt-btn" id="yt-btn" onclick="handleYtBtn()">💾 SAVE</button>
           </div>
           <div id="youtube-embed"></div>
         </div>

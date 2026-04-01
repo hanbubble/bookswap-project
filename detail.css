@@ -122,7 +122,6 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
   overflow: hidden;
   background: white;
   transition: border-color 0.2s, background 0.2s;
@@ -130,6 +129,54 @@ body {
 }
 
 .photo-upload-area:hover { border-color: #FFB6D9; background: #FFF8FF; }
+
+/* 수정 버튼 */
+.photo-edit-btn {
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px;
+  background: rgba(174,226,255,0.15);
+  border: 2px dashed #AEE2FF;
+  border-radius: 50px;
+  font-family: 'Jua', sans-serif;
+  font-size: 13px;
+  color: #88BBDD;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.photo-edit-btn:hover { background: #EEF8FF; color: #5599CC; }
+
+/* 사진 라이트박스 */
+.photo-lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease;
+  cursor: zoom-out;
+}
+.photo-lightbox img {
+  max-width: 92vw;
+  max-height: 88vh;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+  cursor: default;
+}
+.photo-lightbox-close {
+  position: absolute;
+  top: 18px; right: 22px;
+  font-size: 28px;
+  color: white;
+  cursor: pointer;
+  line-height: 1;
+  opacity: 0.8;
+  transition: opacity 0.15s;
+}
+.photo-lightbox-close:hover { opacity: 1; }
 
 .upload-placeholder {
   display: flex;
@@ -149,6 +196,7 @@ body {
   width: 100%; height: 100%;
   object-fit: cover;
   display: none;
+  cursor: zoom-in;
 }
 
 /* YouTube */
@@ -733,4 +781,9 @@ body {
     padding: 24px 12px 30px;
     margin-top: 12px;
   }
+
+  /* Playlist — 링크 입력창 숨김, 버튼 전체 너비 */
+  .yt-input-row input { display: none; }
+  .yt-input-row { flex-direction: column; }
+  .yt-btn { width: 100%; }
 }

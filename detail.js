@@ -47,6 +47,7 @@ let currentBook;
 let currentReview = null;
 let formRating = 0;
 let pendingPhotoBase64 = '';
+let savedYtUrl = '';
 let isEditMode = false;
 
 const DOT_COLORS = USER_COLORS; // user-colors.js 참조
@@ -201,8 +202,10 @@ function loadCurrentUserReview() {
   document.getElementById('form-oneliner').value = currentReview.oneLiner || '';
 
   if (currentReview.youtubeUrl) {
+    savedYtUrl = currentReview.youtubeUrl;
     document.getElementById('youtube-url').value = currentReview.youtubeUrl;
-    embedYoutube();
+    embedYoutube(false);  // 로드만, 재생 안 함
+    updateYtBtn();        // ▶ PLAY 표시
   }
 
   if (currentReview.placePhoto) {
@@ -211,6 +214,7 @@ function loadCurrentUserReview() {
     img.src = currentReview.placePhoto;
     img.style.display = 'block';
     document.getElementById('upload-placeholder').style.display = 'none';
+    document.getElementById('photo-edit-btn').style.display = 'block';
   }
 
   const passagesInput = document.getElementById('passages-input');
@@ -264,6 +268,7 @@ function handlePhotoChange(e) {
     img.src = b64;
     img.style.display = 'block';
     document.getElementById('upload-placeholder').style.display = 'none';
+    document.getElementById('photo-edit-btn').style.display = 'block';
 
     // 사진을 즉시 review에 저장
     const reviews = getReviews();
@@ -273,6 +278,17 @@ function handlePhotoChange(e) {
       saveReviews(reviews);
     }
   });
+}
+
+function openPhotoLightbox() {
+  const src = document.getElementById('place-photo').src;
+  if (!src) return;
+  const overlay = document.createElement('div');
+  overlay.className = 'photo-lightbox';
+  overlay.innerHTML = `<span class="photo-lightbox-close" title="닫기">✕</span><img src="${src}">`;
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+  overlay.querySelector('.photo-lightbox-close').addEventListener('click', () => overlay.remove());
+  document.body.appendChild(overlay);
 }
 
 function resizeImageToBase64(file, maxW, maxH, cb) {
@@ -294,20 +310,64 @@ function resizeImageToBase64(file, maxW, maxH, cb) {
 }
 
 // ── YouTube ───────────────────────────────────────────────
-function embedYoutube() {
+function embedYoutube(save = true) {
   const url = document.getElementById('youtube-url').value.trim();
   if (!url) { showToast('YouTube URL을 입력해주세요', true); return; }
   const match = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
   if (!match) { showToast('올바른 YouTube URL이 아니에요', true); return; }
   document.getElementById('youtube-embed').innerHTML =
-    `<iframe src="https://www.youtube.com/embed/${match[1]}" allowfullscreen allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture"></iframe>`;
+    `<iframe src="https://www.youtube.com/embed/${match[1]}?enablejsapi=1" allowfullscreen allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture"></iframe>`;
 
-  // URL을 즉시 review에 저장
-  const reviews = getReviews();
-  const idx = reviews.findIndex(r => r.bookId === bookId && r.userId === currentUser.id);
-  if (idx !== -1) {
-    reviews[idx].youtubeUrl = url;
-    saveReviews(reviews);
+  if (save) {
+    savedYtUrl = url;
+    updateYtBtn();
+    const reviews = getReviews();
+    const idx = reviews.findIndex(r => r.bookId === bookId && r.userId === currentUser.id);
+    if (idx !== -1) { reviews[idx].youtubeUrl = url; saveReviews(reviews); }
+  }
+}
+
+function _ytPostMessage(cmd) {
+  const iframe = document.querySelector('#youtube-embed iframe');
+  if (iframe) iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: cmd, args: [] }), '*');
+}
+
+function updateYtBtn() {
+  const url = document.getElementById('youtube-url').value.trim();
+  const btn = document.getElementById('yt-btn');
+  if (!btn) return;
+
+  if (window.innerWidth <= 480) {
+    // 모바일: 링크 입력창 숨김 → 영상 없으면 버튼도 숨김
+    if (savedYtUrl) {
+      btn.style.display = 'block';
+      if (!btn.textContent.includes('PAUSE')) btn.textContent = '▶ PLAY';
+    } else {
+      btn.style.display = 'none';
+    }
+  } else {
+    btn.style.display = '';
+    if (url && url === savedYtUrl) {
+      btn.textContent = '▶ PLAY';
+    } else {
+      btn.textContent = '💾 SAVE';
+    }
+  }
+}
+
+function handleYtBtn() {
+  const btn = document.getElementById('yt-btn');
+  if (btn.textContent.includes('PAUSE')) {
+    _ytPostMessage('pauseVideo');
+    btn.textContent = '▶ PLAY';
+  } else if (btn.textContent.includes('PLAY')) {
+    const iframe = document.querySelector('#youtube-embed iframe');
+    if (!iframe) { embedYoutube(false); }
+    _ytPostMessage('playVideo');
+    btn.textContent = '⏸ PAUSE';
+  } else {
+    // SAVE (데스크탑 전용)
+    embedYoutube(true);
   }
 }
 
