@@ -847,9 +847,11 @@
       Promise.all([
         db.ref('books').once('value'),
         db.ref('reviews').once('value'),
-      ]).then(([bSnap, rSnap]) => {
+        db.ref('users').once('value'),
+      ]).then(([bSnap, rSnap, uSnap]) => {
         _books   = bSnap.exists() ? Object.values(bSnap.val()) : [];
         _reviews = rSnap.exists() ? Object.values(rSnap.val()) : [];
+        _users   = uSnap.exists() ? Object.values(uSnap.val()) : [];
         currentBook = _books.find(b => b.id === bookId);
         if (!currentBook) { window.location.href = 'index.html'; return; }
         applyBackground();
