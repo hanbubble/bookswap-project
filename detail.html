@@ -877,7 +877,7 @@
       let html = '';
       for (let i = 1; i <= 5; i++) {
         const fill = Math.min(Math.max(rating - (i - 1), 0), 1);
-        const pct  = fill >= 1 ? 100 : fill >= 0.5 ? 50 : 0;
+        const pct  = Math.round(fill * 100);
         html += `<span class="star-cell"><span class="star-empty">✦</span><span class="star-full" style="width:${pct}%">✦</span></span>`;
       }
       return html;
