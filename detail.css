@@ -779,8 +779,17 @@ body {
     margin-top: 12px;
   }
 
-  /* Playlist — 링크 입력창 숨김, 버튼 전체 너비 */
+  /* Playlist — 링크 입력창 숨김, 버튼을 영상 하단으로 */
   .yt-input-row input { display: none; }
   .yt-input-row { flex-direction: column; }
   .yt-btn { width: 100%; }
+
+  /* playlist 카드: flex column으로 영상→버튼 순서 */
+  .y2k-card:has(#youtube-embed) {
+    display: flex;
+    flex-direction: column;
+  }
+  .y2k-card:has(#youtube-embed) .card-label  { order: 0; }
+  .y2k-card:has(#youtube-embed) #youtube-embed { order: 1; }
+  .y2k-card:has(#youtube-embed) .yt-input-row  { order: 2; }
 }
