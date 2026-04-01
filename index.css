@@ -1041,11 +1041,16 @@ body {
   .star-label          { font-size: 11px; }
   .passages-input-label{ font-size: 11px; }
 
+  /* 입력란 글씨 크기 통일 */
+  .search-row input,
+  .sel-label, .sel-title,
+  .form-textarea, .form-textarea::placeholder,
+  .passage-pair textarea, .passage-pair textarea::placeholder,
+  .result-thumb span { font-size: 13px; }
+
   /* 검색 행 */
   .search-row { flex-direction: column; }
-  .search-row input { font-size: 16px; }
   .search-btn { width: 100%; font-size: 16px; }
-  .result-thumb span { font-size: 11px; }
 
   /* 패세지 인풋 */
   #reg-passages-input .passage-pair {
