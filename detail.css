@@ -755,7 +755,7 @@ body {
   .avg-num,
   .section-title, .section-pill, .card-label,
   .bubble-name, .bubble, .empty-state,
-  .passage-card, .passage-meta,
+  .passage-card, .passage-meta, .passage-text, .passage-comment,
   .form-section-label, .passages-input-area h4,
   .form-heading, .edit-mode-badge,
   .form-textarea, .form-textarea::placeholder,
