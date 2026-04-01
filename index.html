@@ -870,6 +870,7 @@
       db.ref('users').on('value', snap => {
         _users = snap.exists() ? Object.values(snap.val()) : [];
         if (typeof renderMembers === 'function') renderMembers();
+        if (typeof renderBookshelf === 'function') renderBookshelf();
       });
     }
 
