@@ -1008,7 +1008,15 @@ body {
   }
   .home-btn  { right: 10px; }
   .logout-btn{ left: 10px; }
-  .admin-btn { right: 90px; }
+  .admin-btn {
+    right: 80px;
+    font-size: 0;
+    padding: 6px 10px;
+  }
+  .admin-btn::before {
+    content: '⚙';
+    font-size: 14px;
+  }
 
   /* 왼쪽 책 보드 */
   .shelf-section {
