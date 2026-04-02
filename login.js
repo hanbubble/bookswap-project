@@ -297,10 +297,26 @@ function spawnSparkles(btn) {
   }
 }
 
+function fitBgWords() {
+  const container = document.querySelector('.bg-mobile');
+  if (!container) return;
+  const w = window.innerWidth * 0.97;
+  container.querySelectorAll('span').forEach(span => {
+    span.style.fontSize = '100px';
+    span.style.display = 'inline-block';
+    const textWidth = span.offsetWidth;
+    span.style.display = '';
+    span.style.fontSize = (100 * w / textWidth) + 'px';
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.submit-btn').forEach(btn => {
     btn.addEventListener('click', () => spawnSparkles(btn));
   });
+  document.fonts.ready.then(fitBgWords);
 });
+
+window.addEventListener('resize', fitBgWords);
 
 if (getCurrentUser()) window.location.href = 'index.html';
