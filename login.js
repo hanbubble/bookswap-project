@@ -81,7 +81,7 @@ function _pShapes(ctx, ox, oy, S, col, rng) {
   const cols = 3, rows = 3;
   const stepX = S / cols, stepY = S / rows;
   const fontSize = stepX * 0.62;
-  ctx.font = fontSize + 'px serif';
+  ctx.font = fontSize + 'px MonaS12, serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   for (let row = 0; row < rows; row++) {
@@ -172,7 +172,9 @@ function drawPatchwork() {
   document.body.style.backgroundRepeat = 'repeat';
 }
 
-document.addEventListener('DOMContentLoaded', drawPatchwork);
+document.addEventListener('DOMContentLoaded', () => {
+  document.fonts.load('20px MonaS12').then(drawPatchwork);
+});
 
 function switchTab(tab) {
   document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', (i===0&&tab==='login')||(i===1&&tab==='signup')));
@@ -276,7 +278,7 @@ function spawnSparkles(btn) {
     const size = 12 + Math.random() * 14;
     el.style.cssText = `
       position:fixed; left:${cx}px; top:${cy}px;
-      font-size:${size}px; pointer-events:none; z-index:9999;
+      font-size:${size}px; font-family:'MonaS12',serif; pointer-events:none; z-index:9999;
       transform:translate(-50%,-50%); opacity:1;
       transition:transform 0.65s ease-out, opacity 0.65s ease-out, font-size 0.65s ease-out;
     `;
