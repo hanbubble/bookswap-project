@@ -300,7 +300,7 @@ function spawnSparkles(btn) {
 function fitBgWords() {
   const container = document.querySelector('.bg-mobile');
   if (!container) return;
-  const w = window.innerWidth * 0.97;
+  const w = document.documentElement.clientWidth * 0.97;
   container.querySelectorAll('span').forEach(span => {
     span.style.fontSize = '100px';
     span.style.display = 'inline-block';
