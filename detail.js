@@ -129,7 +129,14 @@ function calcAvgRating() {
 
 // ── Reviews ───────────────────────────────────────────────
 function loadReviews() {
-  const reviews = getReviews().filter(r => r.bookId === bookId);
+  const reviews = getReviews()
+    .filter(r => r.bookId === bookId)
+    .sort((a, b) => {
+      if (!a.createdAt && !b.createdAt) return 0;
+      if (!a.createdAt) return 1;
+      if (!b.createdAt) return -1;
+      return new Date(a.createdAt) - new Date(b.createdAt);
+    });
   const list    = document.getElementById('oneliners');
   const grid    = document.getElementById('passages-grid');
   list.innerHTML = '';

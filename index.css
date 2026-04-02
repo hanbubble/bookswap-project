@@ -818,7 +818,7 @@ body {
 /* ── Admin ── */
 .admin-btn {
   position: fixed;
-  top: 14px; right: 138px;
+  top: 14px; right: 168px;
   z-index: 999;
   background: rgba(255,197,252,0.15);
   border: 1px solid rgba(255,197,252,0.4);
@@ -1009,13 +1009,14 @@ body {
   .home-btn  { right: 10px; }
   .logout-btn{ left: 10px; }
   .admin-btn {
-    right: 80px;
+    right: 130px;
     font-size: 0;
-    padding: 6px 10px;
+    padding: 6px 12px;
   }
   .admin-btn::before {
     content: '⚙';
-    font-size: 14px;
+    font-size: 10px;
+    line-height: 1.6;
   }
 
   /* 왼쪽 책 보드 */
