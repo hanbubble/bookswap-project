@@ -200,6 +200,7 @@ function loadCurrentUserReview() {
   formRating = currentReview.rating || 0;
   renderFormStars(formRating);
   document.getElementById('form-oneliner').value = currentReview.oneLiner || '';
+  autoResizeTextarea(document.getElementById('form-oneliner'));
 
   if (currentReview.youtubeUrl) {
     savedYtUrl = currentReview.youtubeUrl;
@@ -310,6 +311,16 @@ function resizeImageToBase64(file, maxW, maxH, cb) {
 }
 
 // ── YouTube ───────────────────────────────────────────────
+function autoResizeTextarea(el) {
+  el.style.height = 'auto';
+  el.style.height = el.scrollHeight + 'px';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const ta = document.getElementById('form-oneliner');
+  if (ta) ta.addEventListener('input', () => autoResizeTextarea(ta));
+});
+
 function embedYoutube(save = true) {
   const url = document.getElementById('youtube-url').value.trim();
   if (!url) { showToast('YouTube URL을 입력해주세요', true); return; }

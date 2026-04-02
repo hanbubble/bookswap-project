@@ -545,8 +545,9 @@ body {
   color: #555;
   background: #FAFAFF;
   outline: none;
-  resize: vertical;
+  resize: none;
   min-height: 70px;
+  overflow: hidden;
   transition: border-color 0.2s;
   line-height: 1.6;
 }
@@ -770,7 +771,7 @@ body {
   .song-input, .yt-input-row input,
   .avg-stars { font-size: 13.5px; }
   .card-label { font-size: 10.5px; }
-  .passage-text { font-size: 20px; }
+  .passage-text { font-size: 12.5px; }
 
   /* 구절 카드 3단 → 1단 */
   .passages-grid {
@@ -786,7 +787,7 @@ body {
   /* 리뷰 폼 */
   .review-form-container {
     padding: 24px 12px 30px;
-    margin-top: 32px;
+    margin-top: 80px;
   }
 
   /* Playlist — 링크 입력창 숨김, 버튼을 영상 하단으로 */
