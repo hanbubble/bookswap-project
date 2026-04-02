@@ -173,7 +173,7 @@ function drawPatchwork() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  document.fonts.load('20px MonaS12').then(drawPatchwork);
+  document.fonts.load('20px MonaS12').then(drawPatchwork).catch(drawPatchwork);
 });
 
 function switchTab(tab) {
