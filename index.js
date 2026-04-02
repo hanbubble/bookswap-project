@@ -72,6 +72,19 @@ function seededRandom(seed) {
   return ((h >>> 0) / 0xFFFFFFFF);
 }
 
+function positionBubble(card) {
+  if (window.innerWidth > 480) return;
+  const bubble = card.querySelector('.pixel-bubble');
+  if (!bubble) return;
+  const rect = card.getBoundingClientRect();
+  const bw = 160, bh = 100, margin = 12;
+  const vw = window.innerWidth, vh = window.innerHeight;
+  bubble.classList.remove('bubble-right','bubble-left','bubble-top','bubble-bottom');
+  if (vw - rect.right >= bw + margin)       bubble.classList.add('bubble-right');
+  else if (rect.left >= bw + margin)        bubble.classList.add('bubble-left');
+  else                                       bubble.classList.add('bubble-top');
+}
+
 function renderBookshelf() {
   const board   = document.getElementById('bookshelf');
   board.innerHTML = '';
@@ -208,6 +221,8 @@ function renderBookshelf() {
       bubble.style.setProperty('--bubble-color', ownerColor);
       bubble.style.setProperty('--bubble-glow', ownerColor + '55');
       card.appendChild(bubble);
+      card.addEventListener('mouseenter', () => positionBubble(card));
+      card.addEventListener('touchstart', () => positionBubble(card), { passive: true });
     }
 
     card.onclick = () => { window.location.href = `detail.html?id=${book.id}`; };

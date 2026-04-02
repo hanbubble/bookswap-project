@@ -276,8 +276,9 @@ body {
 /* 말풍선 — 스페이스 글래스모피즘 */
 .pixel-bubble {
   position: absolute;
-  left: calc(100% + 14px);
-  top: 4px;
+  bottom: calc(100% + 14px);
+  left: 50%;
+  transform: translateX(-50%);
   width: 220px;
   padding: 10px 13px;
   background: rgba(8, 6, 30, 0.88);
@@ -295,25 +296,27 @@ body {
   box-shadow: 0 0 18px var(--bubble-glow, rgba(168,212,255,0.25)), 0 6px 24px rgba(0,0,0,0.5);
   pointer-events: none;
 }
-/* 꼬리 — 테두리 삼각형 */
+/* 꼬리 — 테두리 삼각형 (아래) */
 .pixel-bubble::before {
   content: '';
   position: absolute;
-  left: -8px; top: 14px;
+  bottom: -8px; left: 50%;
+  transform: translateX(-50%);
   width: 0; height: 0;
   border: 8px solid transparent;
-  border-right-color: var(--bubble-color, rgba(168,212,255,0.6));
-  border-left: none;
+  border-top-color: var(--bubble-color, rgba(168,212,255,0.6));
+  border-bottom: none;
 }
-/* 꼬리 — 안쪽 채우기 */
+/* 꼬리 — 안쪽 채우기 (아래) */
 .pixel-bubble::after {
   content: '';
   position: absolute;
-  left: -5px; top: 15px;
+  bottom: -5px; left: 50%;
+  transform: translateX(-50%);
   width: 0; height: 0;
   border: 7px solid transparent;
-  border-right-color: rgba(8,6,30,0.88);
-  border-left: none;
+  border-top-color: rgba(8,6,30,0.88);
+  border-bottom: none;
 }
 
 /* 등록자 도트 — 우상단에 겹쳐서 */
@@ -1018,15 +1021,24 @@ body {
   .shelf-sub   { font-size: 11px; }
 
   /* 책 카드 — 말풍선 위치 조정 */
-  .pixel-bubble {
-    left: auto;
-    right: calc(100% + 10px);
-    top: 0;
-    width: 160px;
-    font-size: 7px;
-  }
-  .pixel-bubble::before { left: auto; right: -8px; border-right-color: transparent; border-left-color: var(--bubble-color, rgba(168,212,255,0.6)); border-right: none; border-left: 8px solid; }
-  .pixel-bubble::after  { left: auto; right: -5px; border-right-color: transparent; border-left-color: rgba(8,6,30,0.88); border-right: none; border-left: 7px solid; }
+  /* 모바일 말풍선 — JS가 방향 클래스 추가 */
+  .pixel-bubble { width: 160px; font-size: 7px; bottom: auto; left: auto; transform: none; }
+
+  .pixel-bubble.bubble-right { left: calc(100% + 10px); top: 0; right: auto; bottom: auto; transform: none; }
+  .pixel-bubble.bubble-right::before { left: -8px; top: 12px; bottom: auto; transform: none; border-top-color: transparent; border-bottom: 8px solid transparent; border-right-color: var(--bubble-color, rgba(168,212,255,0.6)); border-left: none; }
+  .pixel-bubble.bubble-right::after  { left: -5px; top: 13px; bottom: auto; transform: none; border-top-color: transparent; border-bottom: 7px solid transparent; border-right-color: rgba(8,6,30,0.88); border-left: none; }
+
+  .pixel-bubble.bubble-left { right: calc(100% + 10px); top: 0; left: auto; bottom: auto; transform: none; }
+  .pixel-bubble.bubble-left::before { right: -8px; top: 12px; left: auto; bottom: auto; transform: none; border-top-color: transparent; border-bottom: 8px solid transparent; border-left-color: var(--bubble-color, rgba(168,212,255,0.6)); border-right: none; border-left: 8px solid; border-right-color: transparent; }
+  .pixel-bubble.bubble-left::after  { right: -5px; top: 13px; left: auto; bottom: auto; transform: none; border-top-color: transparent; border-bottom: 7px solid transparent; border-left-color: rgba(8,6,30,0.88); border-right: none; border-left: 7px solid; border-right-color: transparent; }
+
+  .pixel-bubble.bubble-top { bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); top: auto; right: auto; }
+  .pixel-bubble.bubble-top::before { bottom: -8px; left: 50%; transform: translateX(-50%); top: auto; border-top-color: var(--bubble-color, rgba(168,212,255,0.6)); border-bottom: none; border-right-color: transparent; border-left-color: transparent; }
+  .pixel-bubble.bubble-top::after  { bottom: -5px; left: 50%; transform: translateX(-50%); top: auto; border-top-color: rgba(8,6,30,0.88); border-bottom: none; border-right-color: transparent; border-left-color: transparent; }
+
+  .pixel-bubble.bubble-bottom { top: calc(100% + 10px); left: 50%; transform: translateX(-50%); bottom: auto; right: auto; }
+  .pixel-bubble.bubble-bottom::before { top: -8px; left: 50%; transform: translateX(-50%); bottom: auto; border-bottom-color: var(--bubble-color, rgba(168,212,255,0.6)); border-top: none; border-right-color: transparent; border-left-color: transparent; }
+  .pixel-bubble.bubble-bottom::after  { top: -5px; left: 50%; transform: translateX(-50%); bottom: auto; border-bottom-color: rgba(8,6,30,0.88); border-top: none; border-right-color: transparent; border-left-color: transparent; }
 
   /* 멤버 카드 */
   .members-card h3  { font-size: 11px; }
