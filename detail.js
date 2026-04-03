@@ -56,8 +56,15 @@ const DOT_COLORS = USER_COLORS; // user-colors.js 참조
 function applyBackground() {
   const pastel = hexToPastel(getUserColor(currentBook.registeredBy), 0.25);
   document.body.style.background = pastel;
-  document.body.style.backgroundImage = `radial-gradient(circle, white 7px, transparent 7px)`;
-  document.body.style.backgroundSize = `44px 44px`;
+  if (window.innerWidth <= 480) {
+    document.body.style.backgroundImage = `radial-gradient(circle, white 7px, transparent 7px), radial-gradient(circle, white 7px, transparent 7px)`;
+    document.body.style.backgroundSize = `44px 44px`;
+    document.body.style.backgroundPosition = `0 0, 22px 22px`;
+  } else {
+    document.body.style.backgroundImage = `radial-gradient(circle, white 7px, transparent 7px)`;
+    document.body.style.backgroundSize = `44px 44px`;
+    document.body.style.backgroundPosition = `0 0`;
+  }
 }
 
 // ── Init ──────────────────────────────────────────────────

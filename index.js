@@ -105,7 +105,7 @@ function renderBookshelf() {
   const users = getUsers();
 
   // ── 별자리 레이아웃 계산 ──────────────────────────────────
-  const CARD_W  = 90;
+  const CARD_W  = 94;
   const CARD_H  = 155;
   const COLS    = 3;
   const CELL_H  = 240;

@@ -734,9 +734,50 @@ body {
   .right-panel { display: contents; }
 
   /* 순서 지정 — 너비는 detail-layout이 통일 */
-  .book-header   { order: 1; }
-  .left-panel    { order: 2; width: 100%; display: flex; flex-direction: row; gap: 10px; }
-  .left-panel > * { flex: 1 1 0; min-width: 0; overflow: hidden; box-sizing: border-box; }
+  .book-header   { order: 1; padding-top: 6px !important; padding-bottom: 6px !important; }
+  .left-panel {
+    order: 2;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 0;
+    background: white;
+    border: 3px solid #AEE2FF;
+    border-radius: 20px;
+    box-shadow: 4px 4px 0 #AEE2FF;
+    overflow: hidden;
+  }
+  .left-panel > * {
+    flex: 1 1 0;
+    min-width: 0;
+    box-sizing: border-box;
+    padding-top: 8px !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+  .left-panel .card-label { margin-bottom: 5px; }
+  .left-panel > *:first-child {
+    flex: 5.5 1 0;
+    border-right: 2px dashed #AEE2FF !important;
+  }
+  .left-panel > *:last-child {
+    flex: 4.5 1 0;
+  }
+  .photo-upload-area { aspect-ratio: 19/17; }
+  .photo-edit-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: auto;
+    margin-top: 0;
+    padding: 3px 10px;
+    font-size: 11px;
+    background: rgba(255,255,255,0.75);
+    border: 1px solid rgba(168,212,255,0.6);
+    backdrop-filter: blur(4px);
+  }
   .y2k-card.pink { order: 3; margin-top: 20px; }
   .y2k-card.green{ order: 4; }
 
@@ -749,7 +790,7 @@ body {
     width: 70px;
     height: 98px;
     flex-shrink: 0;
-    margin-left: 0;
+    margin-left: 35px;
     margin-right: 16px;
   }
   .book-cover-wrap img,
@@ -775,7 +816,7 @@ body {
   .upload-placeholder,
   .song-input, .yt-input-row input,
   .avg-stars { font-size: 13.5px; }
-  .card-label { font-size: 10.5px; }
+  .card-label { font-size: 9.5px; }
   .passage-text { font-size: 12.5px; }
 
   /* 구절 카드 3단 → 1단 */
