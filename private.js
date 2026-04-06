@@ -26,6 +26,12 @@ fillChalkDeco('chalk-deco', 80);
 // ── 데이터 캐시 ───────────────────────────────────────────
 let _books = [], _reviews = [], _users = [];
 let _privateNotes = {};
+let _myReviewsData = [];
+let _myReviewsPage = 0;
+
+function getReviewsPerPage() {
+  return window.innerWidth <= 480 ? 3 : 6;
+}
 
 function getBooks()   { return _books; }
 function getReviews() { return _reviews; }
@@ -134,18 +140,30 @@ function renderMyBooks() {
   });
 }
 
-// ── 내가 남긴 독후감 ───────────────────────────────────────
+// ── 내가 남긴 독후감 (페이지네이션) ──────────────────────────
 function renderMyReviews() {
-  const books   = getBooks();
   const reviews = getReviews();
-  const myReviews = reviews
+  _myReviewsData = reviews
     .filter(r => r.userId === currentUser.id && r.oneLiner)
     .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
 
+  const perPage = getReviewsPerPage();
+  const totalPages = Math.max(1, Math.ceil(_myReviewsData.length / perPage));
+  if (_myReviewsPage >= totalPages) _myReviewsPage = totalPages - 1;
+
+  renderReviewsPage();
+}
+
+function renderReviewsPage() {
+  const books = getBooks();
   const container = document.getElementById('my-reviews');
+
+  const existingPag = document.getElementById('reviews-pagination');
+  if (existingPag) existingPag.remove();
+
   container.innerHTML = '';
 
-  if (myReviews.length === 0) {
+  if (_myReviewsData.length === 0) {
     container.innerHTML = '<div class="empty-msg">아직 남긴 독후감이 없어요 ✦</div>';
     return;
   }
@@ -158,7 +176,11 @@ function renderMyReviews() {
     'linear-gradient(160deg,#FFE0A0,#D4BAFF)',
   ];
 
-  myReviews.forEach((review, i) => {
+  const perPage = getReviewsPerPage();
+  const start = _myReviewsPage * perPage;
+  const pageItems = _myReviewsData.slice(start, start + perPage);
+
+  pageItems.forEach((review, i) => {
     const book = books.find(b => b.id === review.bookId);
     if (!book) return;
 
@@ -263,6 +285,31 @@ function renderMyReviews() {
     card.onclick = () => { window.location.href = `detail.html?id=${book.id}`; };
     container.appendChild(card);
   });
+
+  renderReviewsPagination();
+}
+
+function renderReviewsPagination() {
+  const perPage = getReviewsPerPage();
+  const totalPages = Math.ceil(_myReviewsData.length / perPage);
+  if (totalPages <= 1) return;
+
+  const nav = document.createElement('div');
+  nav.id = 'reviews-pagination';
+  nav.className = 'reviews-pagination';
+
+  for (let i = 0; i < totalPages; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'page-dot' + (i === _myReviewsPage ? ' active' : '');
+    btn.textContent = i + 1;
+    btn.onclick = () => {
+      _myReviewsPage = i;
+      renderReviewsPage();
+    };
+    nav.appendChild(btn);
+  }
+
+  document.getElementById('my-reviews').after(nav);
 }
 
 // ── 내가 남긴 구절 ─────────────────────────────────────────
@@ -341,4 +388,37 @@ db.ref('users').on('value', snap => {
 db.ref('privateNotes/' + currentUser.id).on('value', snap => {
   _privateNotes = snap.exists() ? snap.val() : {};
   renderMyReviews();
+});
+
+// ── MY REVIEWS 스와이프 (모바일) ──────────────────────────────
+(function () {
+  const container = document.getElementById('my-reviews');
+  let startX = 0, startY = 0;
+  container.addEventListener('touchstart', e => {
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+  }, { passive: true });
+  container.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - startX;
+    const dy = e.changedTouches[0].clientY - startY;
+    if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy)) return;
+    const perPage = getReviewsPerPage();
+    const totalPages = Math.ceil(_myReviewsData.length / perPage);
+    if (dx < 0 && _myReviewsPage < totalPages - 1) {
+      _myReviewsPage++;
+      renderReviewsPage();
+    } else if (dx > 0 && _myReviewsPage > 0) {
+      _myReviewsPage--;
+      renderReviewsPage();
+    }
+  }, { passive: true });
+})();
+
+window.addEventListener('resize', () => {
+  if (_myReviewsData.length > 0) {
+    const perPage = getReviewsPerPage();
+    const totalPages = Math.max(1, Math.ceil(_myReviewsData.length / perPage));
+    if (_myReviewsPage >= totalPages) _myReviewsPage = totalPages - 1;
+    renderReviewsPage();
+  }
 });

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>대기실 — 교환독서 기록장</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Jua&family=Nanum+Pen+Script&family=Press+Start+2P&family=Fredoka+One&family=Gamja+Flower&display=swap" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+  <link rel="stylesheet" href="waiting.css">
+  <link rel="stylesheet" href="nav.css">
+</head>
+<body>
+
+  <canvas id="bg-canvas"></canvas>
+  <div class="bg-overlay"></div>
+
+  <button class="back-btn" onclick="sessionStorage.removeItem('currentUser'); window.location.href='login.html';">← BACK</button>
+
+  <div class="wrapper">
+
+    <!-- 내가 참여한 방 -->
+    <div class="my-rooms-section hidden" id="my-rooms-section">
+      <div class="my-rooms-box">
+        <div class="my-rooms-title">JOINED CLUB</div>
+        <div class="my-rooms-list" id="my-rooms-list"></div>
+      </div>
+    </div>
+
+    <div class="join-club-box">
+      <div class="join-club-title">JOIN NEW CLUB</div>
+    <div class="card">
+
+      <div class="tab-bar">
+        <button class="tab-btn active" id="tab-join"   onclick="switchTab('join')">방 참여하기</button>
+        <button class="tab-btn"        id="tab-create" onclick="switchTab('create')">방 만들기</button>
+      </div>
+
+      <!-- 방 만들기 -->
+      <div class="tab-panel" id="panel-create">
+        <div class="form-group">
+          <label>✦ 방 이름</label>
+          <div class="input-wrap">
+            <input type="text" id="create-name" placeholder="방 이름을 입력하세요" maxlength="20" autocomplete="off">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>✦ 비밀번호</label>
+          <div class="input-wrap">
+            <input type="password" id="create-pw" class="has-toggle"
+              placeholder="방 비밀번호를 설정하세요" autocomplete="new-password">
+            <button type="button" class="eye-toggle" onclick="togglePw('create-pw',this)">👁</button>
+          </div>
+        </div>
+        <button class="submit-btn create-btn" id="create-btn" onclick="createRoom()">CREATE ROOM</button>
+
+        <div class="create-result hidden" id="create-result">
+          <div class="result-label">방 코드가 생성됐어요! 🎉</div>
+          <div class="room-code-box">
+            <span class="room-code-display" id="room-code-display"></span>
+            <button class="copy-btn" id="copy-btn" onclick="copyRoomCode()">복사</button>
+          </div>
+          <div class="result-hint">이 코드를 친구에게 공유하세요 ✦</div>
+          <button class="submit-btn enter-btn" onclick="enterCreatedRoom()">입장하기 →</button>
+        </div>
+      </div>
+
+      <!-- 방 참여하기 -->
+      <div class="tab-panel active" id="panel-join">
+        <div class="form-group">
+          <label>✦ 방 코드</label>
+          <div class="input-wrap">
+            <input type="text" id="join-code" placeholder="6자리 코드 입력" maxlength="6"
+              autocomplete="off" oninput="this.value=this.value.toUpperCase()">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>✦ 비밀번호</label>
+          <div class="input-wrap">
+            <input type="password" id="join-pw" class="has-toggle"
+              placeholder="비밀번호를 입력하세요" autocomplete="current-password">
+            <button type="button" class="eye-toggle" onclick="togglePw('join-pw',this)">👁</button>
+          </div>
+        </div>
+        <button class="submit-btn join-btn" id="join-btn" onclick="joinRoom()">JOIN THE ROOM</button>
+      </div>
+
+    </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <nav class="mobile-nav">
+    <button class="mobile-nav-btn active" onclick="window.location.href='waiting.html'">
+      <span class="mobile-nav-icon">🚪</span>
+      <span class="mobile-nav-label">ROOM</span>
+    </button>
+    <button class="mobile-nav-btn mobile-nav-home" onclick="goLastRoom()">
+      <span class="mobile-nav-icon">🏠</span>
+      <span class="mobile-nav-label">HOME</span>
+    </button>
+    <button class="mobile-nav-btn" onclick="window.location.href='private.html'">
+      <span class="mobile-nav-icon">🔒</span>
+      <span class="mobile-nav-label">MY PAGE</span>
+    </button>
+  </nav>
+
+  <script src="common.js"></script>
+  <script src="waiting.js"></script>
+</body>
+</html>

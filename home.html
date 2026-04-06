@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>교환독서 기록장 — 방</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Jua&family=Nanum+Pen+Script&family=Press+Start+2P&family=Fredoka+One&family=Gamja+Flower&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/gh/quiple/galmuri/dist/galmuri.css" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+  <script src="user-colors.js"></script>
+  <link rel="stylesheet" href="index.css">
+  <link rel="stylesheet" href="home.css">
+  <link rel="stylesheet" href="nav.css">
+</head>
+<body>
+
+  <!-- 방 상단 배너 -->
+  <div class="room-banner" id="room-banner">
+    <div class="room-banner-left">
+      <span class="room-banner-name" id="room-banner-name"></span>
+      <span class="room-banner-code" id="room-banner-code"></span>
+    </div>
+    <div class="room-banner-right">
+      <button class="admin-btn hidden" id="admin-btn" onclick="openAdminPanel()">⚙</button>
+      <button class="leave-room-btn" onclick="leaveRoom()">← LOBBY</button>
+      <a class="home-btn" href="private.html">🔒 PRIVATE</a>
+    </div>
+  </div>
+
+  <!-- Admin Modal -->
+  <div class="admin-overlay hidden" id="admin-overlay" onclick="if(event.target===this)closeAdminPanel()">
+    <div class="admin-modal">
+      <div class="admin-modal-header">
+        <span>⚙ ADMIN PANEL</span>
+        <button onclick="closeAdminPanel()">✕</button>
+      </div>
+      <div class="admin-tab-bar">
+        <button class="admin-tab active" id="atab-books" onclick="switchAdminTab('books')">📚 책 관리</button>
+        <button class="admin-tab" id="atab-members" onclick="switchAdminTab('members')">👥 멤버 관리</button>
+        <button class="admin-tab" id="atab-colors" onclick="switchAdminTab('colors')">🎨 색상 팔레트</button>
+      </div>
+      <div class="admin-content" id="admin-content-books"></div>
+      <div class="admin-content hidden" id="admin-content-members"></div>
+      <div class="admin-content hidden" id="admin-content-colors"></div>
+    </div>
+  </div>
+
+  <div class="deco-float-l">⭐<br>♡<br>✦<br>★</div>
+  <div class="deco-float-r">✿<br>♡<br>⭐<br>✦</div>
+
+  <div class="split-layout">
+
+    <!-- LEFT: 콜라주 보드 -->
+    <section class="shelf-section">
+      <div class="chalk-deco" id="chalk-deco" aria-hidden="true"></div>
+      <h2 class="shelf-title">OUR BOOK BOARD</h2>
+      <p class="shelf-sub" id="shelf-sub">열심히 읽어서 보드를 채우자! ✦</p>
+      <div class="bookshelf" id="bookshelf">
+        <div class="shelf-empty-hint" id="empty-hint">첫 번째 책을 등록해보세요 🌟</div>
+      </div>
+    </section>
+
+    <!-- RIGHT -->
+    <section class="right-section">
+      <div class="chalk-deco" id="chalk-deco-right" aria-hidden="true"></div>
+
+      <div class="members-card">
+        <h3>MEMBERS ✦</h3>
+        <div class="members-bar" id="members-bar"></div>
+      </div>
+
+      <div class="register-card">
+        <h2>NEW BOOK ★</h2>
+
+        <div class="search-row">
+          <input type="text" id="book-search" placeholder="책 제목으로 검색해보세요"
+            onkeydown="if(event.key==='Enter') searchBooks()">
+          <button class="search-btn" onclick="searchBooks()">SEARCH</button>
+        </div>
+
+        <div class="search-results" id="search-results"></div>
+
+        <div class="selected-book hidden" id="selected-book">
+          <img id="sel-cover" src="" alt="cover">
+          <div class="sel-info">
+            <div class="sel-label">SELECTED</div>
+            <div class="sel-title" id="sel-title"></div>
+          </div>
+          <button class="deselect-btn" onclick="deselectBook()">✕</button>
+        </div>
+
+        <span class="star-label">RATING ★</span>
+        <div class="star-rating" id="star-rating"></div>
+
+        <textarea class="form-textarea" id="one-liner"
+          placeholder="책의 한줄평을 남겨주세요 ✍"></textarea>
+
+        <div class="passages-input-area">
+          <span class="passages-input-label">PASSAGES &amp; MATE COMMENT ✦</span>
+          <div id="reg-passages-input"></div>
+          <button class="add-passage-btn" onclick="addRegPassagePair()">+ ADD PASSAGE</button>
+        </div>
+
+        <button class="send-btn" onclick="registerBook()">SEND ✈</button>
+      </div>
+
+    </section>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- 모바일 하단 네비게이션 -->
+  <nav class="mobile-nav">
+    <button class="mobile-nav-btn" onclick="leaveRoom()">
+      <span class="mobile-nav-icon">🚪</span>
+      <span class="mobile-nav-label">ROOM</span>
+    </button>
+    <button class="mobile-nav-btn mobile-nav-home active" onclick="goLastRoom()">
+      <span class="mobile-nav-icon">🏠</span>
+      <span class="mobile-nav-label">HOME</span>
+    </button>
+    <button class="mobile-nav-btn" onclick="window.location.href='private.html'">
+      <span class="mobile-nav-icon">🔒</span>
+      <span class="mobile-nav-label">MY PAGE</span>
+    </button>
+  </nav>
+
+  <script src="common.js"></script>
+  <script src="home.js"></script>
+</body>
+</html>

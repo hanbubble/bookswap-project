@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>데이터 마이그레이션</title>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+  <style>
+    body { font-family: monospace; background: #0a0a1a; color: #aef; padding: 40px; }
+    h2 { color: #c8a8ff; }
+    h3 { color: #aee2ff; margin-top: 32px; }
+    button {
+      background: #c8a8ff; border: none; border-radius: 8px;
+      padding: 12px 28px; font-size: 16px; cursor: pointer;
+      margin-top: 20px; font-family: monospace; display: block;
+    }
+    button.red { background: #ff6b8a; }
+    button:disabled { opacity: .4; cursor: not-allowed; }
+    #log { margin-top: 24px; white-space: pre-wrap; line-height: 1.8; font-size: 14px; }
+    .ok  { color: #7ef580; }
+    .err { color: #ff6b6b; }
+    .info { color: #aee2ff; }
+    hr { border-color: rgba(168,212,255,0.15); margin: 32px 0; }
+  </style>
+</head>
+<body>
+
+<h2>🚀 데이터 마이그레이션</h2>
+
+<!-- 책/리뷰 마이그레이션 -->
+<h3>① 책 & 리뷰 복사</h3>
+<p style="color:#aee2ff; font-size:13px">
+  <b>books</b> + <b>reviews</b> (전역) → <b>rooms/E5NHFH/books</b> + <b>rooms/E5NHFH/reviews</b>
+</p>
+<p style="color:#ffb347; font-size:13px">⚠ 기존 전역 데이터는 삭제하지 않습니다. 복사만 합니다.</p>
+<button id="run-books-btn" onclick="runBooksMigration()">▶ 책/리뷰 마이그레이션 시작</button>
+
+<hr>
+
+<!-- 유저 → 방 등록 -->
+<h3>② 기존 유저를 방에 등록</h3>
+<p style="color:#aee2ff; font-size:13px">
+  <b>users</b>에 있는 모든 유저를 <b>E5NHFH</b> 방의 JOINED CLUB에 등록합니다.<br>
+  등록 후 각 유저가 로그인하면 코드/비밀번호 없이 바로 입장할 수 있어요.
+</p>
+<button id="run-users-btn" onclick="runUsersMigration()">▶ 유저 방 등록 시작</button>
+
+<hr>
+<h3>③ 비밀번호 변경</h3>
+<button id="run-pw-btn" onclick="runPwChange()">▶ mneujpp52pdgn 비밀번호 → 0317</button>
+
+<div id="log"></div>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyC_Q9TMiRoNV0lHw9kxL0TagT9B4ZWPPV8",
+  authDomain: "bookswap-94dc2.firebaseapp.com",
+  databaseURL: "https://bookswap-94dc2-default-rtdb.firebaseio.com",
+  projectId: "bookswap-94dc2",
+  storageBucket: "bookswap-94dc2.firebasestorage.app",
+  messagingSenderId: "198519480023",
+  appId: "1:198519480023:web:68c0c0fcfb867b9b371a92"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+const ROOM_ID = 'E5NHFH';
+
+function log(msg, cls = '') {
+  const el = document.getElementById('log');
+  el.innerHTML += `<span class="${cls}">${msg}</span>\n`;
+}
+
+async function runBooksMigration() {
+  const btn = document.getElementById('run-books-btn');
+  btn.disabled = true;
+  document.getElementById('log').innerHTML = '';
+
+  try {
+    log('📚 books 읽는 중...', 'info');
+    const bSnap = await db.ref('books').once('value');
+    const books = bSnap.exists() ? bSnap.val() : null;
+
+    log('📝 reviews 읽는 중...', 'info');
+    const rSnap = await db.ref('reviews').once('value');
+    const reviews = rSnap.exists() ? rSnap.val() : null;
+
+    if (!books) {
+      log('⚠ 전역 books 데이터가 없습니다.', 'err');
+    } else {
+      const count = Object.keys(books).length;
+      log(`✦ books ${count}개 발견`, 'info');
+      await db.ref(`rooms/${ROOM_ID}/books`).set(books);
+      log(`✅ rooms/${ROOM_ID}/books 저장 완료 (${count}개)`, 'ok');
+    }
+
+    if (!reviews) {
+      log('⚠ 전역 reviews 데이터가 없습니다.', 'err');
+    } else {
+      const count = Object.keys(reviews).length;
+      log(`✦ reviews ${count}개 발견`, 'info');
+      await db.ref(`rooms/${ROOM_ID}/reviews`).set(reviews);
+      log(`✅ rooms/${ROOM_ID}/reviews 저장 완료 (${count}개)`, 'ok');
+    }
+
+    log('\n🎉 완료! home.html?roomId=E5NHFH 에서 확인하세요.', 'ok');
+  } catch (e) {
+    log('❌ 오류: ' + e.message, 'err');
+    btn.disabled = false;
+  }
+}
+
+async function runUsersMigration() {
+  const btn = document.getElementById('run-users-btn');
+  btn.disabled = true;
+  document.getElementById('log').innerHTML = '';
+
+  try {
+    log('👥 users 읽는 중...', 'info');
+    const uSnap = await db.ref('users').once('value');
+    if (!uSnap.exists()) {
+      log('⚠ users 데이터가 없습니다.', 'err');
+      btn.disabled = false;
+      return;
+    }
+
+    const roomSnap = await db.ref('rooms/' + ROOM_ID + '/name').once('value');
+    const roomName = roomSnap.exists() ? roomSnap.val() : ROOM_ID;
+
+    const users = Object.values(uSnap.val());
+    let count = 0;
+
+    for (const user of users) {
+      await db.ref('userRooms/' + user.id + '/' + ROOM_ID).set({
+        roomId: ROOM_ID,
+        name: roomName,
+        savedAt: Date.now()
+      });
+      log(`✅ ${user.name} → ${roomName} 등록 완료`, 'ok');
+      count++;
+    }
+
+    log(`\n🎉 완료! ${count}명 등록됨. 각 유저가 로그인하면 JOINED CLUB에 바로 보여요.`, 'ok');
+  } catch (e) {
+    log('❌ 오류: ' + e.message, 'err');
+    btn.disabled = false;
+  }
+}
+
+async function runPwChange() {
+  const btn = document.getElementById('run-pw-btn');
+  btn.disabled = true;
+  document.getElementById('log').innerHTML = '';
+
+  try {
+    // users 먼저 확인
+    const uSnap = await db.ref('users/mneujpp52pdgn').once('value');
+    if (uSnap.exists()) {
+      await db.ref('users/mneujpp52pdgn/password').set('0317');
+      log('✅ users/mneujpp52pdgn 비밀번호 → 0317 변경 완료', 'ok');
+    } else {
+      // pendingUsers 확인
+      const pSnap = await db.ref('pendingUsers/mneujpp52pdgn').once('value');
+      if (pSnap.exists()) {
+        await db.ref('pendingUsers/mneujpp52pdgn/password').set('0317');
+        log('✅ pendingUsers/mneujpp52pdgn 비밀번호 → 0317 변경 완료', 'ok');
+      } else {
+        log('❌ 해당 ID의 유저를 찾을 수 없어요 (users, pendingUsers 모두 없음)', 'err');
+        btn.disabled = false;
+      }
+    }
+  } catch (e) {
+    log('❌ 오류: ' + e.message, 'err');
+    btn.disabled = false;
+  }
+}
+</script>
+</body>
+</html>

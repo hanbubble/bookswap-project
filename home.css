@@ -1,0 +1,84 @@
+/* ── 방 배너 ── */
+.room-banner {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 48px;
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  background: rgba(8,6,30,0.85);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(168,212,255,0.12);
+  z-index: 1000;
+  gap: 12px;
+}
+
+.room-banner-left {
+  display: flex; align-items: center; gap: 12px;
+  min-width: 0; overflow: hidden;
+}
+
+.room-banner-name {
+  font-family: 'Press Start 2P', 'Galmuri11', monospace;
+  font-size: 9px; color: rgba(225,240,255,.9);
+  line-height: 1.8;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  max-width: 180px;
+}
+
+.room-banner-code {
+  font-family: 'Press Start 2P', 'Galmuri11', monospace;
+  font-size: 7px; color: rgba(168,212,255,.5);
+  letter-spacing: 3px; line-height: 1.8;
+  white-space: nowrap;
+}
+
+.room-banner-right {
+  display: flex; align-items: center; gap: 8px;
+  flex-shrink: 0;
+}
+
+/* index.css의 .home-btn을 배너 안에서 재활용 */
+.room-banner .home-btn {
+  position: static;
+  font-size: 7px; padding: 5px 12px;
+}
+
+.room-banner .admin-btn {
+  position: static;
+  background: rgba(200,168,255,.12);
+  border: 1px solid rgba(200,168,255,.3);
+  border-radius: 50px;
+  padding: 5px 10px;
+  font-size: 11px; color: #c8a8ff;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition: all .2s;
+}
+.room-banner .admin-btn:hover { background: rgba(200,168,255,.25); }
+
+.leave-room-btn {
+  background: rgba(168,212,255,.1);
+  border: 1px solid rgba(168,212,255,.3);
+  border-radius: 50px;
+  padding: 5px 14px;
+  font-family: 'Press Start 2P', 'Galmuri11', monospace;
+  font-size: 7px; color: #AEE2FF;
+  cursor: pointer; line-height: 1.8;
+  transition: all .2s;
+}
+.leave-room-btn:hover { background: rgba(168,212,255,.2); }
+
+/* 배너 높이만큼 split-layout 내려주기 */
+.split-layout { padding-top: 48px; }
+
+/* index.css의 fixed 버튼들 숨김 (배너로 대체) */
+body > .home-btn,
+body > .logout-btn { display: none !important; }
+
+@media(max-width:480px) {
+  .room-banner-name { max-width: 90px; font-size: 7px; }
+  .room-banner-code { display: none; }
+  .room-banner .home-btn { display: none; }
+  .room-banner .leave-room-btn { display: none; }
+}

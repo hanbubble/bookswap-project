@@ -36,6 +36,12 @@ function getUserColor(userId) {
   return USER_COLORS[(idx < 0 ? 0 : idx) % USER_COLORS.length];
 }
 
+function goLastRoom() {
+  const last = localStorage.getItem('lastRoomId');
+  if (last) window.location.href = `home.html?roomId=${last}`;
+  else window.location.href = 'waiting.html';
+}
+
 function hexToPastel(hex, blend = 0.38) {
   const r = parseInt(hex.slice(1,3), 16);
   const g = parseInt(hex.slice(3,5), 16);

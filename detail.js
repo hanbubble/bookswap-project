@@ -3,12 +3,18 @@ let _books = [];
 let _reviews = [];
 let _users = [];
 
+// roomId (room-scoped일 때만 존재)
+let roomId = null;
+
+function BOOKS_REF()   { return roomId ? db.ref(`rooms/${roomId}/books`)   : db.ref('books'); }
+function REVIEWS_REF() { return roomId ? db.ref(`rooms/${roomId}/reviews`) : db.ref('reviews'); }
+
 // 실시간 리스너
 function setupRealtimeListeners() {
-  db.ref('books').on('value', snap => {
+  BOOKS_REF().on('value', snap => {
     _books = snap.exists() ? Object.values(snap.val()) : [];
   });
-  db.ref('reviews').on('value', snap => {
+  REVIEWS_REF().on('value', snap => {
     _reviews = snap.exists() ? Object.values(snap.val()) : [];
     if (typeof loadBook === 'function' && currentBook) loadBook();
     if (typeof loadReviews === 'function' && currentBook) loadReviews();
@@ -28,7 +34,7 @@ function getUsers()   { return _users; }
 function saveReviews(reviews) {
   const obj = {};
   reviews.forEach(r => { obj[r.bookId + '_' + r.userId] = r; });
-  db.ref('reviews').set(obj);
+  REVIEWS_REF().set(obj);
 }
 
 const FALLBACK_GRADIENTS = [
@@ -72,21 +78,25 @@ function init() {
   currentUser = checkAuth();
   const params = new URLSearchParams(location.search);
   bookId = params.get('id');
-  if (!bookId) { window.location.href = 'index.html'; return; }
+  roomId = params.get('roomId') || null;
+  const fallbackUrl = roomId ? `home.html?roomId=${roomId}` : 'index.html';
+  if (!bookId) { window.location.href = fallbackUrl; return; }
 
   setupRealtimeListeners();
 
   // books + reviews 동시에 기다린 후 초기화
   Promise.all([
-    db.ref('books').once('value'),
-    db.ref('reviews').once('value'),
+    BOOKS_REF().once('value'),
+    REVIEWS_REF().once('value'),
     db.ref('users').once('value'),
   ]).then(([bSnap, rSnap, uSnap]) => {
     _books   = bSnap.exists() ? Object.values(bSnap.val()) : [];
     _reviews = rSnap.exists() ? Object.values(rSnap.val()) : [];
     _users   = uSnap.exists() ? Object.values(uSnap.val()) : [];
     currentBook = _books.find(b => b.id === bookId);
-    if (!currentBook) { window.location.href = 'index.html'; return; }
+    if (!currentBook) { window.location.href = fallbackUrl; return; }
+    const homeBtn = document.getElementById('home-btn');
+    if (homeBtn) homeBtn.href = fallbackUrl;
     applyBackground();
     loadBook();
     loadReviews();

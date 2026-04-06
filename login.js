@@ -207,26 +207,16 @@ function handleSignup(e) {
   if (!name) { showError(nameEl, '닉네임을 입력해주세요'); return; }
   if (!pw)   { showError(pwEl,   '비밀번호를 입력해주세요'); return; }
 
-  Promise.all([
-    db.ref('users').once('value'),
-    db.ref('pendingUsers').once('value'),
-  ]).then(([uSnap, pSnap]) => {
-    const existing = [
-      ...Object.values(uSnap.exists() ? uSnap.val() : {}),
-      ...Object.values(pSnap.exists() ? pSnap.val() : {}),
-    ];
+  db.ref('users').once('value').then(uSnap => {
+    const existing = Object.values(uSnap.exists() ? uSnap.val() : {});
     if (existing.some(u => u.name === name)) {
       showError(nameEl, '이미 사용 중인 닉네임이에요'); return;
     }
     const newUser = { id: generateId(), name, password: pw };
-    // 관리자는 바로 승인
-    const ref = name === '문서희' ? 'users' : 'pendingUsers';
-    db.ref(ref + '/' + newUser.id).set(newUser, () => {
+    db.ref('users/' + newUser.id).set(newUser, () => {
       nameEl.value = ''; pwEl.value = '';
       const msg = document.getElementById('signup-success');
-      msg.textContent = name === '문서희'
-        ? '🎉 가입 완료! 로그인해보세요!'
-        : '✉ 가입 신청 완료! 관리자 승인 후 로그인 가능해요.';
+      msg.textContent = '🎉 가입 완료! 로그인해보세요!';
       msg.style.display = 'block';
       setTimeout(() => {
         msg.style.display = 'none';
@@ -245,23 +235,31 @@ function handleLogin(e) {
   if (!name) { showError(nameEl, '닉네임을 입력해주세요'); return; }
   if (!pw)   { showError(pwEl,   '비밀번호를 입력해주세요'); return; }
 
-  db.ref('users').once('value', snap => {
-    const users = Object.values(snap.exists() ? snap.val() : {});
-    const user  = users.find(u => u.name === name && u.password === pw);
+  Promise.all([
+    db.ref('users').once('value'),
+    db.ref('pendingUsers').once('value'),
+  ]).then(([uSnap, pSnap]) => {
+    const users   = Object.values(uSnap.exists() ? uSnap.val() : {});
+    const pending = Object.values(pSnap.exists() ? pSnap.val() : {});
+
+    let user = users.find(u => u.name === name && u.password === pw);
+
+    if (!user) {
+      // pendingUsers에 있으면 자동으로 users로 이동 후 로그인
+      const pendingUser = pending.find(u => u.name === name && u.password === pw);
+      if (pendingUser) {
+        db.ref('users/' + pendingUser.id).set(pendingUser);
+        db.ref('pendingUsers/' + pendingUser.id).remove();
+        user = pendingUser;
+      }
+    }
+
     if (user) {
       sessionStorage.setItem('currentUser', JSON.stringify({ id: user.id, name: user.name }));
-      window.location.href = 'index.html';
+      window.location.href = 'waiting.html';
       return;
     }
-    // 대기 중인지 확인
-    db.ref('pendingUsers').once('value', pSnap => {
-      const pending = Object.values(pSnap.exists() ? pSnap.val() : {});
-      if (pending.some(u => u.name === name && u.password === pw)) {
-        showError(pwEl, '아직 관리자 승인 대기 중이에요 🕐');
-      } else {
-        showError(pwEl, '닉네임 또는 비밀번호가 올바르지 않아요');
-      }
-    });
+    showError(pwEl, '닉네임 또는 비밀번호가 올바르지 않아요');
   });
 }
 
@@ -321,4 +319,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 window.addEventListener('resize', fitBgWords);
 
-if (getCurrentUser()) window.location.href = 'index.html';
+if (getCurrentUser()) window.location.href = 'waiting.html';

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>입장 대기 — 교환독서 기록장</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Jua&family=Nanum+Pen+Script&family=Press+Start+2P&family=Fredoka+One&family=Gamja+Flower&display=swap" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+  <link rel="stylesheet" href="pending.css">
+</head>
+<body>
+
+  <div class="bg-overlay"></div>
+  <canvas id="bg-canvas"></canvas>
+
+  <div class="login-wrapper">
+    <div class="card" id="wait-card">
+      <div class="book-float" id="book-icon">📖</div>
+      <div class="wait-title">OPEN THE PAGE</div>
+      <div class="wait-name" id="wait-name"></div>
+      <div class="wait-sub" id="wait-sub">관리자가 문을 열어줄 때까지<br>잠시만 기다려주세요 ✦</div>
+      <div class="dot-row">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="wait-hint">승인되면 자동으로 입장돼요</div>
+    </div>
+  </div>
+
+  <script src="common.js"></script>
+  <script src="pending.js"></script>
+</body>
+</html>

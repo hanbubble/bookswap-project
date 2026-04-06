@@ -11,10 +11,11 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
   <script src="user-colors.js"></script>
   <link rel="stylesheet" href="private.css">
+  <link rel="stylesheet" href="nav.css">
 </head>
 <body>
 
-  <a class="home-btn" href="index.html">🏠 HOME</a>
+  <button class="home-btn" onclick="sessionStorage.removeItem('currentUser'); window.location.href='login.html';">← LOGOUT</button>
   <div class="deco-float-l">⭐<br>♡<br>✦<br>★</div>
   <div class="deco-float-r">✿<br>♡<br>⭐<br>✦</div>
 
@@ -74,6 +75,21 @@
   </div>
 
   <div class="toast" id="toast"></div>
+
+  <nav class="mobile-nav">
+    <button class="mobile-nav-btn" onclick="window.location.href='waiting.html'">
+      <span class="mobile-nav-icon">🚪</span>
+      <span class="mobile-nav-label">ROOM</span>
+    </button>
+    <button class="mobile-nav-btn mobile-nav-home" onclick="goLastRoom()">
+      <span class="mobile-nav-icon">🏠</span>
+      <span class="mobile-nav-label">HOME</span>
+    </button>
+    <button class="mobile-nav-btn active" onclick="window.location.href='private.html'">
+      <span class="mobile-nav-icon">🔒</span>
+      <span class="mobile-nav-label">MY PAGE</span>
+    </button>
+  </nav>
 
   <script src="common.js"></script>
   <script src="private.js"></script>
