@@ -136,6 +136,10 @@ async function runUsersMigration() {
         name: roomName,
         savedAt: Date.now()
       });
+      await db.ref('rooms/' + ROOM_ID + '/registeredMembers/' + user.id).set({
+        id: user.id,
+        name: user.name
+      });
       log(`✅ ${user.name} → ${roomName} 등록 완료`, 'ok');
       count++;
     }

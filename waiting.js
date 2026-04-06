@@ -41,6 +41,7 @@ function showFieldError(inputEl, msg) {
 // ── 참여 이력 (Firebase) ──────────────────────────────────
 function saveRoomToHistory(roomId, name) {
   db.ref('userRooms/' + currentUser.id + '/' + roomId).set({ roomId, name, savedAt: Date.now() });
+  db.ref('rooms/' + roomId + '/registeredMembers/' + currentUser.id).set({ id: currentUser.id, name: currentUser.name });
 }
 
 async function loadMyRooms() {

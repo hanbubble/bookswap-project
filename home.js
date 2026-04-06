@@ -7,12 +7,14 @@ let _books = [];
 let _reviews = [];
 let _users = [];
 let _roomMembers = [];
+let _registeredMembers = [];
 
 // ── Firebase 경로 (방 스코프) ─────────────────────────────
-const ROOM_REF     = () => db.ref('rooms/' + roomId);
-const BOOKS_REF    = () => db.ref('rooms/' + roomId + '/books');
-const REVIEWS_REF  = () => db.ref('rooms/' + roomId + '/reviews');
-const MEMBERS_REF  = () => db.ref('rooms/' + roomId + '/members');
+const ROOM_REF                = () => db.ref('rooms/' + roomId);
+const BOOKS_REF               = () => db.ref('rooms/' + roomId + '/books');
+const REVIEWS_REF             = () => db.ref('rooms/' + roomId + '/reviews');
+const MEMBERS_REF             = () => db.ref('rooms/' + roomId + '/members');
+const REGISTERED_MEMBERS_REF  = () => db.ref('rooms/' + roomId + '/registeredMembers');
 
 // ── 실시간 리스너 ─────────────────────────────────────────
 function setupRealtimeListeners() {
@@ -31,6 +33,10 @@ function setupRealtimeListeners() {
   });
   MEMBERS_REF().on('value', snap => {
     _roomMembers = snap.exists() ? Object.values(snap.val()) : [];
+    if (typeof renderMembers === 'function') renderMembers();
+  });
+  REGISTERED_MEMBERS_REF().on('value', snap => {
+    _registeredMembers = snap.exists() ? Object.values(snap.val()) : [];
     if (typeof renderMembers === 'function') renderMembers();
   });
   db.ref('config/palette').on('value', snap => {
@@ -231,25 +237,30 @@ function renderBookshelf() {
   });
 }
 
-// ── Members (방 멤버만 표시) ──────────────────────────────
+// ── Members (등록 멤버 전체 + 온라인 표시) ───────────────
 function renderMembers() {
   const bar = document.getElementById('members-bar');
   bar.innerHTML = '';
-  if (_roomMembers.length === 0) {
+
+  const members = _registeredMembers.length > 0 ? _registeredMembers : _roomMembers;
+  if (members.length === 0) {
     bar.innerHTML = '<span style="color:#CCC;font-size:13px">아직 멤버가 없어요</span>';
     return;
   }
+
   const sorted = [
-    ..._roomMembers.filter(m => m.id === currentUserInit.id),
-    ..._roomMembers.filter(m => m.id !== currentUserInit.id),
+    ...members.filter(m => m.id === currentUserInit.id),
+    ...members.filter(m => m.id !== currentUserInit.id),
   ];
+
   sorted.forEach(member => {
+    const isMe = member.id === currentUserInit.id;
     const circle = document.createElement('div');
-    circle.className = 'member-circle' + (member.id === currentUserInit.id ? ' me' : '');
+    circle.className = 'member-circle' + (isMe ? ' me' : '');
     circle.title = member.name;
     circle.textContent = member.name.charAt(0);
     circle.style.background = getUserColor(member.id);
-    if (member.id === currentUserInit.id) {
+    if (isMe) {
       circle.addEventListener('click', e => {
         e.stopPropagation();
         if (_colorPickerOpen) closeColorPicker();
