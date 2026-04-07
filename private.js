@@ -184,7 +184,15 @@ function renderReviewsPage() {
     const book = books.find(b => b.id === review.bookId);
     if (!book) return;
 
-    const existingNote = _privateNotes[book.id] || '';
+    const raw = _privateNotes[book.id];
+    const existingNotes = !raw ? [] :
+      typeof raw === 'string'
+        ? [{ id: null, text: raw }]
+        : Object.entries(raw).map(([id, val]) => ({
+            id,
+            text: typeof val === 'string' ? val : val.text,
+            createdAt: typeof val === 'object' ? val.createdAt : 0
+          })).sort((a, b) => a.createdAt - b.createdAt);
 
     const card = document.createElement('div');
     card.className = 'priv-card';
@@ -237,13 +245,8 @@ function renderReviewsPage() {
     date.textContent = formatDate(review.timestamp);
     card.appendChild(date);
 
-    // 나만의 메모 표시
-    if (existingNote) {
-      const noteDisplay = document.createElement('div');
-      noteDisplay.className = 'private-note-display';
-      noteDisplay.textContent = existingNote;
-      card.appendChild(noteDisplay);
-    }
+    // 나만의 메모 목록
+    let _editingNoteId = null;
 
     const noteRow = document.createElement('div');
     noteRow.className = 'private-note-row';
@@ -266,28 +269,93 @@ function renderReviewsPage() {
       e.stopPropagation();
       const text = noteInput.value.trim();
       if (!text) return;
-      db.ref('privateNotes/' + currentUser.id + '/' + book.id).set(text);
+      if (_editingNoteId) {
+        db.ref('privateNotes/' + currentUser.id + '/' + book.id + '/' + _editingNoteId).update({ text });
+        _editingNoteId = null;
+        sendBtn.classList.remove('editing');
+      } else {
+        db.ref('privateNotes/' + currentUser.id + '/' + book.id).push({ text, createdAt: Date.now() });
+      }
       noteInput.value = '';
       noteInput.style.height = '';
     };
     noteRow.appendChild(sendBtn);
-    card.appendChild(noteRow);
 
-    // 우측 상단 수정 버튼 (메모 있을 때만)
-    if (existingNote) {
-      const editBtn = document.createElement('button');
-      editBtn.className = 'private-note-edit-btn';
-      editBtn.textContent = '수정';
-      editBtn.title = '메모 수정';
-      editBtn.onclick = e => {
-        e.stopPropagation();
-        noteInput.value = existingNote;
-        noteInput.style.height = 'auto';
-        noteInput.style.height = noteInput.scrollHeight + 'px';
-        noteInput.focus();
-      };
-      card.appendChild(editBtn);
+    function startEdit(note) {
+      _editingNoteId = note.id;
+      noteInput.value = note.text;
+      noteInput.style.height = 'auto';
+      noteInput.style.height = noteInput.scrollHeight + 'px';
+      noteInput.focus();
+      sendBtn.classList.add('editing');
     }
+
+    function closeDropdown() {
+      document.querySelectorAll('.note-dropdown').forEach(d => d.remove());
+    }
+
+    if (existingNotes.length > 0) {
+      const notesList = document.createElement('div');
+      notesList.className = 'private-notes-list';
+      notesList.onclick = e => e.stopPropagation();
+      existingNotes.forEach(note => {
+        const noteItem = document.createElement('div');
+        noteItem.className = 'private-note-item';
+
+        const noteText = document.createElement('span');
+        noteText.className = 'private-note-text';
+        noteText.textContent = note.text;
+        noteItem.appendChild(noteText);
+
+        if (note.id) {
+          // 데스크탑: 수정 + 삭제 버튼
+          const editBtn = document.createElement('button');
+          editBtn.className = 'private-note-edit desktop-only';
+          editBtn.textContent = '수정';
+          editBtn.onclick = e => { e.stopPropagation(); startEdit(note); };
+          noteItem.appendChild(editBtn);
+
+          const delBtn = document.createElement('button');
+          delBtn.className = 'private-note-del desktop-only';
+          delBtn.textContent = '×';
+          delBtn.onclick = e => {
+            e.stopPropagation();
+            db.ref('privateNotes/' + currentUser.id + '/' + book.id + '/' + note.id).remove();
+          };
+          noteItem.appendChild(delBtn);
+
+          // 모바일: ⋮ 버튼 + 드롭다운
+          const moreBtn = document.createElement('button');
+          moreBtn.className = 'private-note-more mobile-only';
+          moreBtn.textContent = '⋮';
+          moreBtn.onclick = e => {
+            e.stopPropagation();
+            closeDropdown();
+            const dropdown = document.createElement('div');
+            dropdown.className = 'note-dropdown';
+            const editOpt = document.createElement('button');
+            editOpt.textContent = '수정';
+            editOpt.onclick = e => { e.stopPropagation(); closeDropdown(); startEdit(note); };
+            const delOpt = document.createElement('button');
+            delOpt.textContent = '삭제';
+            delOpt.onclick = e => {
+              e.stopPropagation(); closeDropdown();
+              db.ref('privateNotes/' + currentUser.id + '/' + book.id + '/' + note.id).remove();
+            };
+            dropdown.appendChild(editOpt);
+            dropdown.appendChild(delOpt);
+            moreBtn.appendChild(dropdown);
+            setTimeout(() => document.addEventListener('click', closeDropdown, { once: true }), 0);
+          };
+          noteItem.appendChild(moreBtn);
+        }
+
+        notesList.appendChild(noteItem);
+      });
+      card.appendChild(notesList);
+    }
+
+    card.appendChild(noteRow);
 
     card.onclick = () => { window.location.href = `detail.html?id=${book.id}`; };
     container.appendChild(card);

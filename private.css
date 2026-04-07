@@ -4,6 +4,10 @@
   font-family: 'RIDIBatang';
   src: url('RIDIBatang.otf') format('opentype');
 }
+@font-face {
+  font-family: 'MonaS12Bold';
+  src: url('MonaS12-Bold.otf') format('opentype');
+}
 
 @keyframes fadeIn  { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
 @keyframes popIn   { 0%{transform:scale(0.9);opacity:0} 70%{transform:scale(1.03)} 100%{transform:scale(1);opacity:1} }
@@ -395,15 +399,112 @@ body {
   font-family: 'RIDIBatang', serif;
 }
 
-#my-reviews .private-note-display {
+#my-reviews .private-notes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+#my-reviews .private-note-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  border-left: 2px solid rgba(168,212,255,0.3);
+  padding-left: 8px;
+}
+
+#my-reviews .private-note-text {
   font-size: 10px;
   color: rgba(255,255,255,0.9);
   font-family: 'RIDIBatang', serif;
-  font-style: normal;
-  border-left: 2px solid rgba(168,212,255,0.3);
-  padding-left: 8px;
   line-height: 1.5;
+  flex: 1;
+  word-break: break-all;
+}
+
+#my-reviews .private-note-edit,
+#my-reviews .private-note-del {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 1px;
   flex-shrink: 0;
+  line-height: 1;
+  transition: color 0.15s;
+}
+#my-reviews .private-note-edit {
+  font-family: 'Jua', sans-serif;
+  font-size: 7px;
+  color: rgba(168,212,255,0.45);
+}
+#my-reviews .private-note-edit:hover { color: #AEE2FF; }
+#my-reviews .private-note-del {
+  font-size: 9px;
+  color: rgba(168,212,255,0.35);
+}
+#my-reviews .private-note-del:hover { color: #ff7080; }
+
+#my-reviews .private-note-more {
+  background: none;
+  border: none;
+  color: rgba(168,212,255,0.45);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0 3px;
+  flex-shrink: 0;
+  line-height: 1;
+  position: relative;
+}
+
+.note-dropdown {
+  position: absolute;
+  right: 0; top: 100%;
+  background: rgba(10,8,35,0.96);
+  border: 1px solid rgba(168,212,255,0.25);
+  border-radius: 10px;
+  overflow: hidden;
+  z-index: 100;
+  min-width: 56px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+}
+.note-dropdown button {
+  display: block; width: 100%;
+  background: none; border: none;
+  color: rgba(220,235,255,0.85);
+  font-family: 'Jua', sans-serif;
+  font-size: 11px;
+  padding: 9px 11px;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.note-dropdown button:hover { background: rgba(168,212,255,0.1); }
+.note-dropdown button:last-child { color: #ff7080; }
+.note-dropdown button:not(:last-child) {
+  border-bottom: none;
+  position: relative;
+}
+.note-dropdown button:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 20%; right: 20%;
+  height: 1px;
+  background: rgba(168,212,255,0.35);
+}
+
+#my-reviews .private-note-send.editing {
+  background: rgba(200,245,122,0.15);
+  border-color: rgba(200,245,122,0.5);
+  color: #C8F57A;
+}
+
+.desktop-only { display: inline-flex; }
+.mobile-only  { display: none; }
+
+@media (max-width: 480px) {
+  .desktop-only { display: none; }
+  .mobile-only  { display: inline-flex; }
 }
 
 #my-reviews .private-note-row {
@@ -616,8 +717,8 @@ body {
 
 /* 빈 상태 */
 .empty-msg {
-  font-family: 'Nanum Pen Script', cursive;
-  font-size: 20px;
+  font-family: 'MonaS12', serif;
+  font-size: 11px;
   color: rgba(168,212,255,0.4);
   padding: 32px 0;
   text-align: center;
