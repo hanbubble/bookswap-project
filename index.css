@@ -819,6 +819,94 @@ body {
 .search-loading { color: rgba(168,212,255,0.6); font-size: 13px; padding: 8px 4px; font-family: 'Jua', sans-serif; }
 .no-results     { color: rgba(200,168,255,0.6); font-size: 13px; padding: 8px 4px; font-family: 'Jua', sans-serif; }
 
+/* ── 직접 입력 ── */
+.manual-entry-btn {
+  background: none;
+  border: none;
+  font-family: 'Jua', sans-serif;
+  font-size: 12px;
+  color: rgba(200,168,255,0.5);
+  cursor: pointer;
+  padding: 0 2px 8px;
+  transition: color 0.2s;
+  display: block;
+}
+.manual-entry-btn:hover { color: rgba(200,168,255,0.85); }
+
+.manual-input-hint-btn {
+  background: none;
+  border: none;
+  font-family: 'Jua', sans-serif;
+  font-size: 12px;
+  color: rgba(200,168,255,0.6);
+  cursor: pointer;
+  padding: 4px 0;
+  transition: color 0.2s;
+  display: block;
+}
+.manual-input-hint-btn:hover { color: rgba(200,168,255,0.9); }
+
+.manual-input-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  background: rgba(200,168,255,0.06);
+  border: 1px dashed rgba(200,168,255,0.3);
+  border-radius: 16px;
+  width: 100%;
+}
+
+.manual-title-input {
+  padding: 9px 14px;
+  border: 1px solid rgba(168,212,255,0.3);
+  border-radius: 50px;
+  font-family: 'Jua', sans-serif;
+  font-size: 13px;
+  color: #e8f4ff;
+  background: rgba(255,255,255,0.08);
+  outline: none;
+  transition: border-color 0.2s;
+}
+.manual-title-input::placeholder { color: rgba(255,255,255,0.38); }
+.manual-title-input:focus { border-color: rgba(168,212,255,0.7); box-shadow: 0 0 0 3px rgba(168,212,255,0.12); }
+
+.manual-cover-label { display: block; }
+.manual-cover-btn {
+  display: inline-block;
+  padding: 8px 14px;
+  background: rgba(255,255,255,0.06);
+  border: 1px dashed rgba(168,212,255,0.3);
+  border-radius: 50px;
+  font-family: 'Jua', sans-serif;
+  font-size: 12px;
+  color: rgba(168,212,255,0.6);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.manual-cover-btn:hover { background: rgba(168,212,255,0.1); color: rgba(168,212,255,0.9); }
+
+#manual-cover-preview img {
+  width: 50px;
+  border-radius: 6px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+  border: 1px solid rgba(168,212,255,0.2);
+  margin-top: 2px;
+}
+
+.manual-confirm-btn {
+  padding: 9px 14px;
+  background: rgba(200,168,255,0.18);
+  border: 1px solid rgba(200,168,255,0.45);
+  border-radius: 50px;
+  font-family: 'Jua', sans-serif;
+  font-size: 13px;
+  color: #dcc8ff;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.manual-confirm-btn:hover { background: rgba(200,168,255,0.3); }
+
 /* ── Admin ── */
 .admin-btn {
   position: fixed;

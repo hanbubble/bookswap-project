@@ -205,6 +205,45 @@ function renderOneLiner(review, ri) {
   document.getElementById('oneliners').appendChild(wrapper);
 }
 
+function closeScrapPopup() {
+  const popup = document.getElementById('scrap-popup');
+  if (popup) popup.remove();
+}
+
+function showScrapPopup(x, y, passage, review) {
+  closeScrapPopup();
+  const popup = document.createElement('div');
+  popup.id = 'scrap-popup';
+  popup.className = 'scrap-popup';
+
+  const btn = document.createElement('button');
+  btn.className = 'scrap-popup-btn';
+  btn.textContent = '📌 내 스크랩북에 저장';
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    const book = getBooks().find(b => b.id === bookId);
+    db.ref('scrappedPassages/' + currentUser.id).push({
+      text: passage.text,
+      comment: passage.comment || '',
+      bookId: bookId,
+      roomId: roomId || '',
+      bookTitle: book?.title || '',
+      fromUser: review.userName,
+      timestamp: Date.now()
+    });
+    showToast('📌 스크랩북에 저장됐어요!');
+    closeScrapPopup();
+  });
+  popup.appendChild(btn);
+  document.body.appendChild(popup);
+
+  const pw = popup.offsetWidth || 190;
+  popup.style.left = Math.max(8, Math.min(x, window.innerWidth - pw - 8)) + 'px';
+  popup.style.top  = Math.min(y + 8, window.innerHeight - 60) + 'px';
+
+  setTimeout(() => document.addEventListener('click', closeScrapPopup, { once: true }), 0);
+}
+
 function renderPassage(passage, review, ri) {
   if (!passage.text) return;
   const card = document.createElement('div');
@@ -215,6 +254,26 @@ function renderPassage(passage, review, ri) {
     <div class="passage-text">"${escHtml(passage.text)}"</div>
     ${passage.comment ? `<div class="passage-comment">💬 ${escHtml(passage.comment)}</div>` : ''}
   `;
+
+  if (review.userId !== currentUser.id) {
+    // 데스크탑: 우클릭
+    card.addEventListener('contextmenu', e => {
+      e.preventDefault();
+      showScrapPopup(e.clientX, e.clientY, passage, review);
+    });
+
+    // 모바일: 길게 누르기
+    let longPressTimer;
+    card.addEventListener('touchstart', e => {
+      const touch = e.touches[0];
+      longPressTimer = setTimeout(() => {
+        showScrapPopup(touch.clientX, touch.clientY, passage, review);
+      }, 600);
+    }, { passive: true });
+    card.addEventListener('touchend',  () => clearTimeout(longPressTimer), { passive: true });
+    card.addEventListener('touchmove', () => clearTimeout(longPressTimer), { passive: true });
+  }
+
   document.getElementById('passages-grid').appendChild(card);
 }
 

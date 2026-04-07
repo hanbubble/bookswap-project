@@ -666,6 +666,33 @@ body {
 
 .hidden { display: none !important; }
 
+/* ── 스크랩 팝업 ── */
+.scrap-popup {
+  position: fixed;
+  z-index: 10000;
+  background: white;
+  border: 2px solid #C8F57A;
+  border-radius: 14px;
+  box-shadow: 3px 3px 0 #88CC66;
+  overflow: hidden;
+  animation: popIn 0.15s ease;
+}
+.scrap-popup-btn {
+  display: block;
+  width: 100%;
+  padding: 12px 20px;
+  background: none;
+  border: none;
+  font-family: 'Jua', sans-serif;
+  font-size: 13px;
+  color: #555;
+  cursor: pointer;
+  white-space: nowrap;
+  text-align: left;
+  transition: background 0.15s;
+}
+.scrap-popup-btn:hover { background: #F8FFF0; }
+
 /* Y2K section header pill */
 .section-pill {
   display: inline-flex;

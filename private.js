@@ -26,6 +26,7 @@ fillChalkDeco('chalk-deco', 80);
 // ── 데이터 캐시 ───────────────────────────────────────────
 let _books = [], _reviews = [], _users = [];
 let _privateNotes = {};
+let _scrappedPassages = {};
 let _myReviewsData = [];
 let _myReviewsPage = 0;
 
@@ -439,6 +440,60 @@ function renderMyPassages() {
   });
 }
 
+// ── 스크랩한 구절 ─────────────────────────────────────────
+function renderScrappedPassages() {
+  const container = document.getElementById('scrapped-passages');
+  container.innerHTML = '';
+
+  const entries = Object.entries(_scrappedPassages)
+    .map(([id, p]) => ({ id, ...p }))
+    .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+  if (entries.length === 0) {
+    container.innerHTML = '<div class="empty-msg">스크랩한 구절이 없어요 ✦</div>';
+    return;
+  }
+
+  entries.forEach((p, i) => {
+    const card = document.createElement('div');
+    card.className = 'passage-scrap';
+    card.style.animationDelay = (i * 0.05) + 's';
+    card.style.transform = `rotate(${(Math.random() * 6 - 3).toFixed(1)}deg)`;
+
+    const bookLabel = document.createElement('div');
+    bookLabel.className = 'scrap-book-title';
+    bookLabel.textContent = p.bookTitle + (p.fromUser ? ' — ' + p.fromUser : '');
+    card.appendChild(bookLabel);
+
+    const text = document.createElement('div');
+    text.className = 'scrap-text';
+    text.textContent = p.text;
+    card.appendChild(text);
+
+    if (p.comment) {
+      const comment = document.createElement('div');
+      comment.className = 'scrap-comment';
+      comment.textContent = '💬 ' + p.comment;
+      card.appendChild(comment);
+    }
+
+    const delBtn = document.createElement('button');
+    delBtn.className = 'scrap-del-btn';
+    delBtn.textContent = '×';
+    delBtn.onclick = e => {
+      e.stopPropagation();
+      db.ref('scrappedPassages/' + currentUser.id + '/' + p.id).remove();
+    };
+    card.appendChild(delBtn);
+
+    card.onclick = () => {
+      const url = `detail.html?id=${p.bookId}${p.roomId ? '&roomId=' + p.roomId : ''}`;
+      window.location.href = url;
+    };
+    container.appendChild(card);
+  });
+}
+
 // ── Edit Profile 팝업 ─────────────────────────────────────
 function openEditProfile() {
   document.getElementById('edit-name').value = currentUser.name;
@@ -507,6 +562,7 @@ function renderAll() {
   renderMyBooks();
   renderMyReviews();
   renderMyPassages();
+  renderScrappedPassages();
 }
 
 // ── Firebase 리스너 ───────────────────────────────────────
@@ -545,6 +601,10 @@ db.ref('users').on('value', snap => {
 db.ref('privateNotes/' + currentUser.id).on('value', snap => {
   _privateNotes = snap.exists() ? snap.val() : {};
   renderMyReviews();
+});
+db.ref('scrappedPassages/' + currentUser.id).on('value', snap => {
+  _scrappedPassages = snap.exists() ? snap.val() : {};
+  renderScrappedPassages();
 });
 
 // ── MY REVIEWS 스와이프 (모바일) ──────────────────────────────

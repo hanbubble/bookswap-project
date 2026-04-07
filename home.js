@@ -362,11 +362,105 @@ async function searchBooks() {
       cover:  el.querySelector('cover')?.textContent  || '',
       author: el.querySelector('author')?.textContent || '',
     }));
-    if (items.length === 0) { resultsEl.innerHTML = '<span class="no-results">검색 결과가 없어요 😢</span>'; return; }
+    if (items.length === 0) {
+      resultsEl.innerHTML = '<span class="no-results">검색 결과가 없어요 😢</span>';
+      const hint = document.createElement('button');
+      hint.className = 'manual-input-hint-btn';
+      hint.textContent = '✏ 직접 입력하기';
+      hint.onclick = showManualInput;
+      resultsEl.appendChild(hint);
+      return;
+    }
     renderSearchResults(items);
   } catch {
     resultsEl.innerHTML = '<span class="no-results">검색 중 오류가 발생했어요 😢</span>';
+    const hint = document.createElement('button');
+    hint.className = 'manual-input-hint-btn';
+    hint.textContent = '✏ 직접 입력하기';
+    hint.onclick = showManualInput;
+    resultsEl.appendChild(hint);
   }
+}
+
+// ── 직접 입력 ─────────────────────────────────────────────
+let _manualCoverBase64 = '';
+
+function showManualInput() {
+  const resultsEl = document.getElementById('search-results');
+  if (resultsEl.querySelector('.manual-input-form')) {
+    resultsEl.innerHTML = '';
+    _manualCoverBase64 = '';
+    return;
+  }
+  _manualCoverBase64 = '';
+  resultsEl.innerHTML = '';
+  const form = document.createElement('div');
+  form.className = 'manual-input-form';
+
+  const titleInput = document.createElement('input');
+  titleInput.type = 'text';
+  titleInput.id = 'manual-title';
+  titleInput.className = 'manual-title-input';
+  titleInput.placeholder = '책 제목을 입력해주세요';
+  titleInput.addEventListener('keydown', e => { if (e.key === 'Enter') confirmManualInput(); });
+  form.appendChild(titleInput);
+
+  const coverLabel = document.createElement('label');
+  coverLabel.className = 'manual-cover-label';
+  const coverInput = document.createElement('input');
+  coverInput.type = 'file';
+  coverInput.accept = 'image/*';
+  coverInput.style.display = 'none';
+  coverInput.addEventListener('change', handleManualCoverChange);
+  const coverBtn = document.createElement('span');
+  coverBtn.className = 'manual-cover-btn';
+  coverBtn.textContent = '📷 표지 이미지 선택 (선택)';
+  coverLabel.appendChild(coverInput);
+  coverLabel.appendChild(coverBtn);
+  form.appendChild(coverLabel);
+
+  const preview = document.createElement('div');
+  preview.id = 'manual-cover-preview';
+  form.appendChild(preview);
+
+  const confirmBtn = document.createElement('button');
+  confirmBtn.className = 'manual-confirm-btn';
+  confirmBtn.textContent = '✓ 선택';
+  confirmBtn.onclick = confirmManualInput;
+  form.appendChild(confirmBtn);
+
+  resultsEl.appendChild(form);
+  titleInput.focus();
+}
+
+function handleManualCoverChange(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      let w = img.width, h = img.height;
+      const maxW = 600, maxH = 900;
+      if (w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
+      if (h > maxH) { w = Math.round(w * maxH / h); h = maxH; }
+      const c = document.createElement('canvas');
+      c.width = w; c.height = h;
+      c.getContext('2d').drawImage(img, 0, 0, w, h);
+      _manualCoverBase64 = c.toDataURL('image/jpeg', 0.75);
+      const preview = document.getElementById('manual-cover-preview');
+      if (preview) preview.innerHTML = `<img src="${_manualCoverBase64}">`;
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function confirmManualInput() {
+  const title = document.getElementById('manual-title')?.value.trim();
+  if (!title) { showToast('책 제목을 입력해주세요', true); return; }
+  selectBook({ title, cover: _manualCoverBase64 });
+  _manualCoverBase64 = '';
 }
 
 function renderSearchResults(items) {

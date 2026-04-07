@@ -710,6 +710,20 @@ body {
   line-height: 1.5;
 }
 
+.scrap-del-btn {
+  position: absolute;
+  top: 6px; right: 6px;
+  background: none;
+  border: none;
+  color: rgba(43,58,110,0.35);
+  font-size: 15px;
+  cursor: pointer;
+  line-height: 1;
+  padding: 2px 4px;
+  transition: color 0.15s;
+}
+.scrap-del-btn:hover { color: #ff7080; }
+
 /* ── MY REVIEWS 페이지네이션 ── */
 .reviews-pagination {
   display: flex;
