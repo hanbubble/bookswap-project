@@ -253,17 +253,22 @@ function renderReviewsPage() {
     noteInput.className = 'private-note-input';
     noteInput.placeholder = '나만의 메모...';
     noteInput.rows = 1;
+    noteInput.addEventListener('input', () => {
+      noteInput.style.height = 'auto';
+      noteInput.style.height = noteInput.scrollHeight + 'px';
+    });
     noteRow.appendChild(noteInput);
 
     const sendBtn = document.createElement('button');
     sendBtn.className = 'private-note-send';
-    sendBtn.textContent = '✈';
+    sendBtn.textContent = '▶';
     sendBtn.onclick = e => {
       e.stopPropagation();
       const text = noteInput.value.trim();
       if (!text) return;
       db.ref('privateNotes/' + currentUser.id + '/' + book.id).set(text);
       noteInput.value = '';
+      noteInput.style.height = '';
     };
     noteRow.appendChild(sendBtn);
     card.appendChild(noteRow);
@@ -277,6 +282,8 @@ function renderReviewsPage() {
       editBtn.onclick = e => {
         e.stopPropagation();
         noteInput.value = existingNote;
+        noteInput.style.height = 'auto';
+        noteInput.style.height = noteInput.scrollHeight + 'px';
         noteInput.focus();
       };
       card.appendChild(editBtn);
