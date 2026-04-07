@@ -38,9 +38,16 @@ function getUserColor(userId) {
 }
 
 function goLastRoom() {
-  const last = localStorage.getItem('lastRoomId');
-  if (last) window.location.href = `home.html?roomId=${last}`;
-  else window.location.href = 'waiting.html';
+  const user = JSON.parse(sessionStorage.getItem('currentUser') || 'null');
+  if (!user) { window.location.href = 'waiting.html'; return; }
+
+  db.ref('userRooms/' + user.id).once('value', snap => {
+    if (!snap.exists()) { window.location.href = 'waiting.html'; return; }
+    const rooms = Object.values(snap.val());
+    const latest = rooms.sort((a, b) => (b.lastVisited || b.savedAt || 0) - (a.lastVisited || a.savedAt || 0))[0];
+    if (latest) window.location.href = `home.html?roomId=${latest.roomId}`;
+    else window.location.href = 'waiting.html';
+  });
 }
 
 function hexToPastel(hex, blend = 0.38) {

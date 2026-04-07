@@ -4,7 +4,7 @@ const pendingUser = (() => {
 })();
 
 if (!pendingUser) window.location.href = 'login.html';
-if (getCurrentUser()) window.location.href = 'index.html';
+if (getCurrentUser()) window.location.href = 'waiting.html';
 
 document.getElementById('wait-name').textContent = pendingUser.name + '님, 안녕하세요!';
 
@@ -34,7 +34,7 @@ function checkApproval() {
     document.getElementById('wait-sub').textContent = '승인됐어요! 입장 중...';
     sessionStorage.removeItem('pendingUser');
     sessionStorage.setItem('currentUser', JSON.stringify({ id: pendingUser.id, name: pendingUser.name }));
-    setTimeout(() => { window.location.href = 'index.html'; }, 1400);
+    setTimeout(() => { window.location.href = 'waiting.html'; }, 1400);
   });
 }
 checkApproval();

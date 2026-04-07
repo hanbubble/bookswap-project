@@ -2,15 +2,15 @@
 .room-banner {
   position: fixed;
   top: 0; left: 0; right: 0;
-  height: 48px;
+  height: 72px;
   display: flex; align-items: center;
   justify-content: space-between;
-  padding: 0 16px;
+  padding: 0 24px;
   background: rgba(8,6,30,0.85);
   backdrop-filter: blur(14px);
   border-bottom: 1px solid rgba(168,212,255,0.12);
   z-index: 1000;
-  gap: 12px;
+  gap: 18px;
 }
 
 .room-banner-left {
@@ -20,15 +20,15 @@
 
 .room-banner-name {
   font-family: 'Press Start 2P', 'Galmuri11', monospace;
-  font-size: 9px; color: rgba(225,240,255,.9);
+  font-size: 13.5px; color: rgba(225,240,255,.9);
   line-height: 1.8;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  max-width: 180px;
+  max-width: 270px;
 }
 
 .room-banner-code {
   font-family: 'Press Start 2P', 'Galmuri11', monospace;
-  font-size: 7px; color: rgba(168,212,255,.5);
+  font-size: 10.5px; color: rgba(168,212,255,.5);
   letter-spacing: 3px; line-height: 1.8;
   white-space: nowrap;
 }
@@ -41,7 +41,7 @@
 /* index.css의 .home-btn을 배너 안에서 재활용 */
 .room-banner .home-btn {
   position: static;
-  font-size: 7px; padding: 5px 12px;
+  font-size: 10.5px; padding: 7.5px 18px;
 }
 
 .room-banner .admin-btn {
@@ -49,8 +49,8 @@
   background: rgba(200,168,255,.12);
   border: 1px solid rgba(200,168,255,.3);
   border-radius: 50px;
-  padding: 5px 10px;
-  font-size: 11px; color: #c8a8ff;
+  padding: 7.5px 15px;
+  font-size: 16.5px; color: #c8a8ff;
   cursor: pointer;
   backdrop-filter: blur(10px);
   transition: all .2s;
@@ -61,16 +61,16 @@
   background: rgba(168,212,255,.1);
   border: 1px solid rgba(168,212,255,.3);
   border-radius: 50px;
-  padding: 5px 14px;
+  padding: 7.5px 21px;
   font-family: 'Press Start 2P', 'Galmuri11', monospace;
-  font-size: 7px; color: #AEE2FF;
+  font-size: 10.5px; color: #AEE2FF;
   cursor: pointer; line-height: 1.8;
   transition: all .2s;
 }
 .leave-room-btn:hover { background: rgba(168,212,255,.2); }
 
 /* 배너 높이만큼 split-layout 내려주기 */
-.split-layout { padding-top: 48px; }
+.split-layout { padding-top: 72px; }
 
 /* index.css의 fixed 버튼들 숨김 (배너로 대체) */
 body > .home-btn,

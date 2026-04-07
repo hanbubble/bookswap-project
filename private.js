@@ -135,7 +135,7 @@ function renderMyBooks() {
     date.textContent = formatDate(book.timestamp);
     card.appendChild(date);
 
-    card.onclick = () => { window.location.href = `detail.html?id=${book.id}`; };
+    card.onclick = () => { window.location.href = `detail.html?id=${book.id}&roomId=${book._roomId}`; };
     container.appendChild(card);
   });
 }
@@ -357,7 +357,7 @@ function renderReviewsPage() {
 
     card.appendChild(noteRow);
 
-    card.onclick = () => { window.location.href = `detail.html?id=${book.id}`; };
+    card.onclick = () => { window.location.href = `detail.html?id=${book.id}&roomId=${book._roomId}`; };
     container.appendChild(card);
   });
 
@@ -398,7 +398,7 @@ function renderMyPassages() {
     .forEach(r => {
       const book = books.find(b => b.id === r.bookId);
       (r.passages || []).forEach(p => {
-        if (p?.text) allPassages.push({ ...p, bookTitle: book?.title || '', bookId: r.bookId });
+        if (p?.text) allPassages.push({ ...p, bookTitle: book?.title || '', bookId: r.bookId, _roomId: r._roomId });
       });
     });
 
@@ -434,7 +434,7 @@ function renderMyPassages() {
       card.appendChild(comment);
     }
 
-    card.onclick = () => { window.location.href = `detail.html?id=${p.bookId}`; };
+    card.onclick = () => { window.location.href = `detail.html?id=${p.bookId}&roomId=${p._roomId}`; };
     container.appendChild(card);
   });
 }
@@ -510,14 +510,34 @@ function renderAll() {
 }
 
 // ── Firebase 리스너 ───────────────────────────────────────
-db.ref('books').on('value', snap => {
-  _books = snap.exists() ? Object.values(snap.val()) : [];
-  renderAll();
+// 유저가 가입한 모든 방에서 books/reviews 수집
+db.ref('userRooms/' + currentUser.id).once('value', snap => {
+  const roomIds = snap.exists() ? Object.keys(snap.val()) : [];
+
+  let loaded = 0;
+  const total = roomIds.length * 2; // books + reviews per room
+  if (total === 0) { renderAll(); }
+
+  roomIds.forEach(roomId => {
+    db.ref('rooms/' + roomId + '/books').on('value', bSnap => {
+      const roomBooks = bSnap.exists() ? Object.values(bSnap.val()) : [];
+      _books = _books.filter(b => b._roomId !== roomId);
+      roomBooks.forEach(b => { b._roomId = roomId; });
+      _books = _books.concat(roomBooks);
+      loaded++;
+      if (loaded >= total) renderAll();
+    });
+    db.ref('rooms/' + roomId + '/reviews').on('value', rSnap => {
+      const roomReviews = rSnap.exists() ? Object.values(rSnap.val()) : [];
+      _reviews = _reviews.filter(r => r._roomId !== roomId);
+      roomReviews.forEach(r => { r._roomId = roomId; });
+      _reviews = _reviews.concat(roomReviews);
+      loaded++;
+      if (loaded >= total) renderAll();
+    });
+  });
 });
-db.ref('reviews').on('value', snap => {
-  _reviews = snap.exists() ? Object.values(snap.val()) : [];
-  renderAll();
-});
+
 db.ref('users').on('value', snap => {
   _users = snap.exists() ? Object.values(snap.val()) : [];
   renderAll();

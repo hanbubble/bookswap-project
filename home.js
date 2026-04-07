@@ -97,6 +97,17 @@ function loadRoomBanner() {
   ROOM_REF().once('value', snap => {
     if (!snap.exists()) { window.location.href = 'waiting.html'; return; }
     const room = snap.val();
+
+    // 멤버 여부 확인: registeredMembers에 없으면 waiting으로
+    const registered = room.registeredMembers || {};
+    if (!registered[currentUserInit.id]) {
+      window.location.href = 'waiting.html';
+      return;
+    }
+
+    // 가장 최근 접속한 방 기록
+    db.ref('userRooms/' + currentUserInit.id + '/' + roomId + '/lastVisited').set(Date.now());
+
     document.getElementById('room-banner-name').textContent = room.name || '';
     document.getElementById('room-banner-code').textContent = roomId;
     document.title = (room.name || roomId) + ' — 교환독서 기록장';
@@ -675,8 +686,6 @@ let isRoomOwner = false;
 // 방 존재 확인 후 초기화
 ROOM_REF().once('value', snap => {
   if (!snap.exists()) { window.location.href = 'waiting.html'; return; }
-
-  localStorage.setItem('lastRoomId', roomId);
 
   const room = snap.val();
   isRoomOwner = room.createdBy === currentUserInit.id;

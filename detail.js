@@ -84,20 +84,22 @@ function init() {
   const params = new URLSearchParams(location.search);
   bookId = params.get('id');
   roomId = params.get('roomId') || null;
-  const fallbackUrl = roomId ? `home.html?roomId=${roomId}` : 'index.html';
+  const fallbackUrl = roomId ? `home.html?roomId=${roomId}` : 'waiting.html';
   if (!bookId) { window.location.href = fallbackUrl; return; }
 
   setupRealtimeListeners();
 
-  // books + reviews 동시에 기다린 후 초기화
+  // books + reviews + memberColors 동시에 기다린 후 초기화
   Promise.all([
     BOOKS_REF().once('value'),
     REVIEWS_REF().once('value'),
     db.ref('users').once('value'),
-  ]).then(([bSnap, rSnap, uSnap]) => {
+    roomId ? db.ref('rooms/' + roomId + '/memberColors').once('value') : Promise.resolve(null),
+  ]).then(([bSnap, rSnap, uSnap, cSnap]) => {
     _books   = bSnap.exists() ? Object.values(bSnap.val()) : [];
     _reviews = rSnap.exists() ? Object.values(rSnap.val()) : [];
     _users   = uSnap.exists() ? Object.values(uSnap.val()) : [];
+    if (cSnap && cSnap.exists()) _roomColors = cSnap.val();
     currentBook = _books.find(b => b.id === bookId);
     if (!currentBook) { window.location.href = fallbackUrl; return; }
     const homeBtn = document.getElementById('home-btn');
