@@ -77,8 +77,10 @@ body > .home-btn,
 body > .logout-btn { display: none !important; }
 
 @media(max-width:480px) {
+  .room-banner { height: 48px; padding: 0 16px; gap: 12px; }
   .room-banner-name { max-width: 90px; font-size: 7px; }
   .room-banner-code { display: none; }
   .room-banner .home-btn { display: none; }
   .room-banner .leave-room-btn { display: none; }
+  .split-layout { padding-top: 48px; }
 }
