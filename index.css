@@ -1058,6 +1058,7 @@ body {
 
 /* ── 모바일 최적화 ────────────────────────────────────────────────── */
 @media (max-width: 480px) {
+  body { zoom: 1.1; }
   /* 좌우 2단 → 1단 세로 스택 */
   .split-layout {
     grid-template-columns: 1fr;

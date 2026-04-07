@@ -753,7 +753,7 @@ body {
 @media (max-width: 480px) {
   .deco-float-l, .deco-float-r { display: none; }
   .home-btn { font-size: 8px; padding: 6px 12px; top: 10px; right: 10px; }
-  .content { padding: 54px 14px 40px; zoom: 1.2; }
+  .content { padding: 54px 14px 40px; zoom: 1.4; }
 
   .profile-card { padding: 18px; gap: 14px; }
   .profile-name { font-size: 10px; }

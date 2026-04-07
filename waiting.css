@@ -365,6 +365,7 @@ body::after {
 
 /* 로비 모바일 네비 배경 */
 @media(max-width:480px) {
+  body { zoom: 1.1; }
   .mobile-nav {
     background: rgba(255,255,255,0.8);
     border-top: 1px solid rgba(0,0,0,0.08);
