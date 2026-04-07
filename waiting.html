@@ -8,8 +8,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Jua&family=Nanum+Pen+Script&family=Press+Start+2P&family=Fredoka+One&family=Gamja+Flower&display=swap" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-  <link rel="stylesheet" href="waiting.css">
   <link rel="stylesheet" href="nav.css">
+  <link rel="stylesheet" href="waiting.css">
 </head>
 <body>
 
@@ -37,7 +37,7 @@
         <button class="tab-btn"        id="tab-create" onclick="switchTab('create')">방 만들기</button>
       </div>
 
-      <!-- 방 만들기 -->
+      <!-- CREATE ROOM -->
       <div class="tab-panel" id="panel-create">
         <div class="form-group">
           <label>✦ 방 이름</label>
@@ -62,7 +62,7 @@
             <button class="copy-btn" id="copy-btn" onclick="copyRoomCode()">복사</button>
           </div>
           <div class="result-hint">이 코드를 친구에게 공유하세요 ✦</div>
-          <button class="submit-btn enter-btn" onclick="enterCreatedRoom()">입장하기 →</button>
+          <button class="submit-btn enter-btn" onclick="enterCreatedRoom()">JOIN THE ROOM →</button>
         </div>
       </div>
 

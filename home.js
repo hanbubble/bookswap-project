@@ -15,6 +15,7 @@ const BOOKS_REF               = () => db.ref('rooms/' + roomId + '/books');
 const REVIEWS_REF             = () => db.ref('rooms/' + roomId + '/reviews');
 const MEMBERS_REF             = () => db.ref('rooms/' + roomId + '/members');
 const REGISTERED_MEMBERS_REF  = () => db.ref('rooms/' + roomId + '/registeredMembers');
+const MEMBER_COLORS_REF       = () => db.ref('rooms/' + roomId + '/memberColors');
 
 // ── 실시간 리스너 ─────────────────────────────────────────
 function setupRealtimeListeners() {
@@ -38,6 +39,11 @@ function setupRealtimeListeners() {
   REGISTERED_MEMBERS_REF().on('value', snap => {
     _registeredMembers = snap.exists() ? Object.values(snap.val()) : [];
     if (typeof renderMembers === 'function') renderMembers();
+  });
+  MEMBER_COLORS_REF().on('value', snap => {
+    _roomColors = snap.exists() ? snap.val() : {};
+    if (typeof renderMembers === 'function') renderMembers();
+    if (typeof renderBookshelf === 'function') renderBookshelf();
   });
   db.ref('config/palette').on('value', snap => {
     if (snap.exists()) USER_COLORS = snap.val();
@@ -277,7 +283,9 @@ let _colorPickerOpen = false;
 function openColorPicker(circleEl, userId) {
   closeColorPicker();
   const takenColors = new Set(
-    _users.filter(u => u.id !== userId && u.color).map(u => u.color.toUpperCase())
+    Object.entries(_roomColors)
+      .filter(([id]) => id !== userId)
+      .map(([, hex]) => hex.toUpperCase())
   );
   const myColor = getUserColor(userId).toUpperCase();
   const popover = document.createElement('div');
@@ -316,7 +324,7 @@ function closeColorPicker() {
   _colorPickerOpen = false;
 }
 function saveUserColor(userId, hex) {
-  db.ref('users/' + userId).update({ color: hex });
+  MEMBER_COLORS_REF().child(userId).set(hex);
 }
 
 // ── 알라딘 오픈API ────────────────────────────────────────
@@ -508,10 +516,13 @@ fillChalkDeco('chalk-deco', 60);
 fillChalkDeco('chalk-deco-right', 60);
 
 // ── Admin ─────────────────────────────────────────────────
+const DEV_ID = 'mneu8bp1gjbsb';
+
 function openAdminPanel()  { document.getElementById('admin-overlay').classList.remove('hidden'); switchAdminTab('books'); }
 function closeAdminPanel() { document.getElementById('admin-overlay').classList.add('hidden'); }
 
 function switchAdminTab(tab) {
+  if (tab === 'colors' && currentUserInit.id !== DEV_ID) return;
   ['books','members','colors'].forEach(t => {
     document.getElementById('admin-content-' + t).classList.toggle('hidden', t !== tab);
     document.getElementById('atab-' + t).classList.toggle('active', t === tab);
@@ -524,28 +535,29 @@ function switchAdminTab(tab) {
 function loadAdminMembers() {
   const el = document.getElementById('admin-content-members');
   el.innerHTML = '';
-  if (_roomMembers.length === 0) {
-    el.innerHTML = '<div class="admin-empty">현재 접속 중인 멤버가 없어요</div>';
+  if (_registeredMembers.length === 0) {
+    el.innerHTML = '<div class="admin-empty">등록된 멤버가 없어요</div>';
     return;
   }
-  _roomMembers.forEach(member => {
+  _registeredMembers.forEach(member => {
+    const isMe = member.id === currentUserInit.id;
     const row = document.createElement('div'); row.className = 'admin-user-row'; row.id = 'member-row-' + member.id;
     const nameEl = document.createElement('div'); nameEl.className = 'admin-user-name';
     const dot = document.createElement('span');
     dot.style.cssText = `display:inline-block;width:10px;height:10px;border-radius:50%;background:${getUserColor(member.id)};margin-right:8px;`;
     nameEl.appendChild(dot);
     nameEl.appendChild(document.createTextNode(member.name));
-    if (member.id === currentUserInit.id) {
+    if (isMe) {
       const badge = document.createElement('span');
       badge.style.cssText = 'margin-left:6px;font-size:10px;color:rgba(168,212,255,0.6)';
       badge.textContent = '(나)';
       nameEl.appendChild(badge);
     }
     row.appendChild(nameEl);
-    if (member.id !== currentUserInit.id) {
+    if (!isMe) {
       const kickBtn = document.createElement('button');
       kickBtn.className = 'admin-action-btn del';
-      kickBtn.textContent = '킥';
+      kickBtn.textContent = '추방';
       kickBtn.onclick = () => kickMember(member.id, member.name);
       row.appendChild(kickBtn);
     }
@@ -554,9 +566,13 @@ function loadAdminMembers() {
 }
 
 function kickMember(memberId, memberName) {
-  if (!confirm(`${memberName}님을 방에서 내보낼까요?`)) return;
-  MEMBERS_REF().child(memberId).remove(() => {
-    showToast(`👢 ${memberName}님을 내보냈어요`);
+  if (!confirm(`${memberName}님을 방에서 추방할까요?\n추방 시 JOINED CLUB 목록에서도 제거됩니다.`)) return;
+  Promise.all([
+    REGISTERED_MEMBERS_REF().child(memberId).remove(),
+    MEMBERS_REF().child(memberId).remove(),
+    db.ref('userRooms/' + memberId + '/' + roomId).remove(),
+  ]).then(() => {
+    showToast(`👢 ${memberName}님을 추방했어요`);
     loadAdminMembers();
   });
 }
@@ -634,6 +650,23 @@ function loadAdminColors() {
 }
 
 
+function deleteRoom() {
+  document.getElementById('delete-room-overlay').classList.remove('hidden');
+}
+function closeDeleteConfirm() {
+  document.getElementById('delete-room-overlay').classList.add('hidden');
+}
+function confirmDeleteRoom() {
+  closeDeleteConfirm();
+  const removeUserRooms = _registeredMembers.map(m =>
+    db.ref('userRooms/' + m.id + '/' + roomId).remove()
+  );
+  Promise.all(removeUserRooms)
+    .then(() => ROOM_REF().remove())
+    .then(() => { window.location.href = 'waiting.html'; })
+    .catch(() => showToast('방 삭제 중 오류가 발생했어요', true));
+}
+
 // ── Init ──────────────────────────────────────────────────
 const currentUserInit = checkAuth();
 const currentUser = currentUserInit; // alias
@@ -649,6 +682,9 @@ ROOM_REF().once('value', snap => {
   isRoomOwner = room.createdBy === currentUserInit.id;
   if (isRoomOwner) {
     document.getElementById('admin-btn').classList.remove('hidden');
+  }
+  if (currentUserInit.id === DEV_ID) {
+    document.getElementById('atab-colors').classList.remove('hidden');
   }
 
   loadRoomBanner();

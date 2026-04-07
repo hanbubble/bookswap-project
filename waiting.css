@@ -363,6 +363,18 @@ body::after {
 .toast.show { transform:translateX(-50%) translateY(0); }
 .toast.err  { background:linear-gradient(135deg,#FF9CAC,#FF6B8A); box-shadow:4px 4px 0 #CC4455; }
 
+/* 로비 모바일 네비 배경 */
+@media(max-width:480px) {
+  .mobile-nav {
+    background: rgba(255,255,255,0.8);
+    border-top: 1px solid rgba(0,0,0,0.08);
+  }
+  .mobile-nav-btn { color: rgba(43,58,110,0.5); }
+  .mobile-nav-btn.active { color: #C23050; }
+  .mobile-nav-home { color: rgba(154,110,221,0.6); }
+  .mobile-nav-home.active { color: #9A6EDD !important; }
+}
+
 /* mobile */
 @media(max-width:480px) {
   body::before, body::after { display:none; }

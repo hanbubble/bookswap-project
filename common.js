@@ -28,10 +28,11 @@ function showToast(msg, isErr) {
   setTimeout(() => t.classList.remove('show'), 2200);
 }
 
+let _roomColors = {}; // 방별 색상 캐시 (각 페이지에서 채워짐)
+
 function getUserColor(userId) {
+  if (_roomColors[userId]) return _roomColors[userId];
   const users = getUsers();
-  const user  = users.find(u => u.id === userId);
-  if (user && user.color) return user.color;
   const idx = users.findIndex(u => u.id === userId);
   return USER_COLORS[(idx < 0 ? 0 : idx) % USER_COLORS.length];
 }

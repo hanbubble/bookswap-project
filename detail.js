@@ -22,6 +22,11 @@ function setupRealtimeListeners() {
   db.ref('users').on('value', snap => {
     _users = snap.exists() ? Object.values(snap.val()) : [];
   });
+  if (roomId) {
+    db.ref('rooms/' + roomId + '/memberColors').on('value', snap => {
+      _roomColors = snap.exists() ? snap.val() : {};
+    });
+  }
   db.ref('config/palette').on('value', snap => {
     if (snap.exists()) USER_COLORS = snap.val();
   });

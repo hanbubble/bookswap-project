@@ -39,11 +39,15 @@
       <div class="admin-tab-bar">
         <button class="admin-tab active" id="atab-books" onclick="switchAdminTab('books')">📚 책 관리</button>
         <button class="admin-tab" id="atab-members" onclick="switchAdminTab('members')">👥 멤버 관리</button>
-        <button class="admin-tab" id="atab-colors" onclick="switchAdminTab('colors')">🎨 색상 팔레트</button>
+        <button class="admin-tab hidden" id="atab-colors" onclick="switchAdminTab('colors')">🎨 색상 팔레트</button>
       </div>
       <div class="admin-content" id="admin-content-books"></div>
       <div class="admin-content hidden" id="admin-content-members"></div>
       <div class="admin-content hidden" id="admin-content-colors"></div>
+      <div class="admin-danger-zone">
+        <span class="admin-danger-label">⚠ DANGER ZONE</span>
+        <button class="admin-action-btn del admin-delete-room-btn" onclick="deleteRoom()">🗑 방 삭제</button>
+      </div>
     </div>
   </div>
 
@@ -107,6 +111,19 @@
       </div>
 
     </section>
+  </div>
+
+  <!-- 방 삭제 확인 팝업 -->
+  <div class="confirm-overlay hidden" id="delete-room-overlay" onclick="if(event.target===this)closeDeleteConfirm()">
+    <div class="confirm-modal">
+      <div class="confirm-icon">🗑</div>
+      <div class="confirm-title">방을 삭제할까요?</div>
+      <div class="confirm-desc">모든 책, 리뷰, 멤버 데이터가<br>영구적으로 삭제됩니다.</div>
+      <div class="confirm-btns">
+        <button class="confirm-btn cancel" onclick="closeDeleteConfirm()">취소</button>
+        <button class="confirm-btn danger" onclick="confirmDeleteRoom()">삭제</button>
+      </div>
+    </div>
   </div>
 
   <div class="toast" id="toast"></div>

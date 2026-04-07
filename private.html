@@ -26,9 +26,14 @@
     <!-- 프로필 -->
     <section class="profile-section">
       <div class="profile-card">
-        <div class="profile-avatar" id="profile-avatar"></div>
+        <div class="profile-avatar-wrap">
+          <div class="profile-avatar" id="profile-avatar"></div>
+          <button class="profile-edit-btn" id="profile-edit-btn" onclick="openEditProfile()">✏</button>
+        </div>
         <div class="profile-info">
-          <div class="profile-name" id="profile-name"></div>
+          <div class="profile-name-row">
+            <div class="profile-name" id="profile-name"></div>
+          </div>
           <div class="profile-joined" id="profile-joined"></div>
         </div>
         <div class="profile-stats">
@@ -72,6 +77,35 @@
       <div class="passage-scrapbook" id="my-passages"></div>
     </section>
 
+  </div>
+
+  <!-- Edit Profile 팝업 -->
+  <div class="ep-overlay hidden" id="edit-profile-overlay" onclick="if(event.target===this)closeEditProfile()">
+    <div class="ep-modal">
+      <div class="ep-header">
+        <span>✏ EDIT PROFILE</span>
+        <button onclick="closeEditProfile()">✕</button>
+      </div>
+      <div class="ep-body">
+        <div class="ep-field">
+          <label class="ep-label">닉네임</label>
+          <input class="ep-input" type="text" id="edit-name" placeholder="새 닉네임" maxlength="20">
+        </div>
+        <div class="ep-field">
+          <label class="ep-label">현재 비밀번호</label>
+          <input class="ep-input" type="password" id="edit-current-pw" placeholder="현재 비밀번호 입력">
+        </div>
+        <div class="ep-field">
+          <label class="ep-label">새 비밀번호 <span class="ep-optional">(변경 시만)</span></label>
+          <input class="ep-input" type="password" id="edit-new-pw" placeholder="변경할 비밀번호">
+        </div>
+        <div class="ep-error" id="ep-error"></div>
+      </div>
+      <div class="ep-footer">
+        <button class="ep-btn cancel" onclick="closeEditProfile()">취소</button>
+        <button class="ep-btn save" onclick="saveEditProfile()">저장</button>
+      </div>
+    </div>
   </div>
 
   <div class="toast" id="toast"></div>

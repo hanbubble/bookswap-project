@@ -145,7 +145,7 @@ async function createRoom() {
     showToast('방 생성 중 오류가 발생했어요', true);
   } finally {
     btn.disabled = false;
-    btn.textContent = '방 만들기 ✦';
+    btn.textContent = 'CREATE ROOM';
   }
 }
 

@@ -364,6 +364,68 @@ function renderMyPassages() {
   });
 }
 
+// ── Edit Profile 팝업 ─────────────────────────────────────
+function openEditProfile() {
+  document.getElementById('edit-name').value = currentUser.name;
+  document.getElementById('edit-current-pw').value = '';
+  document.getElementById('edit-new-pw').value = '';
+  document.getElementById('ep-error').textContent = '';
+  document.getElementById('edit-profile-overlay').classList.remove('hidden');
+  setTimeout(() => document.getElementById('edit-name').focus(), 80);
+}
+
+function closeEditProfile() {
+  document.getElementById('edit-profile-overlay').classList.add('hidden');
+}
+
+async function saveEditProfile() {
+  const newName   = document.getElementById('edit-name').value.trim();
+  const currentPw = document.getElementById('edit-current-pw').value;
+  const newPw     = document.getElementById('edit-new-pw').value;
+  const errorEl   = document.getElementById('ep-error');
+  errorEl.textContent = '';
+
+  if (!newName)   { errorEl.textContent = '닉네임을 입력해주세요'; return; }
+  if (!currentPw) { errorEl.textContent = '현재 비밀번호를 입력해주세요'; return; }
+
+  const snap = await db.ref('users/' + currentUser.id).once('value');
+  const userData = snap.val();
+  if (userData.password !== currentPw) {
+    errorEl.textContent = '현재 비밀번호가 올바르지 않아요';
+    return;
+  }
+
+  if (newName !== currentUser.name) {
+    const usersSnap = await db.ref('users').once('value');
+    const users = Object.values(usersSnap.val() || {});
+    if (users.some(u => u.id !== currentUser.id && u.name === newName)) {
+      errorEl.textContent = '이미 사용 중인 닉네임이에요';
+      return;
+    }
+  }
+
+  const updates = { name: newName };
+  if (newPw) updates.password = newPw;
+  await db.ref('users/' + currentUser.id).update(updates);
+
+  if (newName !== currentUser.name) {
+    const roomsSnap = await db.ref('userRooms/' + currentUser.id).once('value');
+    if (roomsSnap.exists()) {
+      Object.keys(roomsSnap.val()).forEach(roomId => {
+        db.ref('rooms/' + roomId + '/registeredMembers/' + currentUser.id + '/name').set(newName);
+        db.ref('rooms/' + roomId + '/members/' + currentUser.id + '/name').set(newName);
+      });
+    }
+  }
+
+  currentUser.name = newName;
+  sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+  closeEditProfile();
+  showToast(newPw ? '프로필과 비밀번호가 변경됐어요!' : '닉네임이 변경됐어요!');
+  renderProfile();
+}
+
 // ── 전체 렌더 ─────────────────────────────────────────────
 function renderAll() {
   renderProfile();
@@ -414,9 +476,12 @@ db.ref('privateNotes/' + currentUser.id).on('value', snap => {
   }, { passive: true });
 })();
 
+let _lastPerPage = getReviewsPerPage();
 window.addEventListener('resize', () => {
+  const perPage = getReviewsPerPage();
+  if (perPage === _lastPerPage) return;
+  _lastPerPage = perPage;
   if (_myReviewsData.length > 0) {
-    const perPage = getReviewsPerPage();
     const totalPages = Math.max(1, Math.ceil(_myReviewsData.length / perPage));
     if (_myReviewsPage >= totalPages) _myReviewsPage = totalPages - 1;
     renderReviewsPage();
