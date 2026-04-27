@@ -45,7 +45,7 @@ function saveUsers(users) {
   users.forEach(u => { obj[u.id] = u; });
   db.ref('users').set(obj);
 }
-function logout()     { sessionStorage.removeItem('currentUser'); window.location.href = 'login.html'; }
+function logout()     { localStorage.removeItem('currentUser'); window.location.href = 'login.html'; }
 
 // ── Collage board ─────────────────────────────────────────
 const FALLBACK_GRADIENTS = [

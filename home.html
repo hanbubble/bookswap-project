@@ -4,6 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>교환독서 기록장 — 방</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0a0a2e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="북링">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="icon" href="icons/icon-app.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Jua&family=Nanum+Pen+Script&family=Press+Start+2P&family=Fredoka+One&family=Gamja+Flower&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/gh/quiple/galmuri/dist/galmuri.css" rel="stylesheet">
@@ -88,7 +95,7 @@
         <div class="search-row">
           <input type="text" id="book-search" placeholder="책 제목으로 검색해보세요"
             onkeydown="if(event.key==='Enter') searchBooks()">
-          <button class="search-btn" onclick="searchBooks()">SEARCH</button>
+          <button class="search-btn" onclick="searchBooks()">검색</button>
         </div>
         <button class="manual-entry-btn" onclick="showManualInput()"><span style="display:inline-block;transform:rotate(120deg)">✏</span> 직접 입력하기</button>
 
@@ -107,15 +114,15 @@
         <div class="star-rating" id="star-rating"></div>
 
         <textarea class="form-textarea" id="one-liner"
-          placeholder="책의 한줄평을 남겨주세요 ✍"></textarea>
+          placeholder="책의 한줄평을 남겨주세요"></textarea>
 
         <div class="passages-input-area">
           <span class="passages-input-label">PASSAGES &amp; MATE COMMENT ✦</span>
           <div id="reg-passages-input"></div>
-          <button class="add-passage-btn" onclick="addRegPassagePair()">+ ADD PASSAGE</button>
+          <button class="add-passage-btn" onclick="addRegPassagePair()">+ 코멘트 추가하기</button>
         </div>
 
-        <button class="send-btn" onclick="registerBook()">SEND ✈</button>
+        <button class="send-btn" onclick="registerBook()">도서 등록하기</button>
       </div>
 
     </section>
@@ -154,5 +161,8 @@
 
   <script src="common.js"></script>
   <script src="home.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+  </script>
 </body>
 </html>

@@ -12,7 +12,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 // ── Auth & core helpers ───────────────────────────────────
-function getCurrentUser() { try { return JSON.parse(sessionStorage.getItem('currentUser')); } catch { return null; } }
+function getCurrentUser() { try { return JSON.parse(localStorage.getItem('currentUser')); } catch { return null; } }
 function checkAuth()      { const u = getCurrentUser(); if (!u) window.location.href = 'login.html'; return u; }
 function generateId()     { return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
 
@@ -38,7 +38,7 @@ function getUserColor(userId) {
 }
 
 function goLastRoom() {
-  const user = JSON.parse(sessionStorage.getItem('currentUser') || 'null');
+  const user = JSON.parse(localStorage.getItem('currentUser') || 'null');
   if (!user) { window.location.href = 'waiting.html'; return; }
 
   db.ref('userRooms/' + user.id).once('value', snap => {

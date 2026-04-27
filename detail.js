@@ -67,6 +67,13 @@ const DOT_COLORS = USER_COLORS; // user-colors.js 참조
 function applyBackground() {
   const pastel = hexToPastel(getUserColor(currentBook.registeredBy), 0.25);
   document.body.style.background = pastel;
+  const dotEnabled = localStorage.getItem('detail_dot_' + currentUser.id) !== 'off';
+  if (!dotEnabled) {
+    document.body.style.backgroundImage = '';
+    document.body.style.backgroundSize = '';
+    document.body.style.backgroundPosition = '';
+    return;
+  }
   if (window.innerWidth <= 480) {
     document.body.style.backgroundImage = `radial-gradient(circle, white 7px, transparent 7px), radial-gradient(circle, white 7px, transparent 7px)`;
     document.body.style.backgroundSize = `44px 44px`;
@@ -111,6 +118,7 @@ function init() {
     const hadReview = loadCurrentUserReview();
     if (!hadReview) addPassagePair();
     loadSharedMedia();
+    updateYtBtn();
   });
 }
 
@@ -167,7 +175,7 @@ function loadReviews() {
   grid.innerHTML = '';
 
   if (reviews.length === 0) {
-    list.innerHTML = '<div class="empty-state">아직 코멘트가 없어요 🌟<br>첫 번째 기록을 남겨보세요!</div>';
+    list.innerHTML = '<div class="passages-empty">아직 코멘트가 없어요<br>첫 번째 기록을 남겨보세요</div>';
     return;
   }
 
@@ -176,8 +184,11 @@ function loadReviews() {
     (review.passages || []).forEach(p => renderPassage(p, review, ri));
   });
 
+  if (!list.children.length) {
+    list.innerHTML = '<div class="passages-empty">아직 코멘트가 없어요<br>첫 번째 기록을 남겨보세요</div>';
+  }
   if (!grid.children.length) {
-    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#CCC;font-family:Jua,sans-serif;padding:20px;font-size:13px">아직 등록된 구절이 없어요 📖</div>';
+    grid.innerHTML = '<div class="passages-empty" style="grid-column:1/-1">아직 등록된 구절이 없어요</div>';
   }
 }
 
@@ -250,7 +261,7 @@ function renderPassage(passage, review, ri) {
   card.className = 'passage-card';
   card.style.animationDelay = `${ri * 0.06}s`;
   card.innerHTML = `
-    <div class="passage-meta"><span style="font-size:1.3em">${escHtml(review.userName)}</span><span style="font-size:0.75em">'s pick!</span></div>
+    <div class="passage-meta"><span class="name-badge" style="background:${getUserColor(review.userId)}">${escHtml(review.userName)}</span></div>
     <div class="passage-text">"${escHtml(passage.text)}"</div>
     ${passage.comment ? `<div class="passage-comment">💬 ${escHtml(passage.comment)}</div>` : ''}
   `;
@@ -285,7 +296,7 @@ function loadCurrentUserReview() {
   isEditMode = true;
   document.getElementById('form-title').innerHTML =
     'MY RECORD ✏ <span class="edit-mode-badge">EDIT MODE</span>';
-  document.getElementById('submit-btn').textContent = 'UPDATE ✏';
+  document.getElementById('submit-btn').textContent = '수정하기';
 
   formRating = currentReview.rating || 0;
   renderFormStars(formRating);
@@ -296,8 +307,8 @@ function loadCurrentUserReview() {
     savedYtUrl = currentReview.youtubeUrl;
     document.getElementById('youtube-url').value = currentReview.youtubeUrl;
     embedYoutube(false);  // 로드만, 재생 안 함
-    updateYtBtn();        // ▶ PLAY 표시
   }
+  updateYtBtn();
 
   if (currentReview.placePhoto) {
     pendingPhotoBase64 = currentReview.placePhoto;
@@ -413,7 +424,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function embedYoutube(save = true) {
   const url = document.getElementById('youtube-url').value.trim();
-  if (!url) { showToast('YouTube URL을 입력해주세요', true); return; }
+  if (!url) { showToast('URL을 입력해주세요', true); return; }
   const match = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
   if (!match) { showToast('올바른 YouTube URL이 아니에요', true); return; }
   document.getElementById('youtube-embed').innerHTML =
@@ -434,25 +445,50 @@ function _ytPostMessage(cmd) {
 }
 
 function updateYtBtn() {
-  const url = document.getElementById('youtube-url').value.trim();
   const btn = document.getElementById('yt-btn');
+  const editBtn = document.getElementById('yt-edit-btn');
+  const urlInput = document.getElementById('youtube-url');
   if (!btn) return;
 
-  if (window.innerWidth <= 480) {
-    // 모바일: 링크 입력창 숨김 → 영상 없으면 버튼도 숨김
-    if (savedYtUrl) {
-      btn.style.display = 'block';
-      if (!btn.textContent.includes('PAUSE')) btn.textContent = '▶ PLAY';
-    } else {
-      btn.style.display = 'none';
-    }
+  const hasVideo = savedYtUrl || document.getElementById('youtube-embed').innerHTML.trim();
+
+  if (hasVideo) {
+    // URL 있음: 링크수정하기 + PLAY 표시
+    if (editBtn) editBtn.classList.remove('hidden');
+    urlInput.classList.add('hidden');
+    btn.classList.remove('hidden');
+    if (!btn.textContent.includes('PAUSE')) btn.textContent = '▶ PLAY';
   } else {
-    btn.style.display = '';
-    if (url && url === savedYtUrl) {
-      btn.textContent = '▶ PLAY';
-    } else {
-      btn.textContent = '💾 SAVE';
+    // URL 없음: 입력창 + 확인 표시
+    if (editBtn) editBtn.classList.add('hidden');
+    urlInput.classList.remove('hidden');
+    btn.classList.remove('hidden');
+    btn.textContent = '확인';
+  }
+}
+
+function toggleYtEdit() {
+  const urlInput = document.getElementById('youtube-url');
+  const btn = document.getElementById('yt-btn');
+  const editBtn = document.getElementById('yt-edit-btn');
+
+  if (editBtn.textContent.trim() === '링크 수정하기') {
+    // 편집 모드 진입: play 버튼 → url 입력란
+    btn.classList.add('hidden');
+    urlInput.value = savedYtUrl || '';
+    urlInput.classList.remove('hidden');
+    urlInput.focus();
+    editBtn.textContent = '확인';
+  } else {
+    // 확인: URL 저장
+    const newUrl = urlInput.value.trim();
+    if (newUrl) {
+      embedYoutube(true);
     }
+    urlInput.classList.add('hidden');
+    btn.classList.remove('hidden');
+    if (!btn.textContent.includes('PAUSE')) btn.textContent = '▶ PLAY';
+    editBtn.textContent = '링크 수정하기';
   }
 }
 
@@ -467,7 +503,7 @@ function handleYtBtn() {
     _ytPostMessage('playVideo');
     btn.textContent = '⏸ PAUSE';
   } else {
-    // SAVE (데스크탑 전용)
+    // 확인 / SAVE
     embedYoutube(true);
   }
 }
@@ -559,13 +595,13 @@ function submitReview() {
     reviews.push(reviewData);
     isEditMode = true;
     document.getElementById('form-title').innerHTML = 'MY RECORD ✏ <span class="edit-mode-badge">EDIT MODE</span>';
-    document.getElementById('submit-btn').textContent = 'UPDATE ✏';
+    document.getElementById('submit-btn').textContent = '수정하기';
   }
 
   saveReviews(reviews);
   loadBook();
   loadReviews();
-  showToast(isEditMode ? '✏ 수정되었어요!' : '★ 기록이 저장되었어요!');
+  showToast(isEditMode ? '수정되었어요!' : '★ 기록이 저장되었어요!');
 }
 
 init();

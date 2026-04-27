@@ -255,7 +255,7 @@ function handleLogin(e) {
     }
 
     if (user) {
-      sessionStorage.setItem('currentUser', JSON.stringify({ id: user.id, name: user.name }));
+      localStorage.setItem('currentUser', JSON.stringify({ id: user.id, name: user.name }));
       window.location.href = 'waiting.html';
       return;
     }

@@ -87,7 +87,7 @@ function leaveRoom() {
 
 function logout() {
   MEMBERS_REF().child(currentUserInit.id).remove().then(() => {
-    sessionStorage.removeItem('currentUser');
+    localStorage.removeItem('currentUser');
     window.location.href = 'login.html';
   });
 }
@@ -299,11 +299,45 @@ function openColorPicker(circleEl, userId) {
       .map(([, hex]) => hex.toUpperCase())
   );
   const myColor = getUserColor(userId).toUpperCase();
-  const popover = document.createElement('div');
-  popover.className = 'color-picker-popover'; popover.id = 'color-picker-popover';
+
+  const overlay = document.createElement('div');
+  overlay.className = 'color-picker-overlay'; overlay.id = 'color-picker-popover';
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeColorPicker(); });
+
+  const modal = document.createElement('div');
+  modal.className = 'color-picker-modal';
+
+  // ── 헤더 ──────────────────────────────────────────────────
+  const header = document.createElement('div');
+  header.className = 'color-picker-header';
   const label = document.createElement('div');
-  label.className = 'color-picker-label'; label.textContent = '내 색상 선택 ✦';
-  popover.appendChild(label);
+  label.className = 'color-picker-label'; label.textContent = 'DESIGN SETTING ✦';
+  const closeBtn = document.createElement('button');
+  closeBtn.className = 'color-picker-close'; closeBtn.textContent = '✕';
+  closeBtn.addEventListener('click', closeColorPicker);
+  header.appendChild(label); header.appendChild(closeBtn);
+  modal.appendChild(header);
+
+  // ── 탭 바 ─────────────────────────────────────────────────
+  const tabBar = document.createElement('div');
+  tabBar.className = 'admin-tab-bar';
+  const tabColor = document.createElement('button');
+  tabColor.className = 'admin-tab active'; tabColor.textContent = '프로필 색상';
+  const tabDesign = document.createElement('button');
+  tabDesign.className = 'admin-tab'; tabDesign.textContent = '페이지 디자인';
+  const tabFont = document.createElement('button');
+  tabFont.className = 'admin-tab'; tabFont.textContent = '글씨체';
+  tabBar.appendChild(tabColor); tabBar.appendChild(tabDesign); tabBar.appendChild(tabFont);
+  modal.appendChild(tabBar);
+
+  // ── 탭 콘텐츠: 프로필 색상 ───────────────────────────────
+  const contentColor = document.createElement('div');
+  contentColor.className = 'admin-content';
+  const colorDesc = document.createElement('div');
+  colorDesc.className = 'color-picker-desc';
+  colorDesc.textContent = '선택한 색상은 등록한 책의 상세페이지 배경에 적용됩니다';
+  contentColor.appendChild(colorDesc);
+
   const grid = document.createElement('div'); grid.className = 'color-swatches';
   USER_COLORS.forEach(hex => {
     const swatch = document.createElement('div');
@@ -318,17 +352,69 @@ function openColorPicker(circleEl, userId) {
     }
     grid.appendChild(swatch);
   });
-  popover.appendChild(grid); document.body.appendChild(popover);
-  requestAnimationFrame(() => {
-    const rect = circleEl.getBoundingClientRect();
-    const pw = popover.offsetWidth, ph = popover.offsetHeight;
-    let left = rect.left + rect.width / 2 - pw / 2;
-    let top  = rect.top - ph - 12;
-    left = Math.max(8, Math.min(left, window.innerWidth - pw - 8));
-    popover.style.left = left + 'px'; popover.style.top = top + 'px';
+  contentColor.appendChild(grid);
+  modal.appendChild(contentColor);
+
+  // ── 탭 콘텐츠: 페이지 디자인 ─────────────────────────────
+  const contentDesign = document.createElement('div');
+  contentDesign.className = 'admin-content hidden';
+  const dotRow = document.createElement('div');
+  dotRow.className = 'design-setting-row';
+  const dotLabel = document.createElement('span');
+  dotLabel.className = 'design-setting-label';
+  dotLabel.textContent = '상세 페이지 도트 패턴';
+  const dotEnabled = localStorage.getItem('detail_dot_' + userId) !== 'off';
+  const dotToggle = document.createElement('button');
+  dotToggle.className = 'design-toggle' + (dotEnabled ? ' on' : '');
+  dotToggle.textContent = dotEnabled ? 'ON' : 'OFF';
+  dotToggle.addEventListener('click', () => {
+    const isOn = dotToggle.classList.contains('on');
+    dotToggle.classList.toggle('on', !isOn);
+    dotToggle.textContent = !isOn ? 'ON' : 'OFF';
+    localStorage.setItem('detail_dot_' + userId, !isOn ? 'on' : 'off');
   });
+  dotRow.appendChild(dotLabel); dotRow.appendChild(dotToggle);
+  contentDesign.appendChild(dotRow);
+  modal.appendChild(contentDesign);
+
+  // ── 탭 콘텐츠: 글씨체 ────────────────────────────────────
+  const contentFont = document.createElement('div');
+  contentFont.className = 'admin-content hidden';
+  const savedFont = localStorage.getItem('detail_font_' + userId) || 'readable';
+  const fontOptions = [
+    { value: 'readable', label: '가독성이 좋은 글씨' },
+    { value: 'kitsch',   label: '키치한 손글씨' },
+  ];
+  const fontRow = document.createElement('div');
+  fontRow.className = 'design-font-row';
+  fontOptions.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'design-font-btn' + (savedFont === opt.value ? ' active' : '');
+    btn.textContent = opt.label;
+    btn.addEventListener('click', () => {
+      fontRow.querySelectorAll('.design-font-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      localStorage.setItem('detail_font_' + userId, opt.value);
+    });
+    fontRow.appendChild(btn);
+  });
+  contentFont.appendChild(fontRow);
+  modal.appendChild(contentFont);
+
+  // ── 탭 전환 ───────────────────────────────────────────────
+  const allTabs = [tabColor, tabDesign, tabFont];
+  const allContents = [contentColor, contentDesign, contentFont];
+  function switchTab(idx) {
+    allTabs.forEach((t, i) => t.classList.toggle('active', i === idx));
+    allContents.forEach((c, i) => c.classList.toggle('hidden', i !== idx));
+  }
+  tabColor.addEventListener('click', () => switchTab(0));
+  tabDesign.addEventListener('click', () => switchTab(1));
+  tabFont.addEventListener('click',   () => switchTab(2));
+
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
   _colorPickerOpen = true;
-  setTimeout(() => { document.addEventListener('click', closeColorPicker, { once: true }); }, 0);
 }
 function closeColorPicker() {
   document.getElementById('color-picker-popover')?.remove();
@@ -363,20 +449,20 @@ async function searchBooks() {
       author: el.querySelector('author')?.textContent || '',
     }));
     if (items.length === 0) {
-      resultsEl.innerHTML = '<span class="no-results">검색 결과가 없어요 😢</span>';
+      resultsEl.innerHTML = '<span class="no-results">검색 결과가 없어요</span>';
       const hint = document.createElement('button');
       hint.className = 'manual-input-hint-btn';
-      hint.textContent = '✏ 직접 입력하기';
+      hint.textContent = '직접 입력하기';
       hint.onclick = showManualInput;
       resultsEl.appendChild(hint);
       return;
     }
     renderSearchResults(items);
   } catch {
-    resultsEl.innerHTML = '<span class="no-results">검색 중 오류가 발생했어요 😢</span>';
+    resultsEl.innerHTML = '<span class="no-results">검색 중 오류가 발생했어요</span>';
     const hint = document.createElement('button');
     hint.className = 'manual-input-hint-btn';
-    hint.textContent = '✏ 직접 입력하기';
+    hint.textContent = '직접 입력하기';
     hint.onclick = showManualInput;
     resultsEl.appendChild(hint);
   }

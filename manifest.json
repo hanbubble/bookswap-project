@@ -1,0 +1,20 @@
+{
+  "name": "북링",
+  "short_name": "북링",
+  "description": "친구들과 함께하는 교환독서 기록장",
+  "start_url": "/login.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a0a2e",
+  "theme_color": "#0a0a2e",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "icons/icon-app.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

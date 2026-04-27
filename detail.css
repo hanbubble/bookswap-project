@@ -1,6 +1,16 @@
 @font-face {
   font-family: 'RIDIBatang';
-  src: local('RIDIBatang'), url('RIDIBatang.otf') format('opentype');
+  src: local('RIDIBatang'), url('fonts/RIDIBatang.otf') format('opentype');
+}
+@font-face {
+  font-family: 'Pretendard';
+  src: url('fonts/Pretendard-SemiBold.otf') format('opentype');
+  font-weight: 600;
+}
+@font-face {
+  font-family: 'MonaS12';
+  src: url('fonts/MonaS12-Bold.otf') format('opentype');
+  font-weight: bold;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -13,63 +23,47 @@
 @keyframes popIn   { 0%{transform:scale(0.85);opacity:0} 70%{transform:scale(1.04)} 100%{transform:scale(1);opacity:1} }
 
 body {
-  font-family: 'Jua', sans-serif;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 600;
   min-height: 100vh;
   animation: fadeIn 0.4s ease;
 }
 
 /* HOME button */
-.home-btn {
+.home-btn, .back-btn {
   position: fixed;
-  top: 14px; right: 18px;
-  z-index: 999;
-  background: linear-gradient(135deg, #D4BAFF, #AEE2FF);
-  border: 2px solid white;
-  border-radius: 50px;
-  padding: 8px 20px;
-  font-family: 'Press Start 2P', 'Galmuri11', monospace;
-  font-size: 9px;
-  color: white;
-  box-shadow: 3px 3px 0 #9B8FCC;
-  cursor: pointer;
-  text-decoration: none;
-  display: inline-block;
-  line-height: 1.6;
-  transition: transform 0.15s;
-}
-.home-btn:hover { animation: bounce 0.4s ease; }
-
-/* Back button */
-.back-btn {
-  position: fixed;
-  top: 14px; left: 18px;
+  top: 14px;
   z-index: 999;
   background: white;
   border: 2.5px solid #AEE2FF;
   border-radius: 50px;
   padding: 7px 18px;
   font-family: 'Press Start 2P', 'Galmuri11', monospace;
-  font-size: 9px;
+  font-size: 11px;
+  line-height: 1;
   color: #88BBDD;
-  cursor: pointer;
   box-shadow: 2px 2px 0 #AEE2FF;
+  cursor: pointer;
   text-decoration: none;
   display: inline-block;
   transition: all 0.2s;
+  box-sizing: border-box;
 }
-.back-btn:hover { animation: bounce 0.4s ease; }
+.home-btn { right: 18px; width: 100px; text-align: center; }
+.back-btn { left: 18px; }
+.home-btn:hover, .back-btn:hover { animation: bounce 0.4s ease; }
 
 /* Floating deco */
 .deco-l {
   position: fixed; top: 20%; left: 0.5%;
-  font-size: 18px; color: #D4BAFF; letter-spacing: 8px;
+  font-size: 22px; color: #D4BAFF; letter-spacing: 8px;
   line-height: 2.2; writing-mode: vertical-rl;
   animation: float 4s ease-in-out infinite;
   pointer-events: none; opacity: .6;
 }
 .deco-r {
   position: fixed; bottom: 18%; right: 0.5%;
-  font-size: 18px; color: #C8F57A; letter-spacing: 8px;
+  font-size: 22px; color: #C8F57A; letter-spacing: 8px;
   line-height: 2.2; writing-mode: vertical-rl;
   animation: float2 5s ease-in-out infinite;
   pointer-events: none; opacity: .6;
@@ -100,7 +94,7 @@ body {
 
 .card-label {
   font-family: 'Press Start 2P', 'Galmuri11', monospace;
-  font-size: 9px;
+  font-size: 11px;
   color: #AAAACC;
   margin-bottom: 10px;
   line-height: 1.8;
@@ -109,7 +103,7 @@ body {
   align-items: center;
   gap: 6px;
 }
-.card-label::before { content:'✦'; font-size:12px; color:#D4BAFF; }
+.card-label::before { content:'✦'; font-size:14px; color:#D4BAFF; }
 
 /* ── LEFT PANEL ── */
 .left-panel {
@@ -137,16 +131,20 @@ body {
 
 /* 수정 버튼 */
 .photo-edit-btn {
-  width: 100%;
-  margin-top: 8px;
-  padding: 8px;
-  background: rgba(174,226,255,0.15);
-  border: 2px dashed #AEE2FF;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: auto;
+  margin-top: 0;
+  padding: 5px 14px;
+  background: rgba(255,255,255,0.8);
+  border: 1.5px solid #AEE2FF;
   border-radius: 50px;
-  font-family: 'Jua', sans-serif;
+  font-family: 'Pretendard', sans-serif;
   font-size: 14px;
   color: #88BBDD;
   cursor: pointer;
+  backdrop-filter: blur(4px);
   transition: background 0.2s, color 0.2s;
 }
 .photo-edit-btn:hover { background: #EEF8FF; color: #5599CC; }
@@ -174,7 +172,7 @@ body {
 .photo-lightbox-close {
   position: absolute;
   top: 18px; right: 22px;
-  font-size: 28px;
+  font-size: 34px;
   color: white;
   cursor: pointer;
   line-height: 1;
@@ -189,13 +187,13 @@ body {
   align-items: center;
   gap: 8px;
   color: #CCC;
-  font-size: 12px;
+  font-size: 14px;
   text-align: center;
   padding: 16px;
-  font-family: 'Jua', sans-serif;
+  font-family: 'Pretendard', sans-serif;
 }
 
-.upload-placeholder .upload-icon { font-size: 32px; }
+.upload-placeholder .upload-icon { font-size: 38px; }
 
 #place-photo {
   width: 100%; height: 100%;
@@ -216,8 +214,8 @@ body {
   padding: 8px 12px;
   border: 2px solid #E8E8FF;
   border-radius: 50px;
-  font-family: 'Jua', sans-serif;
-  font-size: 14px;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 17px;
   color: #555;
   background: #FAFAFF;
   outline: none;
@@ -226,23 +224,74 @@ body {
 .yt-input-row input:focus { border-color: #AEE2FF; }
 
 .yt-btn {
-  padding: 8px 14px;
-  background: linear-gradient(135deg, #AEE2FF, #D4BAFF);
-  border: 2px solid white;
-  border-radius: 50px;
-  font-size: 12px;
-  color: white;
+  width: 100%;
+  margin-top: 6px;
+  padding: 5px 14px;
+  background: transparent;
+  border: 2px solid rgba(155,120,200,0.4);
+  border-radius: 10px;
+  font-size: 14px;
+  color: #6a4a8a;
   cursor: pointer;
-  font-family: 'Fredoka One', cursive;
-  box-shadow: 2px 2px 0 #9BB8E0;
+  font-family: 'Pretendard', sans-serif;
   white-space: nowrap;
-  transition: transform 0.15s;
+  transition: all 0.15s;
 }
-.yt-btn:hover { animation: bounce 0.4s ease; }
+.yt-btn:hover { background: rgba(106,74,138,0.85) !important; color: white !important; border-color: rgba(106,74,138,0.85) !important; }
+
+.yt-url-input {
+  width: 100%;
+  margin-top: 4px;
+  padding: 5px 14px;
+  background: rgba(180,180,180,0.35);
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #6a4a8a;
+  font-family: 'Pretendard', sans-serif;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.yt-url-input:focus { border-color: rgba(155,120,200,0.8); }
+.yt-url-input.hidden { display: none; }
+
+.yt-edit-btn {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+  padding: 5px 14px;
+  background: transparent;
+  border: 2px solid rgba(155,120,200,0.4);
+  border-radius: 10px;
+  font-size: 14px;
+  color: #6a4a8a;
+  cursor: pointer;
+  font-family: 'Pretendard', sans-serif;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+.yt-edit-btn:hover { background: rgba(120,120,120,0.75) !important; color: white !important; border-color: rgba(120,120,120,0.75) !important; }
+.yt-edit-btn.hidden { display: none; }
 
 #youtube-embed iframe {
   width: 100%; aspect-ratio: 16/9;
   border-radius: 12px; border: none;
+}
+
+@media (max-width: 480px) {
+  #youtube-embed:empty {
+    aspect-ratio: 16/9;
+    border: 2px dashed rgba(155,120,200,0.35);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #youtube-embed:empty::after {
+    content: '🎵';
+    font-size: 28px;
+    opacity: 0.35;
+  }
 }
 
 /* Song */
@@ -251,8 +300,8 @@ body {
   padding: 8px 14px;
   border: 2px solid #E8E8FF;
   border-radius: 50px;
-  font-family: 'Jua', sans-serif;
-  font-size: 14px;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 17px;
   color: #555;
   background: #FAFAFF;
   outline: none;
@@ -305,12 +354,12 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 52px;
+  font-size: 62px;
 }
 
 .book-info h1 {
   font-family: 'Galmuri11', monospace;
-  font-size: 26px;
+  font-size: 31px;
   color: #444;
   line-height: 1.3;
   margin-bottom: 8px;
@@ -327,21 +376,21 @@ body {
   gap: 2px;
 }
 .stars-display .star-cell {
-  font-size: 20px;
+  font-size: 24px;
   cursor: default;
 }
 .stars-display .star-cell:hover { transform: none; }
 
 .avg-num {
-  font-family: 'Fredoka One', cursive;
-  font-size: 14px;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 17px;
   color: #AAAACC;
 }
 
 /* Section titles */
 .section-title {
   font-family: 'Press Start 2P', 'Galmuri11', monospace;
-  font-size: 8px;
+  font-size: 10px;
   margin-bottom: 14px;
   line-height: 1.8;
   letter-spacing: 0.5px;
@@ -370,19 +419,19 @@ body {
   display: inline-block;
   border-radius: 20px;
   padding: 3px 12px;
-  font-size: 11px;
+  font-size: 13px;
   margin-bottom: 5px;
-  font-family: 'Gamja Flower', cursive;
+  font-family: 'Pretendard', sans-serif;
   color: white;
 }
 
 .bubble {
   border-radius: 18px 18px 18px 4px;
   padding: 10px 16px;
-  font-size: 14px;
+  font-size: 17px;
   line-height: 1.6;
   color: #555;
-  font-family: 'Jua', sans-serif;
+  font-family: 'Pretendard', sans-serif;
 }
 
 .bubble-wrapper.mine .bubble {
@@ -391,11 +440,11 @@ body {
 
 .empty-state {
   color: #CCC;
-  font-size: 14px;
+  font-size: 17px;
   text-align: center;
   padding: 20px;
-  font-family: 'Nanum Pen Script', cursive;
-  font-size: 18px;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 22px;
 }
 
 /* Passages grid */
@@ -410,63 +459,52 @@ body {
   background: #FFFDE7;
   border-radius: 16px;
   padding: 14px;
-  font-size: 12px;
+  font-size: 14px;
   box-shadow: 4px 4px 0 #C8F57A;
   animation: popIn 0.4s ease backwards;
 }
 
-.passage-meta {
-  font-size: 10px;
-  color: #AAAACC;
-  margin-bottom: 6px;
-  font-family: 'Press Start 2P', 'Galmuri11', monospace;
+.passages-empty {
+  text-align: center;
+  color: #CCC;
+  font-family: 'Pretendard', sans-serif;
   font-weight: bold;
-  line-height: 1.8;
+  font-size: 14px;
+  padding: 20px;
+}
+
+.passage-meta {
+  margin-bottom: 6px;
 }
 
 .passage-text {
-  font-style: italic;
+  font-style: normal;
   color: #666;
   margin-bottom: 8px;
   line-height: 1.6;
   border-left: 3px solid #AEE2FF;
   padding-left: 8px;
-  font-family: 'RIDIBatang', serif;
-  font-size: 14px;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 17px;
 }
 
 .passage-comment {
   color: #999;
-  font-size: 14px;
+  font-size: 17px;
   line-height: 1.5;
-  font-family: 'Jua', sans-serif;
+  font-family: 'Pretendard', sans-serif;
 }
 
 /* ── BOTTOM FORM ── */
 .review-form-container {
   background: white;
-  border-top: 4px dashed #AEE2FF;
   padding: 28px 20px 40px;
   margin-top: 20px;
-  position: relative;
-}
-
-.review-form-container::before {
-  content: '✦ ♡ ★ ♡ ✦';
-  position: absolute;
-  top: -14px; left: 50%;
-  transform: translateX(-50%);
-  background: white;
-  padding: 0 12px;
-  color: #AEE2FF;
-  font-size: 14px;
-  letter-spacing: 6px;
-  white-space: nowrap;
 }
 
 .form-heading {
   font-family: 'Press Start 2P', 'Galmuri11', monospace;
-  font-size: 10px;
+  font-size: 12px;
   color: #88BBDD;
   margin-bottom: 20px;
   line-height: 1.8;
@@ -483,14 +521,14 @@ body {
   color: white;
   border-radius: 50px;
   padding: 3px 14px;
-  font-size: 10px;
-  font-family: 'Fredoka One', cursive;
+  font-size: 12px;
+  font-family: 'Pretendard', sans-serif;
   box-shadow: 2px 2px 0 #88CC66;
 }
 
 .form-section-label {
   font-family: 'Press Start 2P', 'Galmuri11', monospace;
-  font-size: 9px;
+  font-size: 11px;
   color: #AAAACC;
   margin-bottom: 8px;
   display: block;
@@ -508,7 +546,7 @@ body {
 .star-cell {
   position: relative;
   display: inline-block;
-  font-size: 30px;
+  font-size: 36px;
   line-height: 1;
   cursor: pointer;
   user-select: none;
@@ -540,8 +578,8 @@ body {
   padding: 10px 14px;
   border: 2.5px solid #E8E8FF;
   border-radius: 16px;
-  font-family: 'Jua', sans-serif;
-  font-size: 14px;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 17px;
   color: #555;
   background: #FAFAFF;
   outline: none;
@@ -559,7 +597,7 @@ body {
 
 .passages-input-area h4 {
   font-family: 'Press Start 2P', 'Galmuri11', monospace;
-  font-size: 9px;
+  font-size: 11px;
   color: #AAAACC;
   margin-bottom: 12px;
   line-height: 1.8;
@@ -582,8 +620,8 @@ body {
   padding: 8px 12px;
   border: 2px solid #E8E8FF;
   border-radius: 12px;
-  font-family: 'Jua', sans-serif;
-  font-size: 14px;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 17px;
   color: #555;
   background: white;
   outline: none;
@@ -602,7 +640,7 @@ body {
   border: none;
   color: #CCC;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 19px;
   transition: color 0.2s;
 }
 
@@ -614,8 +652,8 @@ body {
   background: white;
   border: 2.5px dashed #C8F57A;
   border-radius: 50px;
-  font-family: 'Fredoka One', cursive;
-  font-size: 14px;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 17px;
   color: #88CC66;
   cursor: pointer;
   transition: background 0.2s;
@@ -630,8 +668,9 @@ body {
   background: linear-gradient(135deg, #FFB6D9, #D4BAFF);
   border: 3px solid white;
   border-radius: 50px;
-  font-family: 'Press Start 2P', 'Galmuri11', monospace;
-  font-size: 20px;
+  font-family: 'MonaS12', monospace;
+  font-weight: bold;
+  font-size: 18px;
   color: white;
   cursor: pointer;
   box-shadow: 4px 4px 0 #CC88AA;
@@ -649,20 +688,21 @@ body {
   position: fixed;
   bottom: 28px; left: 50%;
   transform: translateX(-50%) translateY(80px);
-  background: linear-gradient(135deg, #D4BAFF, #AEE2FF);
+  background: #0a0a2e;
   color: white;
   padding: 12px 24px;
-  border-radius: 50px;
-  font-size: 14px;
+  border-radius: 12px;
+  font-size: 17px;
   z-index: 9999;
   transition: transform 0.4s cubic-bezier(.34,1.56,.64,1);
-  box-shadow: 4px 4px 0 #9B8FCC;
-  font-family: 'Jua', sans-serif;
-  border: 2px solid white;
+  box-shadow: none;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: bold;
+  border: none;
 }
 
 .toast.show { transform: translateX(-50%) translateY(0); }
-.toast.err  { background: linear-gradient(135deg, #FF7BAC, #FFB6D9); box-shadow: 4px 4px 0 #CC5588; }
+.toast.err  { background: #0a0a2e; box-shadow: none; }
 
 .hidden { display: none !important; }
 
@@ -683,8 +723,8 @@ body {
   padding: 12px 20px;
   background: none;
   border: none;
-  font-family: 'Jua', sans-serif;
-  font-size: 13px;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 16px;
   color: #555;
   cursor: pointer;
   white-space: nowrap;
@@ -698,10 +738,10 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  border-radius: 50px;
+  border-radius: 15px;
   padding: 5px 16px;
   font-family: 'Press Start 2P', 'Galmuri11', monospace;
-  font-size: 9px;
+  font-size: 11px;
   color: white;
   margin-bottom: 12px;
   line-height: 1.8;
@@ -737,8 +777,8 @@ body {
   .deco-l, .deco-r { display: none; }
 
   /* 상단 버튼 */
-  .home-btn { right: 10px; top: 10px; font-size: 10px; padding: 6px 12px; }
-  .back-btn { left: 10px;  top: 10px; font-size: 10px; padding: 6px 12px; }
+  .home-btn { right: 10px; top: 10px; font-size: 12px; padding: 6px 12px; }
+  .back-btn { left: 10px;  top: 10px; font-size: 12px; padding: 6px 12px; }
 
   /* 전체 컨텐츠 */
   .content {
@@ -753,9 +793,6 @@ body {
     box-sizing: border-box;
   }
 
-  /* ── 레이아웃 재배치 ──
-     순서: book-header → (photo|playlist 2단) → comments → passages
-     right-panel을 display:contents로 해체해 자식들을 flex 직계로 올림 */
   .detail-layout {
     display: flex;
     flex-direction: column;
@@ -768,10 +805,10 @@ body {
   }
 
   .y2k-card { max-width: 100%; box-sizing: border-box; overflow: hidden; }
+  .y2k-card:has(#youtube-embed) { overflow: visible; }
 
   .right-panel { display: contents; }
 
-  /* 순서 지정 — 너비는 detail-layout이 통일 */
   .book-header   { order: 1; padding-top: 6px !important; padding-bottom: 6px !important; }
   .left-panel {
     order: 2;
@@ -795,7 +832,7 @@ body {
     box-shadow: none !important;
     border-radius: 0 !important;
   }
-  .left-panel .card-label { margin-bottom: 5px; }
+  .left-panel .card-label { margin-bottom: 5px; height: 26px; }
   .left-panel > *:first-child {
     flex: 5.5 1 0;
     border-right: 2px dashed #AEE2FF !important;
@@ -811,7 +848,7 @@ body {
     width: auto;
     margin-top: 0;
     padding: 3px 10px;
-    font-size: 11px;
+    font-size: 13px;
     background: rgba(255,255,255,0.75);
     border: 1px solid rgba(168,212,255,0.6);
     backdrop-filter: blur(4px);
@@ -819,10 +856,8 @@ body {
   .y2k-card.pink { order: 3; margin-top: 20px; }
   .y2k-card.green{ order: 4; }
 
-  /* 책 헤더 — 인라인 overflow:visible 재정의 + 이미지 넘침 방지 */
   .book-header { overflow: hidden !important; }
 
-  /* 책 헤더 내부 — 표지 크기 모바일에 맞게 축소 */
   .book-cover-wrap {
     position: relative;
     width: 70px;
@@ -839,9 +874,8 @@ body {
     top: 0; left: 0;
     transform: rotate(-8deg);
   }
-  .book-info h1  { font-size: 20px; }
+  .book-info h1  { font-size: 24px; }
 
-  /* 책 제목·버튼 제외 모든 텍스트 크기 통일 */
   .avg-num,
   .section-title, .section-pill, .card-label,
   .bubble-name, .bubble, .empty-state,
@@ -851,40 +885,40 @@ body {
   .form-textarea, .form-textarea::placeholder,
   .passage-pair textarea, .passage-pair textarea::placeholder,
   .star-label,
-  .upload-placeholder,
+  .upload-placeholder, .passages-empty,
   .song-input, .yt-input-row input,
-  .avg-stars { font-size: 13.5px; }
-  .card-label { font-size: 9.5px; }
-  .passage-text { font-size: 12.5px; }
+  .avg-stars { font-size: 16px; }
+  .card-label { font-size: 11px; }
+  .passage-text { font-size: 15px; }
 
-  /* 구절 카드 3단 → 1단 */
   .passages-grid {
     grid-template-columns: 1fr;
     gap: 8px;
   }
 
-  /* 폼 2단 → 1단 */
   .form-grid { grid-template-columns: 1fr; }
 
   .passage-pair { grid-template-columns: 1fr; }
 
-  /* 리뷰 폼 */
   .review-form-container {
     padding: 24px 12px 30px;
     margin-top: 80px;
   }
 
-  /* Playlist — 링크 입력창 숨김, 버튼을 영상 하단으로 */
   .yt-input-row input { display: none; }
   .yt-input-row { flex-direction: column; }
-  .yt-btn { width: 100%; }
+  .yt-btn { width: 100%; margin-top: 4px; }
 
-  /* playlist 카드: flex column으로 영상→버튼 순서 */
   .y2k-card:has(#youtube-embed) {
     display: flex;
     flex-direction: column;
   }
-  .y2k-card:has(#youtube-embed) .card-label  { order: 0; }
+  .y2k-card:has(#youtube-embed) .card-label    { order: 0; }
   .y2k-card:has(#youtube-embed) #youtube-embed { order: 1; }
-  .y2k-card:has(#youtube-embed) .yt-input-row  { order: 2; }
+  .y2k-card:has(#youtube-embed) .yt-edit-btn   { order: 2; margin-top: 4px; }
+  .y2k-card:has(#youtube-embed) .yt-url-input  { order: 3; }
+  .y2k-card:has(#youtube-embed) .yt-btn        { order: 3; }
+
+  .yt-edit-btn:hover { background: transparent !important; color: #6a4a8a !important; border-color: rgba(155,120,200,0.4) !important; }
+  .yt-btn:hover { background: transparent !important; color: #6a4a8a !important; border-color: rgba(155,120,200,0.4) !important; }
 }

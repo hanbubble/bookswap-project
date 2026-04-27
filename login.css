@@ -1,11 +1,11 @@
 @font-face {
   font-family: 'OkMallanf';
-  src: local('Ok Mallang B'), url('Ok Mallang B.otf') format('opentype');
+  src: local('Ok Mallang B'), url('fonts/Ok Mallang B.otf') format('opentype');
 }
 
 @font-face {
   font-family: 'MonaS12';
-  src: url('MonaS12.otf') format('opentype');
+  src: url('fonts/MonaS12.otf') format('opentype');
 }
 
 .bg-text {

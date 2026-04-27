@@ -4,6 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>교환독서 기록장 — 로그인</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0a0a2e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="북링">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="icon" href="icons/icon-app.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Jua&family=Nanum+Pen+Script&family=Press+Start+2P&family=Fredoka+One&family=Gamja+Flower&display=swap" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -21,10 +28,10 @@
 
 
   <div class="bg-overlay"></div>
-  <div class="bg-mobile"><span>BoOK</span><span>sWAp</span><span>wiTH</span><span>YOUr</span><span>fRIeNDs</span></div>
+  <div class="bg-mobile"><span>BoOK</span><span>riNG</span><span>wiTH</span><span>YOUr</span><span>fRIeNDs</span></div>
   <div class="login-wrapper" id="login-wrapper">
 
-    <div class="bg-text bg-desktop">BoOK sWAp<br>wiTH ✿ YOUr<br>fRIeNDs</div>
+    <div class="bg-text bg-desktop">BoOK riNG<br>wiTH ✿ YOUr<br>fRIeNDs</div>
 
     <div class="card">
       <div class="tab-bar">
@@ -77,5 +84,8 @@
 
   <script src="common.js"></script>
   <script src="login.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+  </script>
 </body>
 </html>

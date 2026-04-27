@@ -1,7 +1,7 @@
-@font-face { font-family:'OkMallanf';     src:local('Ok Mallang B'),url('Ok Mallang B.otf') format('opentype'); }
-@font-face { font-family:'MonaS12';      src:url('MonaS12.otf') format('opentype'); }
-@font-face { font-family:'BaskinRobbinsB'; src:url('BR B.otf') format('opentype'); }
-@font-face { font-family:'WILDgag'; src:url('[KIM]WILDgag-Bold.ttf') format('truetype'); }
+@font-face { font-family:'OkMallanf';     src:local('Ok Mallang B'),url('fonts/Ok Mallang B.otf') format('opentype'); }
+@font-face { font-family:'MonaS12';      src:url('fonts/MonaS12.otf') format('opentype'); }
+@font-face { font-family:'BaskinRobbinsB'; src:url('fonts/BR B.otf') format('opentype'); }
+@font-face { font-family:'WILDgag'; src:url('fonts/[KIM]WILDgag-Bold.ttf') format('truetype'); }
 
 *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
 

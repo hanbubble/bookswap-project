@@ -4,6 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>교환독서 기록장 — Private</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0a0a2e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="북링">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="icon" href="icons/icon-app.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Jua&family=Nanum+Pen+Script&family=Press+Start+2P&family=Fredoka+One&family=Gamja+Flower&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/gh/quiple/galmuri/dist/galmuri.css" rel="stylesheet">
@@ -22,8 +29,8 @@
 </head>
 <body>
 
-  <button class="logout-btn" onclick="sessionStorage.removeItem('currentUser'); window.location.href='login.html';">LOGOUT</button>
-  <button class="home-btn" onclick="history.back()">BACK →</button>
+  <button class="home-btn" onclick="history.back()">← BACK</button>
+  <button class="logout-btn" onclick="localStorage.removeItem('currentUser'); window.location.href='login.html';">LOGOUT</button>
   <div class="deco-float-l">⭐<br>♡<br>✦<br>★</div>
   <div class="deco-float-r">✿<br>♡<br>⭐<br>✦</div>
 
@@ -143,5 +150,8 @@
 
   <script src="common.js"></script>
   <script src="private.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+  </script>
 </body>
 </html>

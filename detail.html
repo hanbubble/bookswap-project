@@ -4,6 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>교환독서 기록장 — 책 상세</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0a0a2e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="북링">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="icon" href="icons/icon-app.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Jua&family=Nanum+Pen+Script&family=Press+Start+2P&family=Fredoka+One&family=Gamja+Flower&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/gh/quiple/galmuri/dist/galmuri.css" rel="stylesheet">
@@ -22,7 +29,7 @@
 </head>
 <body>
 
-  <a class="home-btn" id="home-btn" href="index.html">🏠 HOME</a>
+  <a class="home-btn" id="home-btn" href="index.html">HOME</a>
   <a class="back-btn" onclick="history.back()">← BACK</a>
   <div class="deco-l">⭐<br>♡<br>✦<br>★</div>
   <div class="deco-r">✿<br>♡<br>⭐<br>✦</div>
@@ -51,11 +58,10 @@
         <!-- Playlist (YouTube) -->
         <div class="y2k-card" style="animation-delay:0.08s">
           <div class="card-label">PLAYLIST 🎵</div>
-          <div class="yt-input-row">
-            <input type="text" id="youtube-url" placeholder="YouTube URL" oninput="updateYtBtn()">
-            <button class="yt-btn" id="yt-btn" onclick="handleYtBtn()">💾 SAVE</button>
-          </div>
           <div id="youtube-embed"></div>
+          <button class="yt-edit-btn hidden" id="yt-edit-btn" onclick="toggleYtEdit()">링크 수정하기</button>
+          <input type="text" id="youtube-url" class="yt-url-input hidden" placeholder="YouTube URL">
+          <button class="yt-btn hidden" id="yt-btn" onclick="handleYtBtn()">💾 SAVE</button>
         </div>
 
       </div>
@@ -98,7 +104,7 @@
       <div class="passages-input-area">
         <h4>PASSAGES &amp; COMMENTS ✦</h4>
         <div id="passages-input"></div>
-        <button class="add-passage-btn" onclick="addPassagePair()">+ ADD PASSAGE</button>
+        <button class="add-passage-btn" onclick="addPassagePair()">+ 코멘트 추가하기</button>
       </div>
 
       <button class="submit-review-btn" id="submit-btn" onclick="submitReview()">SAVE ★</button>
@@ -125,5 +131,8 @@
 
   <script src="common.js"></script>
   <script src="detail.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+  </script>
 </body>
 </html>

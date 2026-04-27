@@ -549,7 +549,7 @@ async function saveEditProfile() {
   }
 
   currentUser.name = newName;
-  sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+  localStorage.setItem('currentUser', JSON.stringify(currentUser));
 
   closeEditProfile();
   showToast(newPw ? '프로필과 비밀번호가 변경됐어요!' : '닉네임이 변경됐어요!');

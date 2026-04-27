@@ -33,7 +33,7 @@ function checkApproval() {
     document.getElementById('book-icon').textContent = '🎉';
     document.getElementById('wait-sub').textContent = '승인됐어요! 입장 중...';
     sessionStorage.removeItem('pendingUser');
-    sessionStorage.setItem('currentUser', JSON.stringify({ id: pendingUser.id, name: pendingUser.name }));
+    localStorage.setItem('currentUser', JSON.stringify({ id: pendingUser.id, name: pendingUser.name }));
     setTimeout(() => { window.location.href = 'waiting.html'; }, 1400);
   });
 }
