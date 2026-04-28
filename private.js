@@ -21,7 +21,7 @@ function fillChalkDeco(containerId, count) {
     container.appendChild(s);
   }
 }
-fillChalkDeco('chalk-deco', 80);
+fillChalkDeco('chalk-deco', window.innerWidth <= 480 ? 40 : 80);
 
 // ── 데이터 캐시 ───────────────────────────────────────────
 let _books = [], _reviews = [], _users = [];

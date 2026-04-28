@@ -358,23 +358,73 @@ function openColorPicker(circleEl, userId) {
   // ── 탭 콘텐츠: 페이지 디자인 ─────────────────────────────
   const contentDesign = document.createElement('div');
   contentDesign.className = 'admin-content hidden';
-  const dotRow = document.createElement('div');
-  dotRow.className = 'design-setting-row';
-  const dotLabel = document.createElement('span');
-  dotLabel.className = 'design-setting-label';
-  dotLabel.textContent = '상세 페이지 도트 패턴';
-  const dotEnabled = localStorage.getItem('detail_dot_' + userId) !== 'off';
-  const dotToggle = document.createElement('button');
-  dotToggle.className = 'design-toggle' + (dotEnabled ? ' on' : '');
-  dotToggle.textContent = dotEnabled ? 'ON' : 'OFF';
-  dotToggle.addEventListener('click', () => {
-    const isOn = dotToggle.classList.contains('on');
-    dotToggle.classList.toggle('on', !isOn);
-    dotToggle.textContent = !isOn ? 'ON' : 'OFF';
-    localStorage.setItem('detail_dot_' + userId, !isOn ? 'on' : 'off');
+
+  const savedBg = localStorage.getItem('detail_bg_' + userId)
+    || (localStorage.getItem('detail_dot_' + userId) === 'off' ? 'plain' : 'dot');
+
+  const userPastel = hexToPastel(getUserColor(userId), 0.25);
+
+  const bgOptions = [
+    { value: 'plain',  label: '도트 없는', dots: false, dark: false, picnic: false },
+    { value: 'dot',    label: '도트 기본', dots: true,  dark: false, picnic: false },
+    { value: 'dark',   label: '홈 배경',   dots: false, dark: true,  picnic: false },
+    { value: 'picnic', label: '피크닉',    dots: false, dark: false, picnic: true  },
+  ];
+
+  const bgRow = document.createElement('div');
+  bgRow.className = 'design-bg-row';
+
+  bgOptions.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'design-bg-btn' + (savedBg === opt.value ? ' active' : '');
+
+    const preview = document.createElement('div');
+    preview.className = 'design-bg-preview';
+    if (opt.dark) {
+      preview.style.background = 'linear-gradient(135deg,#0a0a2e 0%,#1a0a3e 50%,#0d1b4b 100%)';
+    } else if (opt.picnic) {
+      const mc = document.createElement('canvas');
+      mc.width = 60; mc.height = 56;
+      const mctx = mc.getContext('2d');
+      const picPal = ['#E8879A','#2B3A6E','#8BC66A','#E8C840','#5BA8D4','#FAD8E8'];
+      const mCols = 3, mRows = 2, cW = 20, cH = 28;
+      picPal.forEach((col, i) => {
+        mctx.fillStyle = col;
+        mctx.fillRect((i % mCols) * cW, Math.floor(i / mCols) * cH, cW, cH);
+      });
+      mctx.setLineDash([2, 2]);
+      mctx.strokeStyle = 'rgba(255,255,255,0.9)'; mctx.lineWidth = 1;
+      for (let i = 1; i < mCols; i++) { mctx.beginPath(); mctx.moveTo(i*cW+0.5, 0); mctx.lineTo(i*cW+0.5, 56); mctx.stroke(); }
+      for (let i = 1; i < mRows; i++) { mctx.beginPath(); mctx.moveTo(0, i*cH+0.5); mctx.lineTo(60, i*cH+0.5); mctx.stroke(); }
+      mctx.setLineDash([]);
+      mctx.fillStyle = 'rgba(255,255,255,0.3)';
+      mctx.fillRect(0, 0, 60, 56);
+      preview.style.backgroundImage = `url(${mc.toDataURL()})`;
+      preview.style.backgroundSize = '100% 100%';
+    } else {
+      preview.style.backgroundColor = userPastel;
+      if (opt.dots) {
+        preview.style.backgroundImage = 'radial-gradient(circle,white 2.5px,transparent 2.5px),radial-gradient(circle,white 2.5px,transparent 2.5px)';
+        preview.style.backgroundSize = '16px 16px';
+        preview.style.backgroundPosition = '0 0,8px 8px';
+      }
+    }
+
+    const lbl = document.createElement('span');
+    lbl.className = 'design-bg-label';
+    lbl.textContent = opt.label;
+
+    btn.appendChild(preview);
+    btn.appendChild(lbl);
+    btn.addEventListener('click', () => {
+      bgRow.querySelectorAll('.design-bg-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      localStorage.setItem('detail_bg_' + userId, opt.value);
+    });
+    bgRow.appendChild(btn);
   });
-  dotRow.appendChild(dotLabel); dotRow.appendChild(dotToggle);
-  contentDesign.appendChild(dotRow);
+
+  contentDesign.appendChild(bgRow);
   modal.appendChild(contentDesign);
 
   // ── 탭 콘텐츠: 글씨체 ────────────────────────────────────

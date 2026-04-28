@@ -88,25 +88,6 @@ body {
   overflow-x: hidden;
 }
 
-.deco-float-l {
-  position: fixed; top: 18%; left: 1%;
-  font-size: 20px; color: #a8d4ff;
-  letter-spacing: 8px; line-height: 2;
-  animation: float 4s ease-in-out infinite;
-  pointer-events: none; opacity: .5;
-  writing-mode: vertical-rl;
-  filter: drop-shadow(0 0 6px rgba(168,212,255,0.6));
-}
-.deco-float-r {
-  position: fixed; bottom: 15%; right: 1%;
-  font-size: 20px; color: #c8a8ff;
-  letter-spacing: 8px; line-height: 2;
-  animation: float2 5s ease-in-out infinite;
-  pointer-events: none; opacity: .5;
-  writing-mode: vertical-rl;
-  filter: drop-shadow(0 0 6px rgba(200,168,255,0.6));
-}
-
 /* HOME button */
 .home-btn {
   position: fixed;
@@ -356,9 +337,13 @@ body {
 }
 
 #my-books.card-grid {
-  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  grid-template-columns: repeat(20, 80px);
+  grid-auto-rows: auto;
   gap: 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
 }
+#my-books.card-grid::-webkit-scrollbar { display: none; }
 
 #my-books .priv-card {
   padding: 8px;
@@ -805,7 +790,6 @@ body {
 
 /* ── 모바일 ── */
 @media (max-width: 480px) {
-  .deco-float-l, .deco-float-r { display: none; }
   .home-btn { display: none; }
   .content { padding: 54px 14px 40px; zoom: 1.4; }
 
@@ -823,20 +807,11 @@ body {
 
   .passage-scrap { width: 100%; }
 
-  /* MY BOOKS 가로 스크롤 */
+  /* MY BOOKS - 20개씩 줄바꿈 그리드 */
   #my-books.card-grid {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    overflow-x: auto;
+    grid-template-columns: repeat(20, 70px);
     gap: 8px;
     padding-bottom: 8px;
     -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-  #my-books.card-grid::-webkit-scrollbar { display: none; }
-  #my-books .priv-card {
-    flex: 0 0 80px;
-    min-width: 80px;
   }
 }

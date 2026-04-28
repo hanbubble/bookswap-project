@@ -625,7 +625,8 @@ body {
   color: #555;
   background: white;
   outline: none;
-  resize: vertical;
+  resize: none;
+  overflow: hidden;
   min-height: 60px;
   line-height: 1.6;
   transition: border-color 0.2s;
@@ -922,3 +923,140 @@ body {
   .yt-edit-btn:hover { background: transparent !important; color: #6a4a8a !important; border-color: rgba(155,120,200,0.4) !important; }
   .yt-btn:hover { background: transparent !important; color: #6a4a8a !important; border-color: rgba(155,120,200,0.4) !important; }
 }
+
+/* ── 홈 배경 모드 (detail-dark) ── */
+body.detail-dark .y2k-card {
+  background: rgba(255,255,255,0.20);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-color: rgba(174,226,255,0.35);
+  box-shadow: 4px 4px 0 rgba(174,226,255,0.2), 0 8px 28px rgba(0,0,0,0.3);
+}
+body.detail-dark .y2k-card.pink {
+  border-color: rgba(255,182,217,0.4);
+  box-shadow: 4px 4px 0 rgba(255,182,217,0.2), 0 8px 28px rgba(0,0,0,0.3);
+}
+body.detail-dark .y2k-card.purple {
+  border-color: rgba(212,186,255,0.4);
+  box-shadow: 4px 4px 0 rgba(212,186,255,0.2), 0 8px 28px rgba(0,0,0,0.3);
+}
+body.detail-dark .y2k-card.green {
+  border-color: rgba(200,245,122,0.4);
+  box-shadow: 4px 4px 0 rgba(136,204,102,0.2), 0 8px 28px rgba(0,0,0,0.3);
+}
+body.detail-dark .review-form-container {
+  background: rgba(255,255,255,0.20);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 20px;
+}
+body.detail-dark .passage-card {
+  background: rgba(255,253,231,0.22);
+  box-shadow: 4px 4px 0 rgba(200,245,122,0.3);
+}
+body.detail-dark .photo-upload-area {
+  background: rgba(255,255,255,0.20);
+}
+body.detail-dark .home-btn,
+body.detail-dark .back-btn {
+  background: rgba(174,226,255,0.14);
+  border-color: rgba(174,226,255,0.5);
+  color: #AEE2FF;
+  box-shadow: 0 0 12px rgba(174,226,255,0.2);
+}
+body.detail-dark .home-btn:hover,
+body.detail-dark .back-btn:hover {
+  background: rgba(174,226,255,0.24);
+}
+
+/* 다크 배경에서 텍스트 가독성 */
+body.detail-dark .book-info h1,
+body.detail-dark .card-label,
+body.detail-dark .section-title,
+body.detail-dark .avg-num,
+body.detail-dark .bubble,
+body.detail-dark .empty-state,
+body.detail-dark .passage-text,
+body.detail-dark .passage-comment,
+body.detail-dark .passage-meta,
+body.detail-dark .form-section-label,
+body.detail-dark .passages-empty,
+body.detail-dark .upload-placeholder,
+body.detail-dark .form-textarea,
+body.detail-dark .song-input,
+body.detail-dark .yt-input-row input { color: white; }
+
+body.detail-dark .form-textarea::placeholder,
+body.detail-dark .song-input::placeholder,
+body.detail-dark .yt-input-row input::placeholder { color: rgba(200,220,255,0.4); }
+
+/* 텍스트 버튼 색 */
+body.detail-dark .section-pill.pink  { color: #FFB6D9; }
+body.detail-dark .section-pill.green,
+body.detail-dark .form-heading       { color: #C8F57A; }
+
+body.detail-dark .form-textarea,
+body.detail-dark .song-input,
+body.detail-dark .yt-input-row input {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(174,226,255,0.25);
+}
+
+body.detail-dark .passage-pair {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(212,186,255,0.3);
+}
+body.detail-dark .passage-pair textarea {
+  background: rgba(255,255,255,0.10);
+  border-color: rgba(174,226,255,0.2);
+  color: white;
+}
+body.detail-dark .passage-pair textarea::placeholder { color: rgba(200,220,255,0.4); }
+
+body.detail-dark .name-badge { opacity: 0.85; }
+body.detail-dark .section-pill {
+  background: transparent;
+  box-shadow: none;
+  border-color: rgba(255,255,255,0.2);
+}
+body.detail-dark .add-passage-btn {
+  background: transparent;
+  border-color: rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.45);
+}
+body.detail-dark .submit-review-btn {
+  background: rgba(255,182,217,0.15);
+  border-color: rgba(255,255,255,0.3);
+  box-shadow: 4px 4px 0 rgba(204,136,170,0.3);
+}
+body.detail-dark .yt-url-input { color: white; }
+body.detail-dark .yt-url-input::placeholder { color: rgba(255,255,255,0.5); }
+body.detail-dark #youtube-embed:empty { border-color: rgba(255,255,255,0.45) !important; background: rgba(255,255,255,0.08); }
+body.detail-dark #youtube-embed:empty::after { opacity: 0.75 !important; }
+
+body.detail-dark .yt-edit-btn,
+body.detail-dark .yt-btn {
+  border-color: rgba(255,255,255,0.45) !important;
+  color: rgba(255,255,255,0.45) !important;
+}
+
+@media (max-width: 480px) {
+  body.detail-dark .left-panel {
+    background: rgba(255,255,255,0.20) !important;
+    border-color: rgba(174,226,255,0.35) !important;
+    box-shadow: 4px 4px 0 rgba(174,226,255,0.2), 0 8px 28px rgba(0,0,0,0.3) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+}
+
+/* ── 피크닉 배경 ── */
+body.detail-picnic::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(255,255,255,0.3);
+  z-index: 0;
+  pointer-events: none;
+}
+body.detail-picnic .content { position: relative; z-index: 1; }

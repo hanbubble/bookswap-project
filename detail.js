@@ -63,17 +63,159 @@ let isEditMode = false;
 
 const DOT_COLORS = USER_COLORS; // user-colors.js 참조
 
+// ── 피크닉 패치워크 배경 ──────────────────────────────────
+function _picnicRng(seed) {
+  let s = seed >>> 0;
+  return () => { s = (Math.imul(1664525, s) + 1013904223) >>> 0; return s / 4294967296; };
+}
+const _PICNIC_PAL = [
+  '#E8879A','#C23050','#A82040',
+  '#2B3A6E','#1E2B5A',
+  '#8BC66A','#6A9A40',
+  '#E8C840',
+  '#5BA8D4','#7AD4C0',
+  '#F5E6C8','#FAD8E8'
+];
+function _ppFlower(ctx, ox, oy, S, col, rng) {
+  const cols = 4, rows = 4, stepX = S / cols, stepY = S / rows;
+  for (let row = 0; row < rows; row++) {
+    for (let col2 = 0; col2 < cols; col2++) {
+      const cx = ox + stepX * (col2 + 0.5), cy = oy + stepY * (row + 0.5);
+      const pr = 1.2 + rng() * 1.5;
+      ctx.fillStyle = col; ctx.globalAlpha = 0.82;
+      for (let p = 0; p < 5; p++) {
+        const a = p / 5 * Math.PI * 2;
+        ctx.beginPath(); ctx.arc(cx + Math.cos(a) * pr * 1.7, cy + Math.sin(a) * pr * 1.7, pr, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.fillStyle = '#FFE566'; ctx.globalAlpha = 1;
+      ctx.beginPath(); ctx.arc(cx, cy, pr * 0.6, 0, Math.PI * 2); ctx.fill();
+    }
+  }
+  ctx.globalAlpha = 1;
+}
+function _ppDots(ctx, ox, oy, S, col) {
+  ctx.fillStyle = col; ctx.globalAlpha = 1;
+  const spacing = 18, r = 5;
+  for (let dy = spacing / 2; dy < S; dy += spacing)
+    for (let dx = spacing / 2; dx < S; dx += spacing) {
+      ctx.beginPath(); ctx.arc(ox + dx, oy + dy, r, 0, Math.PI * 2); ctx.fill();
+    }
+}
+function _ppVStripe(ctx, ox, oy, S, col) {
+  ctx.fillStyle = col; ctx.globalAlpha = 0.55;
+  for (let dx = 1; dx < S; dx += 7) ctx.fillRect(ox + dx, oy, 3, S);
+  ctx.globalAlpha = 1;
+}
+function _ppPlaid(ctx, ox, oy, S, col) {
+  ctx.fillStyle = col;
+  ctx.globalAlpha = 0.5;
+  for (let dx = 0; dx < S; dx += 13) ctx.fillRect(ox + dx, oy, 6, S);
+  ctx.globalAlpha = 0.38;
+  for (let dy = 0; dy < S; dy += 13) ctx.fillRect(ox, oy + dy, S, 6);
+  ctx.globalAlpha = 1;
+}
+function _ppDiag(ctx, ox, oy, S, col) {
+  ctx.strokeStyle = col; ctx.lineWidth = 3; ctx.globalAlpha = 0.5;
+  for (let i = -S; i < S * 2; i += 10) {
+    ctx.beginPath(); ctx.moveTo(ox + i, oy); ctx.lineTo(ox + i + S, oy + S); ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+}
+function _ppShapes(ctx, ox, oy, S) {
+  const cols = 3, rows = 3, stepX = S / cols, stepY = S / rows;
+  ctx.font = (stepX * 0.62) + 'px MonaS12, serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  for (let row = 0; row < rows; row++)
+    for (let col = 0; col < cols; col++)
+      ctx.fillText('🍓', ox + stepX * (col + 0.5), oy + stepY * (row + 0.5));
+}
+function _applyPicnicBg() {
+  const oc = document.createElement('canvas');
+  const DIM = 720; oc.width = oc.height = DIM;
+  const ctx = oc.getContext('2d');
+  const S = 120, COLS = 6, ROWS = 6, NT = 6, NP = _PICNIC_PAL.length;
+  const rng = _picnicRng(20250401);
+  const tg = Array.from({length: ROWS}, () => new Array(COLS));
+  for (let r = 0; r < ROWS; r++)
+    for (let c = 0; c < COLS; c++) {
+      let t; do { t = rng() * NT | 0; } while ((c > 0 && tg[r][c-1] === t) || (r > 0 && tg[r-1][c] === t));
+      tg[r][c] = t;
+    }
+  const cg = Array.from({length: ROWS}, () => new Array(COLS));
+  for (let r = 0; r < ROWS; r++)
+    for (let c = 0; c < COLS; c++) {
+      let ci; do { ci = rng() * NP | 0; } while ((c > 0 && cg[r][c-1] === ci) || (r > 0 && cg[r-1][c] === ci));
+      cg[r][c] = ci;
+    }
+  const fns = [_ppFlower, _ppDots, _ppVStripe, _ppPlaid, _ppDiag, _ppShapes];
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      const ox = c * S, oy = r * S;
+      const bi = cg[r][c], ai = (bi + 2 + (rng() * 8 | 0)) % NP;
+      const pr = _picnicRng(r * 97 + c * 53 + tg[r][c] * 17 + 3);
+      const angle = (rng() - 0.5) * 0.2;
+      ctx.save();
+      ctx.beginPath(); ctx.rect(ox, oy, S, S); ctx.clip();
+      ctx.fillStyle = _PICNIC_PAL[bi]; ctx.fillRect(ox, oy, S, S);
+      ctx.save();
+      ctx.translate(ox + S / 2, oy + S / 2); ctx.rotate(angle);
+      fns[tg[r][c]](ctx, -S / 2, -S / 2, S, _PICNIC_PAL[ai], pr);
+      ctx.restore(); ctx.restore();
+    }
+  }
+  ctx.setLineDash([4, 4]);
+  for (let i = 0; i <= COLS; i++) {
+    const x = i * S;
+    ctx.strokeStyle = 'rgba(0,0,0,0.22)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(x + 1.5, 0); ctx.lineTo(x + 1.5, DIM); ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,255,255,0.95)'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, DIM); ctx.stroke();
+  }
+  for (let i = 0; i <= ROWS; i++) {
+    const y = i * S;
+    ctx.strokeStyle = 'rgba(0,0,0,0.22)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(0, y + 1.5); ctx.lineTo(DIM, y + 1.5); ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,255,255,0.95)'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(DIM, y); ctx.stroke();
+  }
+  ctx.setLineDash([]);
+  document.body.style.background = '';
+  document.body.style.backgroundImage = 'url(' + oc.toDataURL() + ')';
+  document.body.style.backgroundRepeat = 'repeat';
+  document.body.style.backgroundSize = 'auto';
+  document.body.style.backgroundPosition = '0 0';
+  document.body.style.backgroundAttachment = '';
+}
 
 function applyBackground() {
+  const savedBg = localStorage.getItem('detail_bg_' + currentUser.id)
+    || (localStorage.getItem('detail_dot_' + currentUser.id) === 'off' ? 'plain' : 'dot');
+
+  document.body.classList.toggle('detail-dark',   savedBg === 'dark');
+  document.body.classList.toggle('detail-picnic', savedBg === 'picnic');
+  document.body.style.backgroundAttachment = '';
+
+  if (savedBg === 'dark') {
+    document.body.style.background = 'linear-gradient(135deg,#0a0a2e 0%,#1a0a3e 50%,#0d1b4b 100%)';
+    document.body.style.backgroundAttachment = 'fixed';
+    return;
+  }
+
+  if (savedBg === 'picnic') {
+    document.fonts.load('20px MonaS12').then(_applyPicnicBg).catch(_applyPicnicBg);
+    return;
+  }
+
   const pastel = hexToPastel(getUserColor(currentBook.registeredBy), 0.25);
   document.body.style.background = pastel;
-  const dotEnabled = localStorage.getItem('detail_dot_' + currentUser.id) !== 'off';
-  if (!dotEnabled) {
+
+  if (savedBg === 'plain') {
     document.body.style.backgroundImage = '';
     document.body.style.backgroundSize = '';
     document.body.style.backgroundPosition = '';
     return;
   }
+
   if (window.innerWidth <= 480) {
     document.body.style.backgroundImage = `radial-gradient(circle, white 7px, transparent 7px), radial-gradient(circle, white 7px, transparent 7px)`;
     document.body.style.backgroundSize = `44px 44px`;
@@ -147,7 +289,7 @@ function loadBook() {
       <h1>${escHtml(currentBook.title)}</h1>
       <div class="avg-stars">
         <span class="stars-display">${starsHTML(avg)}</span>
-        <span class="avg-num">${avg > 0 ? avg.toFixed(1) + ' / 5.0' : 'NO RATING YET'}</span>
+        <span class="avg-num">${avg > 0 ? avg.toFixed(1) : 'NO RATING YET'}</span>
       </div>
     </div>
     ${coverEl}
@@ -196,20 +338,30 @@ function renderOneLiner(review, ri) {
   if (!review.oneLiner) return;
   const isMine  = review.userId === currentUser.id;
   const uColor  = getUserColor(review.userId);
-  const bubbleBg = hexToPastel(uColor, 0.88);
+  const isDark  = document.body.classList.contains('detail-dark');
+
+  const r = parseInt(uColor.slice(1,3), 16);
+  const g = parseInt(uColor.slice(3,5), 16);
+  const b = parseInt(uColor.slice(5,7), 16);
+
+  const bubbleBg    = isDark ? `rgba(${r},${g},${b},0.18)` : hexToPastel(uColor, 0.88);
+  const borderColor = isDark ? `rgba(${r},${g},${b},0.45)` : uColor;
+  const shadowColor = isDark ? `rgba(${r},${g},${b},0.25)` : uColor;
+  const badgeBg     = isDark ? `rgba(${r},${g},${b},0.35)` : uColor;
 
   const wrapper = document.createElement('div');
   wrapper.className = 'bubble-wrapper' + (isMine ? ' mine' : '');
 
   const badge = document.createElement('div');
   badge.className = 'name-badge';
-  badge.style.background = uColor;
+  badge.style.background = badgeBg;
   badge.textContent = review.userName + (isMine ? ' ✦' : '');
 
   const bubble = document.createElement('div');
   bubble.className = 'bubble';
-  bubble.style.cssText = `background:${bubbleBg}; border:2.5px solid ${uColor}; box-shadow:3px 3px 0 ${uColor};`;
-  bubble.textContent = review.oneLiner;
+  bubble.style.cssText = `background:${bubbleBg}; border:2.5px solid ${borderColor}; box-shadow:3px 3px 0 ${shadowColor};`;
+  if (isDark) bubble.style.color = 'white';
+  bubble.innerHTML = escHtml(review.oneLiner).replace(/\n/g, '<br>');
 
   wrapper.appendChild(badge);
   wrapper.appendChild(bubble);
@@ -262,8 +414,8 @@ function renderPassage(passage, review, ri) {
   card.style.animationDelay = `${ri * 0.06}s`;
   card.innerHTML = `
     <div class="passage-meta"><span class="name-badge" style="background:${getUserColor(review.userId)}">${escHtml(review.userName)}</span></div>
-    <div class="passage-text">"${escHtml(passage.text)}"</div>
-    ${passage.comment ? `<div class="passage-comment">💬 ${escHtml(passage.comment)}</div>` : ''}
+    <div class="passage-text">"${escHtml(passage.text).replace(/\n/g, '<br>')}"</div>
+    ${passage.comment ? `<div class="passage-comment">💬 ${escHtml(passage.comment).replace(/\n/g, '<br>')}</div>` : ''}
   `;
 
   if (review.userId !== currentUser.id) {
@@ -420,6 +572,12 @@ function autoResizeTextarea(el) {
 document.addEventListener('DOMContentLoaded', () => {
   const ta = document.getElementById('form-oneliner');
   if (ta) ta.addEventListener('input', () => autoResizeTextarea(ta));
+
+  document.addEventListener('input', e => {
+    if (e.target.matches('#passages-input textarea')) {
+      autoResizeTextarea(e.target);
+    }
+  });
 });
 
 function embedYoutube(save = true) {
@@ -518,6 +676,7 @@ function addPassagePair(text, comment) {
     <button class="remove-pair-btn" onclick="this.parentElement.remove()">✕</button>
   `;
   document.getElementById('passages-input').appendChild(pair);
+  pair.querySelectorAll('textarea').forEach(ta => autoResizeTextarea(ta));
 }
 
 function collectPassages() {
